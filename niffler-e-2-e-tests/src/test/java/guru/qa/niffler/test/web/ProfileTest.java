@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Selenide.open;
-import static java.lang.Thread.sleep;
-
 
 @ExtendWith(BrowserExtension.class)
 public class ProfileTest {
@@ -51,7 +49,6 @@ public class ProfileTest {
 
                 new MainPage().openAvatarMenu()
                 .goToProfilePage();
-        // sleep(5000);
         new ProfilePage().checkActiveCategoryPresent(categoryJson.name());
 
     }

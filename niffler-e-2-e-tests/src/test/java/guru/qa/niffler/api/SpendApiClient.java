@@ -63,10 +63,7 @@ public class SpendApiClient {
 
     public CategoryJson createCategory(CategoryJson category) {
         Response<CategoryJson> response = executeWithHandling(spendApi.addCategory(category));
-        checkResponse(response, 200, 409);
-        if (response.code() == 409) {
-            return null;
-        }
+        checkResponse(response, 200);
         return response.body();
     }
 

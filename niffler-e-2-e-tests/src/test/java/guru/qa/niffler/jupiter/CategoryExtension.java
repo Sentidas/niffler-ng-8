@@ -18,35 +18,28 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
 
                     System.out.println("Из аннотации: archived = " + anno.archived());
 
-                    for (int i = 0; i < 10; i++) {
-                        String nameCategory = CategoryNameGenerator.randomCategoryName();
+                    String nameCategory = CategoryNameGenerator.randomCategoryName();
 
-                        CategoryJson categoryJson = new CategoryJson(
-                                null,
-                                nameCategory,
-                                anno.username(),
-                                false
-                                // anno.archived()
+                    CategoryJson categoryJson = new CategoryJson(
+                            null,
+                            nameCategory,
+                            anno.username(),
+                            false
+                    );
+
+                    CategoryJson createdCategory = spendApiClient.createCategory(categoryJson);
+
+                    if (anno.archived()) {
+                        CategoryJson archivedCategory = new CategoryJson(
+                                createdCategory.id(),
+                                createdCategory.name(),
+                                createdCategory.username(),
+                                true
                         );
-
-                        CategoryJson createdCategory = spendApiClient.createCategory(categoryJson);
-
-                        if (createdCategory != null) {
-                            if (anno.archived()) {
-                                CategoryJson archivedCategory = new CategoryJson(
-                                        createdCategory.id(),
-                                        createdCategory.name(),
-                                        createdCategory.username(),
-                                        true
-                                );
-                                createdCategory = spendApiClient.editCategory(archivedCategory);
-                            }
-                            System.out.println("Категория создана: " + nameCategory);
-                            context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
-                            return;
-                        }
+                        createdCategory = spendApiClient.editCategory(archivedCategory);
                     }
-                    throw new RuntimeException("Не удалось создать уникальную категорию за 10 попыток");
+                    System.out.println("Категория создана: " + nameCategory);
+                    context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
                 });
     }
 

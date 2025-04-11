@@ -1,6 +1,5 @@
 package guru.qa.niffler.test.web;
 
-import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.UserNameGenerator;
 import guru.qa.niffler.page.LoginPage;

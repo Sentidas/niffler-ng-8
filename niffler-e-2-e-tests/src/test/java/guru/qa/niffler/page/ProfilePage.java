@@ -20,7 +20,8 @@ public class ProfilePage {
             categoryUnarchiveButton = $("button[aria-label='Unarchive category']"),
             toggleShowArchived = $(".MuiSwitch-switchBase.MuiSwitch-colorPrimary");
 
-    private final ElementsCollection allCategories = $$("div.MuiGrid-container.MuiGrid-spacing-xs-2 div.MuiGrid-item");
+    private final ElementsCollection activeCategories = $$("div.MuiChip-filled.MuiChip-colorPrimary"),
+            archivedCategories  = $$("div.MuiChip-filled.MuiChip-colorDefault");
 
 
     public ProfilePage uploadPicture(String path) {
@@ -66,31 +67,10 @@ public class ProfilePage {
     }
 
     public void checkArchivedCategoryPresent(String nameCategory) {
-
-        for (SelenideElement category : allCategories) {
-            boolean hasName = category.$("span.MuiChip-label ").has(text(nameCategory));
-            boolean isArchived = category.$("button[aria-label='Unarchive category']").exists();
-
-            if (hasName && isArchived) {
-                category.shouldBe(visible);
-                return;
-            }
-        }
-        throw new AssertionError("Не найдена архивная категория с именем: " + nameCategory);
-
+        archivedCategories.findBy(exactText(nameCategory));
     }
 
     public void checkActiveCategoryPresent(String nameCategory) {
-
-        for (SelenideElement category : allCategories) {
-            boolean hasName = category.$("span.MuiChip-label ").has(text(nameCategory));
-            boolean isNotArchived = category.$("button[aria-label='Archive category']").exists();
-
-            if (hasName && isNotArchived) {
-                category.shouldBe(visible);
-                return;
-            }
-        }
-        throw new AssertionError("Не найдена активная категория с именем: " + nameCategory);
+        activeCategories.findBy(exactText(nameCategory));
     }
 }

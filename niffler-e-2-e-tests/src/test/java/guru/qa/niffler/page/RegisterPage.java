@@ -8,9 +8,6 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class RegisterPage {
 
-    // подумать про переход на логин
-    // подумать про переход на регистрацию
-
     private final SelenideElement userNameInput = $("#username"),
             passwordInput = $("#password"),
             passwordButton = $("#passwordBtn"),
