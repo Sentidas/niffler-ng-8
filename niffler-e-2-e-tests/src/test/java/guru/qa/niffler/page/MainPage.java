@@ -16,7 +16,10 @@ public class MainPage {
             spendingSection = $("#spendings"),
             newSpendingButton = $(byText("New spending")),
             profileButton = $("button[aria-label=Menu]"),
-            profileLink = $("a[href='/profile']");
+            profileLink = $("a[href='/profile']"),
+            friendsLink = $("a[href='/people/friends']"),
+            peopleLink = $("a[href='/people/all']");
+
 
 
     public EditSpendingPage editSpending(String spendingDescription) {
@@ -35,6 +38,16 @@ public class MainPage {
     public ProfilePage goToProfilePage() {
         profileLink.click();
         return new ProfilePage();
+    }
+
+    public FriendsPage goToFriendsPage() {
+        friendsLink.click();
+        return new FriendsPage();
+    }
+
+    public FriendsPage goToPeoplePage() {
+        peopleLink.click();
+        return new FriendsPage();
     }
 
 
