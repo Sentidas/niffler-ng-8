@@ -1,10 +1,10 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.SpendApiClient;
-import guru.qa.niffler.data.CategoryNameGenerator;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
@@ -23,7 +23,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                     if (anno.categories().length > 0) {
                         Category category = anno.categories()[0];
 
-                        String nameCategory = CategoryNameGenerator.randomCategoryName();
+                        String nameCategory = RandomDataUtils.randomCategoryName();
 
                         CategoryJson categoryJson = new CategoryJson(
                                 null,

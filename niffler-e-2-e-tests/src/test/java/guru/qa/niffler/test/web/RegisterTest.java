@@ -1,8 +1,8 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.UserNameGenerator;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Selenide.open;
@@ -16,7 +16,7 @@ public class RegisterTest {
     @Test
     void shouldRegisterNewUser() {
 
-        String uniqueUsername = UserNameGenerator.generateLogin();
+        String uniqueUsername = RandomDataUtils.randomUsername();
         System.out.println("Сгенерированное имя: " + uniqueUsername);
 
         open(CFG.frontUrl(), LoginPage.class)
