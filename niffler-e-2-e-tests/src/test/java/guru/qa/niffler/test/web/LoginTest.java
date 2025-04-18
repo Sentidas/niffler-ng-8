@@ -13,7 +13,7 @@ public class LoginTest {
     void shouldLoginSuccessfully() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .setUserName("raven")
-                .setPassword("raven")
+                .setPassword("12345")
                 .submitLogin();
 
         new MainPage().checkHistoryOfSpendingIsVisible()

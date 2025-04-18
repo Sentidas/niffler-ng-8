@@ -1,9 +1,14 @@
-package guru.qa.niffler.data;
+package guru.qa.niffler.utils;
+
+import com.github.javafaker.Faker;
 
 import java.util.List;
 import java.util.Random;
 
-public class CategoryNameGenerator {
+public class RandomDataUtils {
+
+    private static final Faker faker = new Faker();
+    private static final Random RANDOM = new Random();
     private static final List<String> CATEGORIES = List.of(
             // Еда и напитки
             "Продукты", "Рестораны", "Кофейни", "Доставка еды", "Алкоголь",
@@ -21,9 +26,28 @@ public class CategoryNameGenerator {
             "Авиабилеты", "Отели", "Экскурсии", "Сувениры", "Пляж"
     );
 
-    private static final Random RANDOM = new Random();
+    public static String randomUsername() {
+        String username;
+        do {
+            username = faker.animal().name();
+        } while (username.length() < 3);
+        return username;
+    }
+
+    public static String randomName() {
+        return faker.name().firstName();
+    }
+
+    public static String randomSurname() {
+        return faker.name().lastName();
+    }
+
+    public static String randomSentence(int wordsCount) {
+        return String.join(" ", faker.lorem().words(wordsCount));
+    }
 
     public static String randomCategoryName() {
         return CATEGORIES.get(RANDOM.nextInt(CATEGORIES.size())) + "_" + RANDOM.nextInt(100);
     }
+
 }
