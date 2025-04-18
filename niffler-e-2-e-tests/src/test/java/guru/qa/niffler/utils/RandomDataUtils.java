@@ -43,12 +43,7 @@ public class RandomDataUtils {
     }
 
     public static String randomSentence(int wordsCount) {
-        StringBuilder sentence = new StringBuilder();
-
-        for (int i = 0; i < wordsCount; i++) {
-            sentence.append(faker.lorem().word() + " ");
-        }
-        return sentence.toString();
+        return String.join(" ", faker.lorem().words(wordsCount));
     }
 
     public static String randomCategoryName() {

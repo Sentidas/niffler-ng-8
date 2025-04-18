@@ -2,9 +2,9 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
@@ -15,26 +15,27 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(BrowserExtension.class)
 public class SpendingTest {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  @User(
-      username = "duck",
-      spendings = @Spending(
-      category = "Обучение",
-      description = "Обучение 2.0",
-      amount = 89000.00,
-      currency = CurrencyValues.RUB
-  ))
+    @User(
+            username = "duck",
+            spendings = @Spending(
+                    category = "Обучение",
+                    description = "Обучение 2.0",
+                    amount = 89000.00,
+                    currency = CurrencyValues.RUB
+            ))
 
-  @Test
-  void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson spend) {
-    final String newDescription = "Обучение True";
+    @Test
+    void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson spend) {
 
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .loginWithCredentials("duck", "12345")
-        .editSpending(spend.description())
-        .editDescription(newDescription);
+        final String newDescription = "Обучение True";
 
-    new MainPage().checkThatTableContains(newDescription);
-  }
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .loginWithCredentials("duck", "12345")
+                .editSpending(spend.description())
+                .editDescription(newDescription);
+
+        new MainPage().checkThatTableContains(newDescription);
+    }
 }

@@ -52,23 +52,17 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
 
-        Optional<User> user = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class);
+        CategoryJson category = context.getStore(NAMESPACE)
+                .get(context.getUniqueId(), CategoryJson.class);
 
-        if (user.isPresent()) {
-            if (user.get().categories().length > 0) {
-                CategoryJson category = context.getStore(NAMESPACE)
-                        .get(context.getUniqueId(), CategoryJson.class);
-
-                if (!category.archived()) {
-                    CategoryJson archivedCategory = new CategoryJson(
-                            category.id(),
-                            category.name(),
-                            category.username(),
-                            true
-                    );
-                    new SpendApiClient().editCategory(archivedCategory);
-                }
-            }
+        if (category != null && !category.archived()) {
+            CategoryJson archivedCategory = new CategoryJson(
+                    category.id(),
+                    category.name(),
+                    category.username(),
+                    true
+            );
+            new SpendApiClient().editCategory(archivedCategory);
         }
     }
 
