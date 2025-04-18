@@ -1,49 +1,63 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@WebTest
+import static com.codeborne.selenide.Selenide.open;
+
+@ExtendWith(BrowserExtension.class)
 public class ProfileTest {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  @User(
-      username = "duck",
-      categories = @Category(
-          archived = true
-      )
-  )
-  @Test
-  void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
+    @User(
+            username = "duck",
+            categories = @Category(
+                    archived = true
+            )
+    )
 
-    Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
-        .checkArchivedCategoryExists(category.name());
-  }
+    @Test
+    void archivedCategoryShouldPresentInCategoriesList(CategoryJson categoryJson) {
 
-  @User(
-      username = "duck",
-      categories = @Category(
-          archived = false
-      )
-  )
-  @Test
-  void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
+        open(CFG.frontUrl(), LoginPage.class)
+                .setUserName("duck")
+                .setPassword("12345")
+                .submitLogin();
 
-    Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
-        .checkCategoryExists(category.name());
-  }
+                new MainPage().openAvatarMenu()
+                .goToProfilePage()
+                .showArchivedCategories()
+                .checkArchivedCategoryPresent(categoryJson.name());
+    }
+
+    @User(
+            username = "duck",
+            categories = @Category(
+                    archived = false
+            )
+    )
+
+    @Test
+    void activeCategoryShouldPresentInCategoriesList(CategoryJson categoryJson) throws InterruptedException {
+
+        open(CFG.frontUrl(), LoginPage.class)
+                .setUserName("duck")
+                .setPassword("12345")
+                .submitLogin();
+
+                new MainPage().openAvatarMenu()
+                .goToProfilePage();
+        new ProfilePage().checkActiveCategoryPresent(categoryJson.name());
+
+    }
 }

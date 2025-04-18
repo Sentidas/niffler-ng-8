@@ -2,35 +2,56 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
 public class LoginPage {
 
-  private final SelenideElement usernameInput = $("input[name='username']");
-  private final SelenideElement passwordInput = $("input[name='password']");
-  private final SelenideElement submitButton = $("button[type='submit']");
-  private final SelenideElement registerButton = $("a[href='/register']");
-  private final SelenideElement errorContainer = $(".form__error");
+    private final SelenideElement usernameInput = $("input[name='username']"),
+            passwordInput = $("input[name='password']"),
+            submitButton = $("button[type='submit']"),
+            createAccountLink = $("a.form__register"),
+            errorMessageText = $("p.form__error"),
+            togglePasswordVisibility = $("button.form__password-button");
 
-  public RegisterPage doRegister() {
-    registerButton.click();
-    return new RegisterPage();
-  }
 
-  public MainPage successLogin(String username, String password) {
-    login(username, password);
-    return new MainPage();
-  }
+    public MainPage loginWithCredentials(String username, String password) {
+        usernameInput.setValue(username);
+        passwordInput.setValue(password);
+        submitButton.click();
+        return new MainPage();
+    }
 
-  public void login(String username, String password) {
-    usernameInput.setValue(username);
-    passwordInput.setValue(password);
-    submitButton.click();
-  }
+    public LoginPage setUserName(String username) {
+        usernameInput.setValue(username);
+        return this;
+    }
 
-  public LoginPage checkError(String error) {
-    errorContainer.shouldHave(text(error));
-    return this;
-  }
+    public LoginPage setPassword(String password) {
+        passwordInput.setValue(password);
+        return this;
+    }
+
+    public LoginPage clickPasswordVisibilityButton() {
+        togglePasswordVisibility.click();
+        return this;
+    }
+
+    public void submitLogin() {
+        submitButton.click();
+    }
+
+    public RegisterPage clickCreateNewAccountLink() {
+        createAccountLink.click();
+        return new RegisterPage();
+    }
+
+    public void checkErrorMessage(String errorMessageText) {
+        this.errorMessageText.shouldHave(text(errorMessageText));
+    }
+
+    public void shouldShowPasswordInPlainText() {
+        togglePasswordVisibility.shouldHave(cssClass("form__password-button_active"));
+        passwordInput.shouldHave(attribute("type", "text"));
+    }
 }
