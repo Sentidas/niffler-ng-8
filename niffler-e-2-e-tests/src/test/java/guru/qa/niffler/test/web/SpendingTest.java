@@ -29,12 +29,13 @@ public class SpendingTest {
     @Test
     void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson spend) {
 
-        final String newDescription = "Обучение True";
+        final String newDescription = "For fanny";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithCredentials("duck", "12345")
                 .editSpending(spend.description())
-                .editDescription(newDescription);
+                .editDescription(newDescription)
+                .save();
 
         new MainPage().checkThatTableContains(newDescription);
     }
