@@ -29,7 +29,7 @@ public class SpendingTest {
     @Test
     void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson spend) {
 
-        final String newDescription = "For fanny";
+        final String newDescription = "For me";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithCredentials("duck", "12345")

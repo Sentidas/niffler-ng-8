@@ -9,6 +9,8 @@ import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 
+import java.util.Optional;
+
 public class SpendDbClient {
 
     private final SpendDao spendDao = new SpendDaoJdbc();
@@ -19,8 +21,14 @@ public class SpendDbClient {
         SpendEntity spendEntity = SpendEntity.fromJson(spend);
 
         if (spendEntity.getCategory().getId() == null) {
-            CategoryEntity categoryEntity = categoryDao.create(spendEntity.getCategory());
-            spendEntity.setCategory(categoryEntity);
+
+            Optional<CategoryEntity> existingCategory = categoryDao.findCategoryByUsernameAndCategoryName(spend.category().username(), spend.category().name());
+            if (existingCategory.isPresent()) {
+                spendEntity.setCategory(existingCategory.get());
+            } else {
+                CategoryEntity categoryEntity = categoryDao.create(spendEntity.getCategory());
+                spendEntity.setCategory(categoryEntity);
+            }
         }
         return SpendJson.fromEntity(
                 spendDao.create(spendEntity)
