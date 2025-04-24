@@ -28,6 +28,8 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+/niffler-e-2-e-tests/allure-results/
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
