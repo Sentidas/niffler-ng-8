@@ -7,6 +7,7 @@ import guru.qa.niffler.data.dao.SpendDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
+import org.checkerframework.checker.units.qual.C;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,14 +71,11 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setAmount(rs.getDouble("amount"));
                         se.setDescription(rs.getString("description"));
 
-                        UUID CategoryId = rs.getObject("category_id", UUID.class);
-                        CategoryDao categoryDao = new CategoryDaoJdbc();
+                        UUID categoryId = rs.getObject("category_id", UUID.class);
+                        CategoryEntity category = new CategoryEntity();
+                        category.setId(categoryId);
+                        se.setCategory(category);
 
-
-                        Optional<CategoryEntity> category = categoryDao.findCategoryById(CategoryId);
-                        if (category.isPresent()) {
-                            se.setCategory(category.get());
-                        }
                         return Optional.of(se);
                     } else {
                         return Optional.empty();
@@ -110,13 +108,11 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setAmount(rs.getDouble("amount"));
                         se.setDescription(rs.getString("description"));
 
-                        UUID CategoryId = rs.getObject("category_id", UUID.class);
-                        CategoryDao categoryDao = new CategoryDaoJdbc();
+                        UUID categoryId = rs.getObject("category_id", UUID.class);
+                        CategoryEntity category = new CategoryEntity();
+                        category.setId(categoryId);
+                        se.setCategory(category);
 
-                        Optional<CategoryEntity> category = categoryDao.findCategoryById(CategoryId);
-                        if (category.isPresent()) {
-                            se.setCategory(category.get());
-                        }
                         spends.add(se);
                     }
                 }

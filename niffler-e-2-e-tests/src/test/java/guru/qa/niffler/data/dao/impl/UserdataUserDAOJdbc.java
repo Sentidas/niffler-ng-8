@@ -4,6 +4,8 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.UserdataUserDAO;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.model.CurrencyValues;
+import jaxb.userdata.Currency;
 
 import java.sql.*;
 import java.util.Optional;
@@ -59,6 +61,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
                         UserEntity ue = new UserEntity();
                         ue.setId(rs.getObject("id", UUID.class));
                         ue.setUsername(rs.getString("username"));
+                        ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         ue.setFirstname(rs.getString("firstname"));
                         ue.setSurname(rs.getString("surname"));
                         ue.setFullname(rs.getString("full_name"));
@@ -90,6 +93,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
                         UserEntity ue = new UserEntity();
                         ue.setId(rs.getObject("id", UUID.class));
                         ue.setUsername(rs.getString("username"));
+                        ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         ue.setFirstname(rs.getString("firstname"));
                         ue.setSurname(rs.getString("surname"));
                         ue.setFullname(rs.getString("full_name"));
