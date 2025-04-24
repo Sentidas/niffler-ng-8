@@ -1,6 +1,7 @@
 package guru.qa.niffler.jupiter.annotation;
 
 import guru.qa.niffler.jupiter.extension.CategoryExtension;
+import guru.qa.niffler.jupiter.extension.SpendingExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
@@ -13,6 +14,6 @@ import java.lang.annotation.Target;
 @ExtendWith(CategoryExtension.class)
 public @interface Category {
 
-  boolean archived() default false;
+    boolean archived() default false;
 
 }

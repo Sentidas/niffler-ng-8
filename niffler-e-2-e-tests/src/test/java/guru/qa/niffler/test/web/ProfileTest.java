@@ -48,7 +48,7 @@ public class ProfileTest {
     )
 
     @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson categoryJson) throws InterruptedException {
+    void activeCategoryShouldPresentInCategoriesList(CategoryJson categoryJson) {
 
         open(CFG.frontUrl(), LoginPage.class)
                 .setUserName("duck")
@@ -58,6 +58,5 @@ public class ProfileTest {
                 new MainPage().openAvatarMenu()
                 .goToProfilePage();
         new ProfilePage().checkActiveCategoryPresent(categoryJson.name());
-
     }
 }

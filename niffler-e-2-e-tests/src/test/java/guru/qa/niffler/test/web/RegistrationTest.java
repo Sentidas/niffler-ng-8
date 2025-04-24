@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Selenide.open;
 
-public class RegisterTest {
+public class RegistrationTest {
 
     private static final Config CFG = Config.getInstance();
     private static final String existingUsername = "Catty";

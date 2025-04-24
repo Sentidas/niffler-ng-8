@@ -4,15 +4,14 @@ import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import java.util.Optional;
-
 public class CategoryExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-    private final SpendApiClient spendApiClient = new SpendApiClient();
+    private final SpendDbClient spendDbClient = new SpendDbClient();
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -32,17 +31,8 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                                 false
                         );
 
-                        CategoryJson createdCategory = spendApiClient.createCategory(categoryJson);
+                        CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
 
-                        if (category.archived()) {
-                            CategoryJson archivedCategory = new CategoryJson(
-                                    createdCategory.id(),
-                                    createdCategory.name(),
-                                    createdCategory.username(),
-                                    true
-                            );
-                            createdCategory = spendApiClient.editCategory(archivedCategory);
-                        }
                         System.out.println("Категория создана: " + nameCategory);
                         context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
                     }
