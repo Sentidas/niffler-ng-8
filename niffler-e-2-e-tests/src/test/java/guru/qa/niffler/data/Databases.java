@@ -16,167 +16,166 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
-
 public class Databases {
-  private Databases() {
-  }
+    private Databases() {
+    }
 
-  private static final Map<String, DataSource> dataSources = new ConcurrentHashMap<>();
-  private static final Map<Long, Map<String, Connection>> threadConnections = new ConcurrentHashMap<>();
+    private static final Map<String, DataSource> datasources = new ConcurrentHashMap<>();
+    private static final Map<Long, Map<String, Connection>> threadConnections = new ConcurrentHashMap<>();
 
-  public record XaFunction<T>(Function<Connection, T> function, String jdbcUrl) {
-  }
+    public record XaFunction<T>(Function<Connection, T> function, String jdbcUrl) {
+    }
 
-  public record XaConsumer(Consumer<Connection> function, String jdbcUrl) {
-  }
+    public record XaConsumer(Consumer<Connection> function, String jdbcUrl) {
+    }
 
-  public static <T> T transaction(Function<Connection, T> function, String jdbcUrl, int isolationLvl) {
-    Connection connection = null;
-    try {
-      connection = connection(jdbcUrl);
-      connection.setTransactionIsolation(isolationLvl);
-      connection.setAutoCommit(false);
-      T result = function.apply(connection);
-      connection.commit();
-      connection.setAutoCommit(true);
-      return result;
-    } catch (Exception e) {
-      if (connection != null) {
+    public static <T> T transaction(int isolationLevel, Function<Connection, T> function, String jdbcUrl) {
+        Connection connection = null;
         try {
-          connection.rollback();
-          connection.setAutoCommit(true);
-        } catch (SQLException ex) {
-          throw new RuntimeException(ex);
-        }
-      }
-      throw new RuntimeException(e);
-    }
-  }
+            connection = connection(jdbcUrl);
+            connection.setTransactionIsolation(isolationLevel);
+            connection.setAutoCommit(false);
+            T result = function.apply(connection);
+            connection.commit();
+            connection.setAutoCommit(true);
 
-  public static <T> T transaction(Function<Connection, T> function, String jdbcUrl) {
-    return transaction(function, jdbcUrl, TRANSACTION_READ_COMMITTED);
-  }
-
-  public static <T> T xaTransaction(XaFunction<T>... actions) {
-    UserTransaction ut = new UserTransactionImp();
-    try {
-      ut.begin();
-      T result = null;
-      for (XaFunction<T> action : actions) {
-        result = action.function.apply(connection(action.jdbcUrl));
-      }
-      ut.commit();
-      return result;
-    } catch (Exception e) {
-      try {
-        ut.rollback();
-      } catch (SystemException ex) {
-        throw new RuntimeException(ex);
-      }
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static void transaction(Consumer<Connection> consumer, String jdbcUrl, int isolationLvl) {
-    Connection connection = null;
-    try {
-      connection = connection(jdbcUrl);
-      connection.setTransactionIsolation(isolationLvl);
-      connection.setAutoCommit(false);
-      consumer.accept(connection);
-      connection.commit();
-      connection.setAutoCommit(true);
-    } catch (Exception e) {
-      if (connection != null) {
-        try {
-          connection.rollback();
-          connection.setAutoCommit(true);
-        } catch (SQLException ex) {
-          throw new RuntimeException(ex);
-        }
-      }
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static void transaction(Consumer<Connection> consumer, String jdbcUrl) {
-    transaction(consumer, jdbcUrl, TRANSACTION_READ_COMMITTED);
-  }
-
-  public static void xaTransaction(XaConsumer... actions) {
-    UserTransaction ut = new UserTransactionImp();
-    try {
-      ut.begin();
-      for (XaConsumer action : actions) {
-        action.function.accept(connection(action.jdbcUrl));
-      }
-      ut.commit();
-    } catch (Exception e) {
-      try {
-        ut.rollback();
-      } catch (SystemException ex) {
-        throw new RuntimeException(ex);
-      }
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static DataSource dataSource(String jdbcUrl) {
-    return dataSources.computeIfAbsent(
-        jdbcUrl,
-        key -> {
-          AtomikosDataSourceBean dsBean = new AtomikosDataSourceBean();
-          final String uniqId = StringUtils.substringAfter(jdbcUrl, "5432/");
-          dsBean.setUniqueResourceName(uniqId);
-          dsBean.setXaDataSourceClassName("org.postgresql.xa.PGXADataSource");
-          Properties props = new Properties();
-          props.put("URL", jdbcUrl);
-          props.put("user", "postgres");
-          props.put("password", "secret");
-          dsBean.setXaProperties(props);
-          dsBean.setMaxPoolSize(10);
-          return dsBean;
-        }
-    );
-  }
-
-  private static Connection connection(String jdbcUrl) throws SQLException {
-    return threadConnections.computeIfAbsent(
-        Thread.currentThread().threadId(),
-        key -> {
-          try {
-            return new HashMap<>(Map.of(
-                jdbcUrl,
-                dataSource(jdbcUrl).getConnection()
-            ));
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        }
-    ).computeIfAbsent(
-        jdbcUrl,
-        key -> {
-          try {
-            return dataSource(jdbcUrl).getConnection();
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        }
-    );
-  }
-
-  public static void closeAllConnections() {
-    for (Map<String, Connection> connectionMap : threadConnections.values()) {
-      for (Connection connection : connectionMap.values()) {
-        try {
-          if (connection != null && !connection.isClosed()) {
-            connection.close();
-          }
+            return result;
         } catch (SQLException e) {
-          // NOP
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            throw new RuntimeException(e);
         }
-      }
     }
-  }
+
+    public static <T> T xaTransaction(int isolationLevel, XaFunction<T>... actions) {
+        UserTransaction ut = new UserTransactionImp();
+        try {
+            ut.begin();
+            T result = null;
+            for (XaFunction<T> action : actions) {
+                try (Connection connection = connection(action.jdbcUrl)) {
+                    connection.setTransactionIsolation(isolationLevel);
+                    result = action.function.apply(connection);
+                }
+
+            }
+            ut.commit();
+            return result;
+        } catch (Exception e) {
+            try {
+                ut.rollback();
+            } catch (SystemException ex) {
+                throw new RuntimeException(ex);
+            }
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void transaction(int isolationLevel, Consumer<Connection> consumer, String jdbcUrl) {
+        Connection connection = null;
+        try {
+            connection = connection(jdbcUrl);
+            connection.setTransactionIsolation(isolationLevel);
+            connection.setAutoCommit(false);
+            consumer.accept(connection);
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void xaTransaction(int isolationLevel, XaConsumer... actions) {
+        UserTransaction ut = new UserTransactionImp();
+        try {
+            ut.begin();
+            for (XaConsumer action : actions) {
+                try (Connection connection = connection(action.jdbcUrl)) {
+                    connection.setTransactionIsolation(isolationLevel);
+                    action.function.accept(connection);
+                }
+            }
+            ut.commit();
+        } catch (Exception e) {
+            try {
+                ut.rollback();
+            } catch (SystemException ex) {
+                throw new RuntimeException(ex);
+            }
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static DataSource dataSource(String jdbcUrl) {
+        return datasources.computeIfAbsent(
+                jdbcUrl,
+                key -> {
+                    AtomikosDataSourceBean dsBean = new AtomikosDataSourceBean();
+                    final String uniqId = StringUtils.substringAfter(jdbcUrl, "5432/");
+                    dsBean.setUniqueResourceName(uniqId);
+                    dsBean.setXaDataSourceClassName("org.postgresql.xa.PGXADataSource");
+                    Properties props = new Properties();
+                    props.put("URL", jdbcUrl);
+                    props.put("user", "postgres");
+                    props.put("password", "secret");
+                    dsBean.setXaProperties(props);
+                    dsBean.setMaxPoolSize(10);
+                    return dsBean;
+                }
+        );
+    }
+
+    private static Connection connection(String jdbcUrl) throws SQLException {
+        return threadConnections.computeIfAbsent(
+                Thread.currentThread().threadId(),
+                key -> {
+                    try {
+                        return new HashMap<>(Map.of(
+                                jdbcUrl,
+                                dataSource(jdbcUrl).getConnection()
+                        ));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).computeIfAbsent(
+                jdbcUrl,
+                key -> {
+                    try {
+                        return dataSource(jdbcUrl).getConnection();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+    }
+
+    public static void closeAllConnections() {
+        for (Map<String, Connection> connectionMap : threadConnections.values()) {
+            for (Connection connection : connectionMap.values()) {
+                try {
+                    if (connection != null && !connection.isClosed()) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
+                    // NOP
+                }
+            }
+        }
+    }
 }

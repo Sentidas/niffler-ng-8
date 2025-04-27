@@ -1,0 +1,69 @@
+package guru.qa.niffler.data.dao.impl.springJdbc;
+
+import guru.qa.niffler.data.dao.UserdataUserDAO;
+import guru.qa.niffler.data.entity.userdata.UdUserEntity;
+import guru.qa.niffler.data.mapper.UdUserEntitylRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
+import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.Optional;
+import java.util.UUID;
+
+public class UserdataUserDaoSpringJdbc implements UserdataUserDAO {
+
+    private final DataSource dataSource;
+
+    public UserdataUserDaoSpringJdbc(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public UdUserEntity createUser(UdUserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
+                            "VALUES(?, ?, ?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getCurrency().name());
+            ps.setString(3, user.getFirstname());
+            ps.setString(4, user.getSurname());
+            ps.setBytes(5, user.getPhoto());
+            ps.setBytes(6, user.getPhotoSmall());
+            ps.setString(7, user.getFullname());
+            return ps;
+        }, kh);
+        final UUID generatedKey = (UUID) kh.getKeys().get("id");
+        user.setId(generatedKey);
+        return user;
+    }
+
+    @Override
+    public Optional<UdUserEntity> findById(UUID id) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return Optional.ofNullable(
+                jdbcTemplate.queryForObject(
+                        "SELECT * FROM \"user\" WHERE id = ?",
+                        UdUserEntitylRowMapper.instance,
+                        id
+                )
+        );
+    }
+
+
+    @Override
+    public Optional<UdUserEntity> findByUsername(String username) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void deleteUser(UdUserEntity user) {
+
+    }
+}
