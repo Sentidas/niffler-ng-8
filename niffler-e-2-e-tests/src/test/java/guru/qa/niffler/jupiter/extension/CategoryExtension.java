@@ -1,10 +1,9 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.service.service.SpendDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -33,7 +32,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
 
                         CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
 
-                        System.out.println("Категория создана: " + nameCategory);
+                        System.out.println("Категория '" + nameCategory + "' создана. " + "Статус архивности: " + category.archived());
                         context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
                     }
                 });
@@ -42,17 +41,21 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
 
-        CategoryJson category = context.getStore(NAMESPACE)
+        CategoryJson categoryJson = context.getStore(NAMESPACE)
                 .get(context.getUniqueId(), CategoryJson.class);
 
-        if (category != null && !category.archived()) {
+        if (categoryJson != null && !categoryJson.archived()) {
+
             CategoryJson archivedCategory = new CategoryJson(
-                    category.id(),
-                    category.name(),
-                    category.username(),
+                    categoryJson.id(),
+                    categoryJson.name(),
+                    categoryJson.username(),
                     true
             );
-            new SpendApiClient().editCategory(archivedCategory);
+            spendDbClient.updateCategory(archivedCategory);
+            System.out.println("После окончания теста у категории '" + archivedCategory.name() + "' изменен статус архивности на: " + archivedCategory.archived());
+
+
         }
     }
 
