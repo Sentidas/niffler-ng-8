@@ -2,7 +2,7 @@ package guru.qa.niffler.data.dao.impl.jdbc;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UserdataUserDAO;
-import guru.qa.niffler.data.entity.userdata.UdUserEntity;
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.spend.CurrencyValues;
 
 import java.sql.*;
@@ -21,7 +21,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
 
 
     @Override
-    public UdUserEntity createUser(UdUserEntity user) {
+    public UserEntity createUser(UserEntity user) {
 
             try (PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO \"user\" (username,  currency) " +
@@ -50,7 +50,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
     }
 
     @Override
-    public Optional<UdUserEntity> findById(UUID id) {
+    public Optional<UserEntity> findById(UUID id) {
 
             try (PreparedStatement ps = connection.prepareStatement(
                     "SELECT * FROM \"user\" WHERE id = ?"
@@ -61,7 +61,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
 
                 try (ResultSet rs = ps.getResultSet()) {
                     if (rs.next()) {
-                        UdUserEntity ue = new UdUserEntity();
+                        UserEntity ue = new UserEntity();
                         ue.setId(rs.getObject("id", UUID.class));
                         ue.setUsername(rs.getString("username"));
                         ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
@@ -82,7 +82,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
     }
 
     @Override
-    public Optional<UdUserEntity> findByUsername(String username) {
+    public Optional<UserEntity> findByUsername(String username) {
 
             try (PreparedStatement ps = connection.prepareStatement(
                     "SELECT * FROM \"user\" WHERE username = ?"
@@ -93,7 +93,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
 
                 try (ResultSet rs = ps.getResultSet()) {
                     if (rs.next()) {
-                        UdUserEntity ue = new UdUserEntity();
+                        UserEntity ue = new UserEntity();
                         ue.setId(rs.getObject("id", UUID.class));
                         ue.setUsername(rs.getString("username"));
                         ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
@@ -114,7 +114,7 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
     }
 
     @Override
-    public void deleteUser(UdUserEntity user) {
+    public void deleteUser(UserEntity user) {
 
 
             try (PreparedStatement ps = connection.prepareStatement(

@@ -14,7 +14,7 @@ import guru.qa.niffler.data.dao.impl.springJdbc.UserdataUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
-import guru.qa.niffler.data.entity.userdata.UdUserEntity;
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -59,7 +59,7 @@ public class UsersDbClient {
 
        return UserJson.fromEntity(
                new UserdataUserDaoSpringJdbc(dataSource(CFG.userdataJdbcUrl()))
-               .createUser(UdUserEntity.fromJson(user))
+               .createUser(UserEntity.fromJson(user))
        );
    }
 
@@ -96,7 +96,7 @@ public class UsersDbClient {
 
     public UserJson createUser(UserJson user) {
         return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
-                    UdUserEntity userEntity = UdUserEntity.fromJson(user);
+                    UserEntity userEntity = UserEntity.fromJson(user);
 
                     return UserJson.fromEntity(
                             new UserdataUserDAOJdbc(connection).createUser(userEntity)
@@ -108,7 +108,7 @@ public class UsersDbClient {
 
     public Optional<UserJson> findUserById(UUID userId) {
         return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
-                    Optional<UdUserEntity> user = new UserdataUserDAOJdbc(connection).findById(userId);
+                    Optional<UserEntity> user = new UserdataUserDAOJdbc(connection).findById(userId);
 
                     if (user.isPresent()) {
                         return Optional.of(UserJson.fromEntity(user.get()));
@@ -122,7 +122,7 @@ public class UsersDbClient {
 
     public Optional<UserJson> findUserByUsername(String username) {
         return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
-                    Optional<UdUserEntity> user = new UserdataUserDAOJdbc(connection).findByUsername(username);
+                    Optional<UserEntity> user = new UserdataUserDAOJdbc(connection).findByUsername(username);
 
                     if (user.isPresent()) {
                         return Optional.of(UserJson.fromEntity(user.get()));

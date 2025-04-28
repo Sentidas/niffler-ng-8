@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class UdUserEntity implements Serializable {
+public class UserEntity implements Serializable {
 
     private UUID id;
     private String username;
@@ -21,8 +21,8 @@ public class UdUserEntity implements Serializable {
     private byte[] photo;
     private byte[] photoSmall;
 
-    public static UdUserEntity fromJson(UserJson json) {
-        UdUserEntity ue = new UdUserEntity();
+    public static UserEntity fromJson(UserJson json) {
+        UserEntity ue = new UserEntity();
         ue.setId(json.id());
         ue.setUsername(json.username());
         ue.setCurrency(json.currency());
