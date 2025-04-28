@@ -8,6 +8,8 @@ import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import java.util.UUID;
+
 public class CategoryExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
     private final SpendDbClient spendDbClient = new SpendDbClient();
@@ -52,7 +54,8 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                     categoryJson.username(),
                     true
             );
-            spendDbClient.updateCategory(archivedCategory);
+
+            spendDbClient.updateCategorySpringJdbc(archivedCategory);
             System.out.println("После окончания теста у категории '" + archivedCategory.name() + "' изменен статус архивности на: " + archivedCategory.archived());
 
 
