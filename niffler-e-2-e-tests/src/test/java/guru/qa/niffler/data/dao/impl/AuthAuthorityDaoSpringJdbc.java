@@ -17,7 +17,12 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     this.dataSource = dataSource;
   }
 
-  @Override
+    @Override
+    public AuthorityEntity create(AuthorityEntity authority) {
+        return null;
+    }
+
+    @Override
   public void create(AuthorityEntity... authority) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     jdbcTemplate.batchUpdate(

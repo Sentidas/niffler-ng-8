@@ -4,7 +4,7 @@ import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 
-import guru.qa.niffler.service.service.UsersDbClient;
+import guru.qa.niffler.service.UsersDbClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ public class JDBCRegistrationTest {
 
     @Disabled
     @Test
-    void createUser1() {
+    void createUserInAuth() {
         UsersDbClient authDbClient = new UsersDbClient();
 
         AuthUserJson user = authDbClient.createUser(
@@ -30,7 +30,7 @@ public class JDBCRegistrationTest {
     }
     @Disabled
     @Test
-    void createUser() {
+    void createUserIdUserData() {
 
         UsersDbClient us = new UsersDbClient();
 
@@ -59,7 +59,7 @@ public class JDBCRegistrationTest {
         UserJson userJson = us.createUserSpringJdbc(
                 new UserJson(
                         null,
-                        "maximusic-1",
+                        "max",
                         CurrencyValues.USD,
                         null,
                         null,

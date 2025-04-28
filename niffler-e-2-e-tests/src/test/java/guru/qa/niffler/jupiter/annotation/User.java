@@ -9,13 +9,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 @ExtendWith({CategoryExtension.class, SpendingExtension.class})
+
 public @interface User {
-  String username();
-
-  Category[] categories() default {};
-
-  Spend[] spendings() default {};
+    String username();
+    Category[] categories() default {};
+    Spending[] spendings() default {};
 }

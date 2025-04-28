@@ -22,7 +22,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
   }
 
   @Override
-  public AuthUserEntity create(AuthUserEntity user) {
+  public AuthUserEntity createUser(AuthUserEntity user) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     KeyHolder kh = new GeneratedKeyHolder();
     jdbcTemplate.update(con -> {
@@ -44,6 +44,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
     user.setId(generatedKey);
     return user;
   }
+
 
   @Override
   public Optional<AuthUserEntity> findById(UUID id) {

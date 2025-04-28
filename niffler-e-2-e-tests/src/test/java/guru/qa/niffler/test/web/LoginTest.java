@@ -2,28 +2,46 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.Test;
 
-import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
-
-@WebTest
 public class LoginTest {
+    public static Config CFG = Config.getInstance();
 
-  private static final Config CFG = Config.getInstance();
+    @Test
+    void shouldLoginSuccessfully() {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .setUserName("raven")
+                .setPassword("12345")
+                .submitLogin();
 
-  @Test
-  void mainPageShouldBeDisplayedAfterSuccessLogin() {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
-  }
+        new MainPage().checkHistoryOfSpendingIsVisible()
+                .checkStatisticsIsVisible()
+                .checkToolBarIsVisible();
+    }
 
-  @Test
-  void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-    LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-    loginPage.login(randomUsername(), "BAD");
-    loginPage.checkError("Bad credentials");
-  }
+    @Test
+    void loginShouldFailWithWrongCredentials() {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .setUserName("raven")
+                .setPassword("1234")
+                .submitLogin();
+        new LoginPage().checkErrorMessage("Неверные учетные данные пользователя");
+    }
+
+    @Test
+    void passwordShouldBeVisibleAfterClickOnVisibilityToggle() {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .setPassword("12345")
+                .clickPasswordVisibilityButton()
+                .shouldShowPasswordInPlainText();
+    }
+
+    @Test
+    void shouldRedirectToRegisterPage() {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .clickCreateNewAccountLink()
+                .shouldBeOnRegisterPage();
+    }
 }

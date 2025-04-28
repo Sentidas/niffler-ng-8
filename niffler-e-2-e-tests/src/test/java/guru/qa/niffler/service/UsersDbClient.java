@@ -6,11 +6,9 @@ import guru.qa.niffler.data.Databases.XaFunction;
 
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.dao.AuthUserDao;
-import guru.qa.niffler.data.dao.impl.AuthAuthorityDaoSpringJdbc;
+import guru.qa.niffler.data.dao.UserdataUserDAO;
+import guru.qa.niffler.data.dao.impl.*;
 
-import guru.qa.niffler.data.dao.impl.AuthUserDaoSpringJdbc;
-import guru.qa.niffler.data.dao.impl.UdUserDaoJdbc;
-import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.dao.impl.jdbc.AuthAuthorityDaoJdbc;
 import guru.qa.niffler.data.dao.impl.jdbc.AuthUserDaoJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
@@ -26,9 +24,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Connection;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.UUID;
 
-import static guru.qa.niffler.data.Databases.dataSource;
-import static guru.qa.niffler.data.Databases.xaTransaction;
+import static guru.qa.niffler.data.Databases.*;
+import static guru.qa.niffler.data.Databases.transaction;
 
 public class UsersDbClient {
 
@@ -46,7 +46,7 @@ public class UsersDbClient {
     authUser.setCredentialsNonExpired(true);
 
     AuthUserEntity createdAuthUser = new AuthUserDaoSpringJdbc(dataSource(CFG.authJdbcUrl()))
-        .create(authUser);
+        .createUser(authUser);
 
     AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
         e -> {
@@ -98,5 +98,58 @@ public class UsersDbClient {
                         CFG.authJdbcUrl()
                 )
         );
+    }
+    public UserJson createUser(UserJson user) {
+        return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
+                    UserEntity userEntity = UserEntity.fromJson(user);
+
+                    return UserJson.fromEntity(
+                            new UserdataUserDAOJdbc(connection).createUser(userEntity)
+                    );
+                },
+                CFG.userdataJdbcUrl()
+        );
+    }
+
+    public Optional<UserJson> findUserById(UUID userId) {
+        return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
+                    Optional<UserEntity> user = new UserdataUserDAOJdbc(connection).findById(userId);
+
+                    if (user.isPresent()) {
+                        return Optional.of(UserJson.fromEntity(user.get()));
+                    } else {
+                        return Optional.empty();
+                    }
+                },
+                CFG.userdataJdbcUrl()
+        );
+    }
+
+    public Optional<UserJson> findUserByUsername(String username) {
+        return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
+                    Optional<UserEntity> user = new UserdataUserDAOJdbc(connection).findByUsername(username);
+
+                    if (user.isPresent()) {
+                        return Optional.of(UserJson.fromEntity(user.get()));
+                    } else {
+                        return Optional.empty();
+                    }
+                },
+                CFG.userdataJdbcUrl()
+        );
+    }
+
+    public void deleteUser(UUID userId) {
+        transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
+                    UserdataUserDAO userDao = new UserdataUserDAOJdbc(connection);
+                    userDao.findById(userId)
+                            .ifPresentOrElse(user ->
+                                            userDao.deleteUser(user),
+                                    () -> {
+                                        throw new IllegalArgumentException("User не найден: " + userId);
+                                    });
+                    return null;
+                },
+                CFG.userdataJdbcUrl());
     }
 }

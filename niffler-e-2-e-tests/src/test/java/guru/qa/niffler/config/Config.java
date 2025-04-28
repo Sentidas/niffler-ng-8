@@ -8,9 +8,15 @@ public interface Config {
 
   String frontUrl();
 
+  String spendUrl();
+
+  String spendJdbcUrl();
+
   String authUrl();
 
   String authJdbcUrl();
+
+  String ghUrl();
 
   String gatewayUrl();
 
@@ -18,11 +24,5 @@ public interface Config {
 
   String userdataJdbcUrl();
 
-  String spendUrl();
-
-  String spendJdbcUrl();
-
   String currencyJdbcUrl();
-
-  String ghUrl();
 }
