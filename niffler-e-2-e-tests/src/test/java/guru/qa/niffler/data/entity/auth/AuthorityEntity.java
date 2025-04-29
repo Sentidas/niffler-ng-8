@@ -10,14 +10,14 @@ import java.util.UUID;
 @Setter
 public class AuthorityEntity {
 
-    private UUID userId;
-    private AuthUserEntity user;
+    private UUID id;
+    private AuthUserEntity userId;
     private Authority authority;
 
     public static AuthorityEntity fromJson(AuthorityJson json) {
         AuthorityEntity ae = new AuthorityEntity();
-        ae.setUserId(json.id());
-        ae.setUser(json.user());
+        ae.setId(json.id());
+        ae.setUserId(json.user());
         ae.setAuthority(json.authority());
         return ae;
     }

@@ -7,12 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class AuthUserEntitylRowMapper implements RowMapper<AuthUserEntity> {
+public class AuthUserEntityRowMapper implements RowMapper<AuthUserEntity> {
 
-    public static final AuthUserEntitylRowMapper instance = new AuthUserEntitylRowMapper();
+    public static final AuthUserEntityRowMapper instance = new AuthUserEntityRowMapper();
 
-    private AuthUserEntitylRowMapper() {
+    private AuthUserEntityRowMapper() {
     }
+
     @Override
     public AuthUserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         AuthUserEntity result = new AuthUserEntity();

@@ -2,9 +2,14 @@ package guru.qa.niffler.data.dao.impl.jdbc;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
+import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
@@ -25,7 +30,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                 Statement.RETURN_GENERATED_KEYS
         )) {
 
-            ps.setObject(1, authority.getUser().getId());
+            ps.setObject(1, authority.getUserId().getId());
             ps.setString(2, authority.getAuthority().name());
 
 
@@ -39,7 +44,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                     throw new SQLException("Can`t find id in ResultSet");
                 }
             }
-            authority.setUserId(generatedKey);
+            authority.setId(generatedKey);
             return authority;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -48,7 +53,38 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void create(AuthorityEntity... authority) {
+        List<CategoryEntity> categories = new ArrayList<>();
+    }
 
+    @Override
+    public List<AuthorityEntity> findAll() {
+        List<AuthorityEntity> authorities = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM authority"
+        )) {
+
+            ps.execute();
+
+            try (ResultSet rs = ps.getResultSet()) {
+                while (rs.next()) {
+                    AuthorityEntity ae = new AuthorityEntity();
+                    ae.setId(rs.getObject("id", UUID.class));
+                    ae.setAuthority(Authority.valueOf(rs.getString("authority")));
+
+                    UUID userId = rs.getObject("user_id", UUID.class);
+
+                    AuthUserEntity resultUser = new AuthUserEntity();
+                    resultUser.setId(userId);
+                    ae.setUserId(resultUser);
+                    authorities.add(ae);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return authorities;
     }
 }
 

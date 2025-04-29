@@ -1,11 +1,9 @@
-package guru.qa.niffler.test.web;
+package guru.qa.niffler.test.web.JDBC;
 
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
-import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
-import guru.qa.niffler.service.UsersDbClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -53,7 +51,7 @@ public class JDBCTest {
     }
 
     @Test
-    void findAllSpend() {
+    void findAllSpendsUser() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
         List<SpendJson> spends = spendDbClient.findAllByUsername("duck");
@@ -70,6 +68,17 @@ public class JDBCTest {
 
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteSpend(spendId);
+    }
+
+    @Test
+    void findAllSpends() {
+
+        SpendDbClient spendDbClient = new SpendDbClient();
+        List<SpendJson> spends = spendDbClient.findAllSpends();
+        System.out.println("Общий список spends : ");
+        for (SpendJson spend : spends) {
+            System.out.println(spend.description() + " ");
+        }
     }
 
     @Test
@@ -109,10 +118,10 @@ public class JDBCTest {
     }
 
     @Test
-    void findAllCategoryByUserName() {
+    void findAllCategoriesByUserName() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<CategoryJson> categories = spendDbClient.findAllCategoryByUserName("duck");
+        List<CategoryJson> categories = spendDbClient.findAllCategoriesByUserName("duck");
         System.out.println("Список категорий: ");
         for (CategoryJson category : categories) {
             System.out.println(category.name());
@@ -127,57 +136,15 @@ public class JDBCTest {
         spendDbClient.deleteCategory(categoryId);
     }
 
-
     @Test
-    void findUserById() {
-        UUID userId = UUID.fromString("a18b5ba5-1f73-4164-87f7-ebfbe8dc4585");
+    void findAllCategories() {
 
-        UsersDbClient us = new UsersDbClient();
-        Optional<UserJson> user = us.findUserById(userId);
-
-        System.out.println("User найден: " + user.get().username());
-
-    }
-
-    @Test
-    void findUserByUsername() {
-
-        UsersDbClient us = new UsersDbClient();
-        Optional<UserJson> user = us.findUserByUsername("duck");
-
-        System.out.println("User найден: " + user.get().id());
-        // a18b5ba5-1f73-4164-87f7-ebfbe8dc4585
-
-    }
-
-    @Test
-    void deleteUser() {
-        UUID userId = UUID.fromString("cd6aec3c-236b-11f0-9601-0242ac110004");
-
-        UsersDbClient us = new UsersDbClient();
-        us.deleteUser(userId);
-    }
-
-    @Test
-    void createUser() {
-
-        UsersDbClient us = new UsersDbClient();
-
-        UserJson userJson =
-                new UserJson(
-                        null,
-                        "minni",
-                        CurrencyValues.USD,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-
-                );
-        UserJson user = us.createUser(userJson);
-
-        System.out.println(user);
+        SpendDbClient spendDbClient = new SpendDbClient();
+        List<CategoryJson> categories = spendDbClient.findAllCategory();
+        System.out.println("Общий список категорий: ");
+        for (CategoryJson category : categories) {
+            System.out.println(category.name());
+        }
     }
 }
 

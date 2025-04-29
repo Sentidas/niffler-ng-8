@@ -2,7 +2,7 @@ package guru.qa.niffler.data.dao.impl.springJdbc;
 
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
-import guru.qa.niffler.data.mapper.AuthUserEntitylRowMapper;
+import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
                     "INSERT INTO \"user\" (username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
-                    "VALUES(?, ?, ?, ?, ?, ?)",
+                            "VALUES(?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
@@ -49,9 +50,19 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
         return Optional.ofNullable(
                 jdbcTemplate.queryForObject(
                         "SELECT * FROM \"user\" WHERE id = ?",
-                        AuthUserEntitylRowMapper.instance,
+                        AuthUserEntityRowMapper.instance,
                         id
                 )
+        );
+    }
+
+    @Override
+    public List<AuthUserEntity> findAll() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+        return jdbcTemplate.query(
+                "SELECT * FROM \"user\"",
+                AuthUserEntityRowMapper.instance
         );
     }
 }

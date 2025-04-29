@@ -1,7 +1,7 @@
 package guru.qa.niffler.data.entity.auth;
 
 
-import guru.qa.niffler.model.auth.UserJson;
+import guru.qa.niffler.model.auth.AuthUserJson;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +25,7 @@ public class UserEntity {
 
     private Boolean credentialsNonExpired;
 
-    public static UserEntity fromJson(UserJson json) {
+    public static UserEntity fromJson(AuthUserJson json) {
         UserEntity ue = new UserEntity();
         ue.setId(json.id());
         ue.setUsername(json.username());

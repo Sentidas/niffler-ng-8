@@ -4,11 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -176,4 +172,32 @@ public class CategoryDaoJdbc implements CategoryDao {
             throw new RuntimeException(e);
         }
     }
+
+    public List<CategoryEntity> findAll() {
+        List<CategoryEntity> categories = new ArrayList<>();
+
+
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM category"
+        )) {
+
+            ps.execute();
+
+            try (ResultSet rs = ps.getResultSet()) {
+                while (rs.next()) {
+                    CategoryEntity ce = new CategoryEntity();
+                    ce.setId(rs.getObject("id", UUID.class));
+                    ce.setName(rs.getString("name"));
+                    ce.setUsername(rs.getString("username"));
+                    ce.setArchived(rs.getBoolean("archived"));
+                    categories.add(ce);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return categories;
+    }
+
 }

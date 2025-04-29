@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.web;
+package guru.qa.niffler.test.web.JDBC;
 
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SpringJdbcTest {
+public class SpringJDBCTest {
 
     @Test
     void createCategory() {
@@ -50,15 +50,17 @@ public class SpringJdbcTest {
     }
 
     @Test
-    void findAllCategoryByUserName() {
+    void findAllCategoriesByUserName() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<CategoryJson> categories = spendDbClient.findAllCategoryByUserNameSpringJdbc("duck");
+        List<CategoryJson> categories = spendDbClient.findAllCategoriesByUserNameSpringJdbc("duck");
         System.out.println("Список категорий: ");
         for (CategoryJson category : categories) {
             System.out.println(category.name());
         }
     }
+
+
 
     @Test
     void deleteCategory() {
@@ -66,6 +68,17 @@ public class SpringJdbcTest {
         UUID categoryId = UUID.fromString("98b237f6-2425-11f0-9be4-0242ac110004");
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteCategorySpringJdbc(categoryId);
+    }
+
+    @Test
+    void findAllCategories() {
+
+        SpendDbClient spendDbClient = new SpendDbClient();
+        List<CategoryJson> categories = spendDbClient.findAllCategoriesSpringJdbc();
+        System.out.println("Общий список категорий: ");
+        for (CategoryJson category : categories) {
+            System.out.println(category.name());
+        }
     }
 
 
@@ -107,11 +120,22 @@ public class SpringJdbcTest {
     }
 
     @Test
-    void findAllSpend() {
+    void findAllSpendsUser() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
         List<SpendJson> spends = spendDbClient.findAllSpendByUserNameSpringJdbc("duck");
         System.out.println("Spends пользователя: ");
+        for (SpendJson spend : spends) {
+            System.out.println(spend.description() + " ");
+        }
+    }
+
+    @Test
+    void findAllSpends() {
+
+        SpendDbClient spendDbClient = new SpendDbClient();
+        List<SpendJson> spends = spendDbClient.findAllSpendsSpringJdbc();
+        System.out.println("Общий список spends : ");
         for (SpendJson spend : spends) {
             System.out.println(spend.description() + " ");
         }
@@ -125,6 +149,4 @@ public class SpringJdbcTest {
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteSpendSpringJdbc(spendId);
     }
-
-
 }
