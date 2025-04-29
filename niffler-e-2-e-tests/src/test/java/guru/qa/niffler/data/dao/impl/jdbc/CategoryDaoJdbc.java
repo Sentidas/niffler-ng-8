@@ -160,7 +160,6 @@ public class CategoryDaoJdbc implements CategoryDao {
 
     public void deleteCategory(CategoryEntity category) {
 
-
         try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM category WHERE id = ?"
         )) {

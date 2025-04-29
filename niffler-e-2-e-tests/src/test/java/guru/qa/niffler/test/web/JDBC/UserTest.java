@@ -4,7 +4,10 @@ import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.utils.RandomDataUtils;
+import org.apache.kafka.common.protocol.types.Field;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -76,14 +79,23 @@ public class UserTest {
     // JDBC TESTS
 
     @Test
-    void createUserInUserdata() {
+    void createUser() {
+        UsersDbClient authDbClient = new UsersDbClient();
 
-        UsersDbClient us = new UsersDbClient();
+        String username = RandomDataUtils.randomUsername();
 
-        UserJson userJson =
-                new UserJson(
+        UserJson user = authDbClient.createUser(
+                new AuthUserJson(
                         null,
-                        "murka",
+                        username,
+                        "12345",
+                        true,
+                        true,
+                        true,
+                        true
+                ), new UserJson(
+                        null,
+                        username,
                         CurrencyValues.USD,
                         null,
                         null,
@@ -91,29 +103,14 @@ public class UserTest {
                         null,
                         null
 
-                );
-        UserJson user = us.createUser(userJson);
-
+                ));
         System.out.println(user);
     }
 
-    @Disabled
     @Test
-    void createUserInAuth() {
-        UsersDbClient authDbClient = new UsersDbClient();
-
-        AuthUserJson user = authDbClient.createUser(
-                new AuthUserJson(
-                        null,
-                        "alexa",
-                        "12345",
-                        true,
-                        true,
-                        true,
-                        true
-                )
-        );
-        System.out.println(user);
+    void deleteUser() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        usersDbClient.deleteUser("salmon");
     }
 
 
@@ -142,7 +139,7 @@ public class UserTest {
         UUID userId = UUID.fromString("df82e1fe-24c9-11f0-877e-0242ac110004");
 
         UsersDbClient us = new UsersDbClient();
-        us.deleteUser(userId);
+        us.deleteUserInUserdata(userId);
     }
 
     @Test
@@ -177,6 +174,30 @@ public class UserTest {
             System.out.println(authority.id());
         }
     }
+
+    @Test
+    void createUserInUserdata() {
+
+        UsersDbClient us = new UsersDbClient();
+
+        UserJson userJson =
+                new UserJson(
+                        null,
+                        "murka",
+                        CurrencyValues.USD,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+
+                );
+        UserJson user = us.createUserInUserData(userJson);
+
+        System.out.println(user);
+    }
+
+
 }
 
 

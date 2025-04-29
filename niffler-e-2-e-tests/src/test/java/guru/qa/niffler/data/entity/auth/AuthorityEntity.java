@@ -14,6 +14,15 @@ public class AuthorityEntity {
     private AuthUserEntity userId;
     private Authority authority;
 
+    public AuthorityEntity(AuthUserEntity user, Authority authority) {
+        this.userId = user;
+        this.authority = authority;
+    }
+
+    public AuthorityEntity() {
+
+    }
+
     public static AuthorityEntity fromJson(AuthorityJson json) {
         AuthorityEntity ae = new AuthorityEntity();
         ae.setId(json.id());

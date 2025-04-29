@@ -86,5 +86,20 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
         }
         return authorities;
     }
+
+    @Override
+    public void delete(UUID userId) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM authority WHERE user_id = ?"
+        )) {
+            ps.setObject(1, userId);
+
+            int rowDeleted = ps.executeUpdate();
+            System.out.println("Удалено из auth.authority '" + rowDeleted + "' строк");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 

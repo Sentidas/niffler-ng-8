@@ -118,13 +118,13 @@ public class UserdataUserDAOJdbc implements UserdataUserDAO {
     @Override
     public void deleteUser(UserEntity user) {
 
-
         try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM \"user\" WHERE id = ?"
+                "DELETE FROM \"user\" WHERE username = ?"
         )) {
-            ps.setObject(1, user.getId());
+            ps.setObject(1, user.getUsername());
 
-            ps.executeUpdate();
+            int rowDeleted = ps.executeUpdate();
+            System.out.println("Удалено из userdata.user '" + rowDeleted + "' строк");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
@@ -53,5 +54,9 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
                 "SELECT * FROM authority",
                 AuthAuthorityEntityRowMapper.instance
         );
+    }
+
+    @Override
+    public void delete(UUID userId) {
     }
 }

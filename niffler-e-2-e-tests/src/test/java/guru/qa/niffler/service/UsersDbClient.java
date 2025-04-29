@@ -69,38 +69,74 @@ public class UsersDbClient {
     }
 
 
-    public AuthUserJson createUser(AuthUserJson user) {
+    public UserJson createUser(AuthUserJson authUser, UserJson user) {
         return xaTransaction(
                 Connection.TRANSACTION_READ_COMMITTED,
                 new Databases.XaFunction<>(
                         connection -> {
-                            AuthUserJson updateUserJson = user.withEncodedPassword(pe.encode(user.password()));
-                            AuthUserEntity userEntity = AuthUserEntity.fromJson(updateUserJson);
-                            AuthUserDao userDao = new AuthUserDaoJdbc(connection);
+                            AuthUserDao authUserDao = new AuthUserDaoJdbc(connection);
 
-                            AuthUserEntity createdUser = userDao.createUser(userEntity);
+                            AuthUserJson encodedUserJson = authUser.withEncodedPassword(pe.encode(authUser.password()));
+                            AuthUserEntity authUserEntity = AuthUserEntity.fromJson(encodedUserJson);
 
-                            if (createdUser.getId() != null) {
+                            AuthUserEntity createdAuthUser = authUserDao.createUser(authUserEntity);
+
+                            if (createdAuthUser.getId() != null) {
                                 AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc(connection);
 
-                                AuthorityEntity readRole = new AuthorityEntity();
-                                readRole.setUserId(createdUser);
-                                readRole.setAuthority(Authority.read);
-                                authorityDao.create(readRole);
+                                authorityDao.create(new AuthorityEntity(createdAuthUser, Authority.read));
+                                authorityDao.create(new AuthorityEntity(createdAuthUser, Authority.write));
 
-                                AuthorityEntity writeRole = new AuthorityEntity();
-                                writeRole.setUserId(createdUser);
-                                writeRole.setAuthority(Authority.write);
-                                authorityDao.create(writeRole);
                             }
-                            return AuthUserJson.fromEntity(createdUser);
+                            return null;
                         },
                         CFG.authJdbcUrl()
+                ),
+
+                new Databases.XaFunction<>(
+                        connection -> {
+                            UserEntity userEntity = UserEntity.fromJson(user);
+                            return UserJson.fromEntity(
+                                    new UserdataUserDAOJdbc(connection).createUser(userEntity));
+
+                        },
+                        CFG.userdataJdbcUrl()
                 )
         );
     }
 
-    public UserJson createUser(UserJson user) {
+    public void deleteUser(String username) {
+        xaTransaction(
+                Connection.TRANSACTION_READ_COMMITTED,
+                new Databases.XaFunction<>(
+                        connection -> {
+                            AuthUserDao authUserDao = new AuthUserDaoJdbc(connection);
+                            Optional<AuthUserEntity> authUser = authUserDao.findByUsername(username);
+
+                            AuthAuthorityDao authAuthorityDao = new AuthAuthorityDaoJdbc(connection);
+                            authAuthorityDao.delete(authUser.get().getId());
+
+                            authUserDao.deleteUser(authUser.get().getId());
+
+                            return null;
+                        },
+                        CFG.authJdbcUrl()
+                ),
+                new Databases.XaFunction<>(
+                        connection -> {
+
+                            UserdataUserDAO userDao = new UserdataUserDAOJdbc(connection);
+                            Optional<UserEntity> user = userDao.findByUsername(username);
+                            userDao.deleteUser(user.get());
+
+                            return null;
+                        },
+                        CFG.userdataJdbcUrl()
+                )
+        );
+    }
+
+    public UserJson createUserInUserData(UserJson user) {
         return transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
                     UserEntity userEntity = UserEntity.fromJson(user);
 
@@ -110,6 +146,20 @@ public class UsersDbClient {
                 },
                 CFG.userdataJdbcUrl()
         );
+    }
+
+    public void deleteUserInUserdata(UUID userId) {
+        transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
+                    UserdataUserDAO userDao = new UserdataUserDAOJdbc(connection);
+                    userDao.findById(userId)
+                            .ifPresentOrElse(user ->
+                                            userDao.deleteUser(user),
+                                    () -> {
+                                        throw new IllegalArgumentException("User не найден: " + userId);
+                                    });
+                    return null;
+                },
+                CFG.userdataJdbcUrl());
     }
 
     public Optional<UserJson> findUserById(UUID userId) {
@@ -138,21 +188,6 @@ public class UsersDbClient {
                 },
                 CFG.userdataJdbcUrl()
         );
-    }
-
-
-    public void deleteUser(UUID userId) {
-        transaction(Connection.TRANSACTION_READ_COMMITTED, connection -> {
-                    UserdataUserDAO userDao = new UserdataUserDAOJdbc(connection);
-                    userDao.findById(userId)
-                            .ifPresentOrElse(user ->
-                                            userDao.deleteUser(user),
-                                    () -> {
-                                        throw new IllegalArgumentException("User не найден: " + userId);
-                                    });
-                    return null;
-                },
-                CFG.userdataJdbcUrl());
     }
 
     public List<UserJson> findAllUdUsers() {
