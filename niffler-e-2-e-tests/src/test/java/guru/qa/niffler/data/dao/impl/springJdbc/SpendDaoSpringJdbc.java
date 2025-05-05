@@ -72,14 +72,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     @Override
     public void deleteSpend(SpendEntity spend) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendUrl()));
-        jdbcTemplate.update(con -> {
-            PreparedStatement ps = con.prepareStatement(
-                    "DELETE FROM spend WHERE id = ?");
-
-            ps.setObject(1, spend.getId());
-            return ps;
-        });
-
+        jdbcTemplate.update("DELETE FROM spend WHERE id = ?",spend.getId());
     }
 
     @Override
