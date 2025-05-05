@@ -23,13 +23,13 @@ public class JDBCTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "корм для собаки",
+                                "на фитнес",
                                 "duck",
                                 false
                         ),
                         CurrencyValues.EUR,
                         1000.0,
-                        "100000 dog",
+                        "на фитнес тренера",
                         "duck"
                 )
         );
@@ -64,7 +64,7 @@ public class JDBCTest {
     @Test
     void deleteSpend() {
         // UUID spendId = UUID.fromString("410177ba-2105-11f0-bfca-0242ac110004");
-        UUID spendId = UUID.fromString("5ecb6f18-200a-11f0-9410-0242ac110004");
+        UUID spendId = UUID.fromString("3c29b0aa-23fc-11f0-b340-0242ac110004");
 
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteSpend(spendId);
@@ -88,9 +88,9 @@ public class JDBCTest {
         CategoryJson category = spendDbClient.createCategory(
                 new CategoryJson(
                         null,
-                        "hobby",
+                        "на велосипеды",
                         "duck",
-                        true
+                        false
                 )
         );
         System.out.println(category);
@@ -131,7 +131,7 @@ public class JDBCTest {
     @Test
     void deleteCategory() {
         // UUID categoryId = UUID.fromString("91326cc6-2105-11f0-bc4d-0242ac110004");
-        UUID categoryId = UUID.fromString("16416d06-1ff1-11f0-a99a-0242ac110004");
+        UUID categoryId = UUID.fromString("96ecfd4c-29c1-11f0-8556-0242ac110003");
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteCategory(categoryId);
     }
