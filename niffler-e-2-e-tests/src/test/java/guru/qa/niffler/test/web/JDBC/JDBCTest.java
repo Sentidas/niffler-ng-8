@@ -1,11 +1,9 @@
-package guru.qa.niffler.test.web;
+package guru.qa.niffler.test.web.JDBC;
 
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
-import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.service.SpendDbClient;
-import guru.qa.niffler.service.service.UserDataDbClient;
+import guru.qa.niffler.service.SpendDbClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -25,13 +23,13 @@ public class JDBCTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "корм для кошки",
+                                "на фитнес",
                                 "duck",
                                 false
                         ),
                         CurrencyValues.EUR,
                         1000.0,
-                        "100000 desc",
+                        "на фитнес тренера",
                         "duck"
                 )
         );
@@ -53,7 +51,7 @@ public class JDBCTest {
     }
 
     @Test
-    void findAllSpend() {
+    void findAllSpendsUser() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
         List<SpendJson> spends = spendDbClient.findAllByUsername("duck");
@@ -66,10 +64,21 @@ public class JDBCTest {
     @Test
     void deleteSpend() {
         // UUID spendId = UUID.fromString("410177ba-2105-11f0-bfca-0242ac110004");
-        UUID spendId = UUID.fromString("5ecb6f18-200a-11f0-9410-0242ac110004");
+        UUID spendId = UUID.fromString("3c29b0aa-23fc-11f0-b340-0242ac110004");
 
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteSpend(spendId);
+    }
+
+    @Test
+    void findAllSpends() {
+
+        SpendDbClient spendDbClient = new SpendDbClient();
+        List<SpendJson> spends = spendDbClient.findAllSpends();
+        System.out.println("Общий список spends : ");
+        for (SpendJson spend : spends) {
+            System.out.println(spend.description() + " ");
+        }
     }
 
     @Test
@@ -79,9 +88,9 @@ public class JDBCTest {
         CategoryJson category = spendDbClient.createCategory(
                 new CategoryJson(
                         null,
-                        "hobbits",
+                        "на велосипеды",
                         "duck",
-                        true
+                        false
                 )
         );
         System.out.println(category);
@@ -109,10 +118,10 @@ public class JDBCTest {
     }
 
     @Test
-    void findAllCategoryByUserName() {
+    void findAllCategoriesByUserName() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<CategoryJson> categories = spendDbClient.findAllCategoryByUserName("duck");
+        List<CategoryJson> categories = spendDbClient.findAllCategoriesByUserName("duck");
         System.out.println("Список категорий: ");
         for (CategoryJson category : categories) {
             System.out.println(category.name());
@@ -122,62 +131,20 @@ public class JDBCTest {
     @Test
     void deleteCategory() {
         // UUID categoryId = UUID.fromString("91326cc6-2105-11f0-bc4d-0242ac110004");
-        UUID categoryId = UUID.fromString("16416d06-1ff1-11f0-a99a-0242ac110004");
+        UUID categoryId = UUID.fromString("96ecfd4c-29c1-11f0-8556-0242ac110003");
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteCategory(categoryId);
     }
 
-
     @Test
-    void findUserById() {
-        UUID userId = UUID.fromString("a18b5ba5-1f73-4164-87f7-ebfbe8dc4585");
+    void findAllCategories() {
 
-        UserDataDbClient us = new UserDataDbClient();
-        Optional<UserJson> user = us.findUserById(userId);
-
-        System.out.println("User найден: " + user.get().username());
-
-    }
-
-    @Test
-    void findUserByUsername() {
-
-        UserDataDbClient us = new UserDataDbClient();
-        Optional<UserJson> user = us.findUserByUsername("duck");
-
-        System.out.println("User найден: " + user.get().id());
-        // a18b5ba5-1f73-4164-87f7-ebfbe8dc4585
-
-    }
-
-    @Test
-    void deleteUser() {
-        UUID userId = UUID.fromString("aee60d98-22bf-11f0-9c1d-0242ac110004");
-
-        UserDataDbClient us = new UserDataDbClient();
-        us.deleteUser(userId);
-    }
-
-    @Test
-    void createUser() {
-
-        UserDataDbClient us = new UserDataDbClient();
-
-        UserJson userJson =
-                new UserJson(
-                        null,
-                        "mouse",
-                        CurrencyValues.USD,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-
-                );
-        UserJson user = us.createUser(userJson);
-
-        System.out.println(user);
+        SpendDbClient spendDbClient = new SpendDbClient();
+        List<CategoryJson> categories = spendDbClient.findAllCategory();
+        System.out.println("Общий список категорий: ");
+        for (CategoryJson category : categories) {
+            System.out.println(category.name());
+        }
     }
 }
 

@@ -11,13 +11,22 @@ import java.util.UUID;
 public class AuthorityEntity {
 
     private UUID id;
-    private UserEntity user;
+    private AuthUserEntity userId;
     private Authority authority;
+
+    public AuthorityEntity(AuthUserEntity user, Authority authority) {
+        this.userId = user;
+        this.authority = authority;
+    }
+
+    public AuthorityEntity() {
+
+    }
 
     public static AuthorityEntity fromJson(AuthorityJson json) {
         AuthorityEntity ae = new AuthorityEntity();
         ae.setId(json.id());
-        ae.setUser(json.user());
+        ae.setUserId(json.user());
         ae.setAuthority(json.authority());
         return ae;
     }
