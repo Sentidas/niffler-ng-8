@@ -9,12 +9,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
 
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
   private static final Config CFG = Config.getInstance();
 
-  @Override
+    @Override
+    public AuthorityEntity create(AuthorityEntity authority) {
+        return null;
+    }
+
+    @Override
   public void create(AuthorityEntity... authority) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
     jdbcTemplate.batchUpdate(
@@ -33,4 +40,14 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
         }
     );
   }
+
+    @Override
+    public List<AuthorityEntity> findAll() {
+        return List.of();
+    }
+
+    @Override
+    public void delete(UUID userId) {
+
+    }
 }

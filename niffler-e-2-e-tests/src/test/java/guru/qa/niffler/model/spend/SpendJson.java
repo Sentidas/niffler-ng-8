@@ -1,4 +1,4 @@
-package guru.qa.niffler.model;
+package guru.qa.niffler.model.spend;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
@@ -28,18 +28,18 @@ public record SpendJson(
         final String username = entity.getUsername();
 
         return new SpendJson(
-            entity.getId(),
-            entity.getSpendDate(),
-            new CategoryJson(
-                category.getId(),
-                category.getName(),
-                username,
-                category.isArchived()
-            ),
-            entity.getCurrency(),
-            entity.getAmount(),
-            entity.getDescription(),
-            username
+                entity.getId(),
+                entity.getSpendDate(),
+                new CategoryJson(
+                        category.getId(),
+                        category.getName(),
+                        username,
+                        category.isArchived()
+                ),
+                entity.getCurrency(),
+                entity.getAmount(),
+                entity.getDescription(),
+                username
         );
     }
 }

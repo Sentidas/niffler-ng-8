@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,6 +47,11 @@ public class CategoryDaoJdbc implements CategoryDao {
   }
 
   @Override
+  public CategoryEntity update(CategoryEntity category) {
+    return null;
+  }
+
+  @Override
   public Optional<CategoryEntity> findCategoryById(UUID id) {
     try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
         "SELECT * FROM category WHERE id = ?"
@@ -67,5 +73,25 @@ public class CategoryDaoJdbc implements CategoryDao {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
+    return Optional.empty();
+  }
+
+  @Override
+  public List<CategoryEntity> findAllByUsername(String username) {
+    return List.of();
+  }
+
+  @Override
+  public void deleteCategory(CategoryEntity category) {
+
+  }
+
+  @Override
+  public List<CategoryEntity> findAll() {
+    return List.of();
   }
 }

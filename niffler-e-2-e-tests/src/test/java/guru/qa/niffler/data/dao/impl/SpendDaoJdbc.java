@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
@@ -45,5 +47,25 @@ public class SpendDaoJdbc implements SpendDao {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public Optional<SpendEntity> findSpendById(UUID id) {
+    return Optional.empty();
+  }
+
+  @Override
+  public List<SpendEntity> findAllByUsername(String username) {
+    return List.of();
+  }
+
+  @Override
+  public void deleteSpend(SpendEntity spend) {
+
+  }
+
+  @Override
+  public List<SpendEntity> findAll() {
+    return List.of();
   }
 }

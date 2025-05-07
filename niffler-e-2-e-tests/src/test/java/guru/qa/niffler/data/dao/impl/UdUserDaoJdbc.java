@@ -1,24 +1,28 @@
 package guru.qa.niffler.data.dao.impl;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.dao.UdUserDao;
+import guru.qa.niffler.data.dao.UserdataUserDAO;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.spend.CurrencyValues;
+
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
-public class UdUserDaoJdbc implements UdUserDao {
+public class UdUserDaoJdbc implements UserdataUserDAO {
 
   private static final Config CFG = Config.getInstance();
 
+
+
   @Override
-  public UserEntity create(UserEntity user) {
+  public UserEntity createUser(UserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
         "INSERT INTO \"user\" (username, currency) VALUES (?, ?)",
         PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -38,6 +42,11 @@ public class UdUserDaoJdbc implements UdUserDao {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public UserEntity create(UserEntity user) {
+    return null;
   }
 
   @Override
@@ -64,5 +73,20 @@ public class UdUserDaoJdbc implements UdUserDao {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public Optional<UserEntity> findByUsername(String username) {
+    return Optional.empty();
+  }
+
+  @Override
+  public void deleteUser(UserEntity user) {
+
+  }
+
+  @Override
+  public List<UserEntity> findAll() {
+    return List.of();
   }
 }

@@ -6,12 +6,19 @@ import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
   private static final Config CFG = Config.getInstance();
+
+  @Override
+  public AuthorityEntity create(AuthorityEntity authority) {
+    return null;
+  }
 
   @Override
   public void create(AuthorityEntity... authority) {
@@ -28,5 +35,15 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public List<AuthorityEntity> findAll() {
+    return List.of();
+  }
+
+  @Override
+  public void delete(UUID userId) {
+
   }
 }

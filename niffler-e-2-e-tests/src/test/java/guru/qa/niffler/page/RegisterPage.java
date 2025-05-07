@@ -2,37 +2,75 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 public class RegisterPage {
 
-  private final SelenideElement usernameInput = $("input[name='username']");
-  private final SelenideElement passwordInput = $("input[name='password']");
-  private final SelenideElement passwordSubmitInput = $("input[name='passwordSubmit']");
-  private final SelenideElement submitButton = $("button[type='submit']");
-  private final SelenideElement proceedLoginButton = $(".form_sign-in");
-  private final SelenideElement errorContainer = $(".form__error");
+    private final SelenideElement userNameInput = $("#username"),
+            passwordInput = $("#password"),
+            passwordButton = $("#passwordBtn"),
+            passwordSubmitInput = $("#passwordSubmit"),
+            passwordSubmitButton = $("#passwordSubmitBtn"),
+            submitButton = $("button.form__submit"),
+            errorField = $("span.form__error"),
+            titleSuccessRegistration = $("p.form__paragraph_success"),
+            registrationTitleLabel = $(byText("Sign up")),
+            goToLoginButton = $("a.form_sign-in");
 
-  public RegisterPage fillRegisterPage(String login, String password, String passwordSubmit) {
-    usernameInput.setValue(login);
-    passwordInput.setValue(password);
-    passwordSubmitInput.setValue(passwordSubmit);
-    return this;
-  }
 
-  public LoginPage successSubmit() {
-    submit();
-    proceedLoginButton.click();
-    return new LoginPage();
-  }
+    public RegisterPage setUserName(String userName) {
+        userNameInput.setValue(userName);
+        return this;
+    }
 
-  public void submit() {
-    submitButton.click();
-  }
+    public RegisterPage setPassword(String password) {
+        passwordInput.setValue(password);
+        return this;
+    }
 
-  public RegisterPage checkAlertMessage(String errorMessage) {
-    errorContainer.shouldHave(text(errorMessage));
-    return this;
-  }
+    public RegisterPage setPasswordSubmit(String password) {
+        passwordSubmitInput.setValue(password);
+        return this;
+    }
+
+    public RegisterPage togglePasswordVisibility() {
+        passwordButton.click();
+        return this;
+    }
+
+    public RegisterPage togglePasswordSubmitVisibility() {
+        passwordSubmitButton.click();
+        return this;
+    }
+
+    public RegisterPage submitRegistration() {
+        submitButton.click();
+        return new RegisterPage();
+    }
+
+    public void checkErrorMessage(String errorMessageText) {
+        errorField.shouldHave(text(errorMessageText));
+    }
+
+
+    public void checkSuccessRegistration() {
+        titleSuccessRegistration.shouldHave(text("Congratulations! You've registered!"));
+        goToLoginButton.shouldBe(visible);
+    }
+
+    public void shouldBeVisibleInputPassword() {
+        passwordButton.shouldHave(cssClass("form__password-button_active"));
+        passwordInput.shouldHave(attribute("type", "text"));
+    }
+
+    public void shouldBeOnRegisterPage() {
+        registrationTitleLabel.shouldBe(visible);
+    }
+
+    public void shouldBeVisibleInputPasswordSubmit() {
+        passwordSubmitButton.shouldHave(cssClass("form__password-button_active"));
+        passwordSubmitInput.shouldHave(attribute("type", "text"));
+    }
 }

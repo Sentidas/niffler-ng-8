@@ -6,6 +6,7 @@ build
 !gradle/wrapper/gradle-wrapper.properties
 !**/src/main/**/build/
 !**/src/test/**/build/
+allure-results/
 
 ### STS ###
 .apt_generated
@@ -27,6 +28,8 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
+/niffler-e-2-e-tests/allure-results/
 
 ### NetBeans ###
 /nbproject/private/
