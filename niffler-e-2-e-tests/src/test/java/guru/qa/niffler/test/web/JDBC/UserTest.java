@@ -4,8 +4,11 @@ import guru.qa.niffler.model.auth.AuthUserJson;
 import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import org.apache.kafka.common.protocol.types.Field;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,7 +28,7 @@ public class UserTest {
         UserJson userJson = us.createUserSpringJdbc(
                 new UserJson(
                         null,
-                        "mark-68",
+                        "mark",
                         CurrencyValues.RUB,
                         null,
                         null,
@@ -75,40 +78,40 @@ public class UserTest {
 
     // JDBC TESTS
 
-//    @Test
-//    void createUser() {
-//        UsersDbClient authDbClient = new UsersDbClient();
-//
-//        String username = RandomDataUtils.randomUsername();
-//
-//        UserJson user = authDbClient.createUser(
-//                new AuthUserJson(
-//                        null,
-//                        username,
-//                        "12345",
-//                        true,
-//                        true,
-//                        true,
-//                        true
-//                ), new UserJson(
-//                        null,
-//                        username,
-//                        CurrencyValues.USD,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null
-//
-//                ));
-//        System.out.println(user);
-//    }
+    @Test
+    void createUser() {
+        UsersDbClient authDbClient = new UsersDbClient();
 
-//    @Test
-//    void deleteUser() {
-//        UsersDbClient usersDbClient = new UsersDbClient();
-//        usersDbClient.deleteUser("salmon");
-//    }
+        String username = RandomDataUtils.randomUsername();
+
+        UserJson user = authDbClient.createUser(
+                new AuthUserJson(
+                        null,
+                        username,
+                        "12345",
+                        true,
+                        true,
+                        true,
+                        true
+                ), new UserJson(
+                        null,
+                        username,
+                        CurrencyValues.USD,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+
+                ));
+        System.out.println(user);
+    }
+
+    @Test
+    void deleteUser() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        usersDbClient.deleteUser("salmon");
+    }
 
 
     @Test
@@ -189,7 +192,7 @@ public class UserTest {
                         null
 
                 );
-        UserJson user = us.createUserSpringJdbc(userJson);
+        UserJson user = us.createUserInUserData(userJson);
 
         System.out.println(user);
     }

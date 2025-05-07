@@ -12,15 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.tpl.Connections.holder;
-
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     private static final Config CFG = Config.getInstance();
 
+    private final Connection connection;
+
+    public AuthAuthorityDaoJdbc(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
     public AuthorityEntity create(AuthorityEntity authority) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+        try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO authority (user_id, authority) " +
                         "VALUES (?, ?)",
                 Statement.RETURN_GENERATED_KEYS
@@ -49,29 +53,14 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void create(AuthorityEntity... authority) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)",
-                PreparedStatement.RETURN_GENERATED_KEYS)) {
-            for (AuthorityEntity a : authority) {
-                ps.setObject(1, a.getUserId().getId());
-                ps.setString(2, a.getAuthority().name());
-                ps.addBatch();
-                ps.clearParameters();
-
-            }
-            ps.executeBatch();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        List<CategoryEntity> categories = new ArrayList<>();
     }
-
-
 
     @Override
     public List<AuthorityEntity> findAll() {
         List<AuthorityEntity> authorities = new ArrayList<>();
 
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+        try (PreparedStatement ps = connection.prepareStatement(
                 "SELECT * FROM authority"
         )) {
 
@@ -100,7 +89,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void delete(UUID userId) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+        try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM authority WHERE user_id = ?"
         )) {
             ps.setObject(1, userId);
