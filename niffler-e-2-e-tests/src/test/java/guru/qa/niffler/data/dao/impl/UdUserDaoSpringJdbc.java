@@ -20,10 +20,7 @@ public class UdUserDaoSpringJdbc implements UserdataUserDAO {
 
   private static final Config CFG = Config.getInstance();
 
-  @Override
-  public UserEntity createUser(UserEntity user) {
-    return null;
-  }
+
 
   @Override
   public UserEntity create(UserEntity user) {

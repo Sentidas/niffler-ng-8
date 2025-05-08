@@ -23,7 +23,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDAO {
     }
 
     @Override
-    public UserEntity createUser(UserEntity user) {
+    public UserEntity create(UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
@@ -45,10 +45,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDAO {
         return user;
     }
 
-    @Override
-    public UserEntity create(UserEntity user) {
-        return null;
-    }
+
 
     @Override
     public Optional<UserEntity> findById(UUID id) {

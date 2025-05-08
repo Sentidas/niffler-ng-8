@@ -5,10 +5,8 @@ import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.dao.AuthUserDao;
 
 import guru.qa.niffler.data.dao.UserdataUserDAO;
-import guru.qa.niffler.data.dao.impl.AuthAuthorityDaoSpringJdbc;
-import guru.qa.niffler.data.dao.impl.AuthUserDaoSpringJdbc;
+import guru.qa.niffler.data.dao.impl.*;
 
-import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
@@ -30,9 +28,9 @@ public class UsersDbClient {
   private static final Config CFG = Config.getInstance();
   private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-  private final AuthUserDao authUserDao = new AuthUserDaoSpringJdbc();
-  private final AuthAuthorityDao authAuthorityDao = new AuthAuthorityDaoSpringJdbc();
-  private final UserdataUserDAO udUserDao = new UdUserDaoSpringJdbc();
+  private final AuthUserDao authUserDao = new AuthUserDaoJdbc();
+  private final AuthAuthorityDao authAuthorityDao = new AuthAuthorityDaoJdbc();
+  private final UserdataUserDAO udUserDao = new UdUserDaoJdbc();
 
   private final TransactionTemplate txTemplate = new TransactionTemplate(
       new JdbcTransactionManager(

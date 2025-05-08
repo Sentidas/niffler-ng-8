@@ -22,7 +22,7 @@ public class UdUserDaoJdbc implements UserdataUserDAO {
 
 
   @Override
-  public UserEntity createUser(UserEntity user) {
+  public UserEntity create(UserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
         "INSERT INTO \"user\" (username, currency) VALUES (?, ?)",
         PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -44,10 +44,7 @@ public class UdUserDaoJdbc implements UserdataUserDAO {
     }
   }
 
-  @Override
-  public UserEntity create(UserEntity user) {
-    return null;
-  }
+
 
   @Override
   public Optional<UserEntity> findById(UUID id) {
