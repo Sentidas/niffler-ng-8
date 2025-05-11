@@ -32,7 +32,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                                 false
                         );
 
-                        CategoryJson createdCategory = spendDbClient.createCategorySpringJdbc(categoryJson);
+                        CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
 
                         System.out.println("Категория '" + nameCategory + "' создана. " + "Статус архивности: " + category.archived());
                         context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
@@ -55,7 +55,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                     true
             );
 
-            spendDbClient.updateCategorySpringJdbc(archivedCategory);
+            spendDbClient.updateCategory(archivedCategory);
             System.out.println("После окончания теста у категории '" + archivedCategory.name() + "' изменен статус архивности на: " + archivedCategory.archived());
 
 
