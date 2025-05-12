@@ -4,7 +4,10 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +18,6 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class CategoryDaoJdbc implements CategoryDao {
 
     private static final Config CFG = Config.getInstance();
-
 
     @Override
     public CategoryEntity create(CategoryEntity category) {
@@ -155,7 +157,7 @@ public class CategoryDaoJdbc implements CategoryDao {
         return categories;
     }
 
-    public void deleteCategory(CategoryEntity category) {
+    public void delete(CategoryEntity category) {
 
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM category WHERE id = ?"
@@ -195,5 +197,4 @@ public class CategoryDaoJdbc implements CategoryDao {
         }
         return categories;
     }
-
 }

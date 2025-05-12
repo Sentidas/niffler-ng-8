@@ -13,10 +13,11 @@ public class DataSources {
     private DataSources() {
     }
 
-    private static final Map<String, DataSource> datasources = new ConcurrentHashMap<>();
+    private static final Map<String, DataSource> dataSources = new ConcurrentHashMap<>();
 
     public static DataSource dataSource(String jdbcUrl) {
-        return datasources.computeIfAbsent(
+
+        return dataSources.computeIfAbsent(
                 jdbcUrl,
                 key -> {
                     AtomikosDataSourceBean dsBean = new AtomikosDataSourceBean();

@@ -1,7 +1,6 @@
 package guru.qa.niffler.test.web.JDBC;
 
 import guru.qa.niffler.model.spend.CategoryJson;
-import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendDbClient;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class JDBCTest {
+public class CategoryAndSpendTest {
 
     @Test
     void createSpend() {
@@ -23,13 +22,13 @@ public class JDBCTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "на фитнес",
+                                "корм для оленя",
                                 "duck",
                                 false
                         ),
-                        CurrencyValues.EUR,
+                        null,
                         1000.0,
-                        "на фитнес тренера",
+                        "100000 dog",
                         "duck"
                 )
         );
@@ -54,7 +53,7 @@ public class JDBCTest {
     void findAllSpendsUser() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<SpendJson> spends = spendDbClient.findAllByUsername("duck");
+        List<SpendJson> spends = spendDbClient.findAllSpendByUserName("duck");
         System.out.println("Spends пользователя: ");
         for (SpendJson spend : spends) {
             System.out.println(spend.description() + " ");
@@ -64,7 +63,7 @@ public class JDBCTest {
     @Test
     void deleteSpend() {
         // UUID spendId = UUID.fromString("410177ba-2105-11f0-bfca-0242ac110004");
-        UUID spendId = UUID.fromString("3c29b0aa-23fc-11f0-b340-0242ac110004");
+        UUID spendId = UUID.fromString("f9f514a6-2dae-11f0-96e1-0242ac110004");
 
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteSpend(spendId);
@@ -88,9 +87,9 @@ public class JDBCTest {
         CategoryJson category = spendDbClient.createCategory(
                 new CategoryJson(
                         null,
-                        "на велосипеды",
+                        "hob99",
                         "duck",
-                        false
+                        true
                 )
         );
         System.out.println(category);
@@ -131,7 +130,7 @@ public class JDBCTest {
     @Test
     void deleteCategory() {
         // UUID categoryId = UUID.fromString("91326cc6-2105-11f0-bc4d-0242ac110004");
-        UUID categoryId = UUID.fromString("96ecfd4c-29c1-11f0-8556-0242ac110003");
+        UUID categoryId = UUID.fromString("4d48d926-2daf-11f0-9710-0242ac110004");
         SpendDbClient spendDbClient = new SpendDbClient();
         spendDbClient.deleteCategory(categoryId);
     }
@@ -140,7 +139,7 @@ public class JDBCTest {
     void findAllCategories() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<CategoryJson> categories = spendDbClient.findAllCategory();
+        List<CategoryJson> categories = spendDbClient.findAllCategories();
         System.out.println("Общий список категорий: ");
         for (CategoryJson category : categories) {
             System.out.println(category.name());

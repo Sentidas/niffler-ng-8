@@ -55,7 +55,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                     true
             );
 
-            spendDbClient.updateCategorySpringJdbc(archivedCategory);
+            spendDbClient.updateCategory(archivedCategory);
             System.out.println("После окончания теста у категории '" + archivedCategory.name() + "' изменен статус архивности на: " + archivedCategory.archived());
 
 

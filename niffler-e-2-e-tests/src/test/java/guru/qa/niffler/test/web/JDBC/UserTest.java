@@ -14,34 +14,63 @@ import java.util.UUID;
 
 public class UserTest {
 
-    // SPRING JDBC TESTS
-
     @Test
-    void createUserWithSpring() {
-
-        UsersDbClient us = new UsersDbClient();
-
-
-        UserJson userJson = us.createUserSpringJdbc(
+    void createUserSpringTx() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserSpringTx(
                 new UserJson(
                         null,
-                        "mark-68",
+                        "duck-1",
                         CurrencyValues.RUB,
                         null,
                         null,
                         null,
                         null,
                         null
+                )
+        );
+        System.out.println(user);
+    }
 
-                ));
+    @Test
+    void createUserSpringTxChained() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserSpringTxChained(
+                new UserJson(
+                        null,
+                        "duck-2",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
 
-        System.out.println(userJson);
+    @Test
+    void createUserSpring() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserSpring(
+                new UserJson(
+                        null,
+                        "duck-3",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
     }
 
 
     @Test
     void findAllUsersInUserDataSpringJDBC() {
-
         UsersDbClient usersDbClient = new UsersDbClient();
         List<UserJson> users = usersDbClient.findAllUdUsersSpringJdbc();
         System.out.println("Общий список пользователей из Userdata: ");
@@ -52,7 +81,6 @@ public class UserTest {
 
     @Test
     void findAllUsersInAuthSpringJDBC() {
-
         UsersDbClient usersDbClient = new UsersDbClient();
         List<AuthUserJson> users = usersDbClient.findAllAuthUsersSpringJdbc();
         System.out.println("Общий список пользователей из Auth: ");
@@ -63,7 +91,6 @@ public class UserTest {
 
     @Test
     void findAllAuthoritiesInAuthSpringJDBC() {
-
         UsersDbClient usersDbClient = new UsersDbClient();
         List<AuthorityJson> authorities = usersDbClient.findAllAuthoritiesSpringJdbc();
         System.out.println("Общий список id всех прав всех пользователей из Auth: ");
@@ -72,48 +99,60 @@ public class UserTest {
         }
     }
 
+    @Test
+    void deleteUserSpring() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        usersDbClient.deleteUserSpringTx("duck-4");
+    }
 
     // JDBC TESTS
-
-//    @Test
-//    void createUser() {
-//        UsersDbClient authDbClient = new UsersDbClient();
-//
-//        String username = RandomDataUtils.randomUsername();
-//
-//        UserJson user = authDbClient.createUser(
-//                new AuthUserJson(
-//                        null,
-//                        username,
-//                        "12345",
-//                        true,
-//                        true,
-//                        true,
-//                        true
-//                ), new UserJson(
-//                        null,
-//                        username,
-//                        CurrencyValues.USD,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null
-//
-//                ));
-//        System.out.println(user);
-//    }
-
-//    @Test
-//    void deleteUser() {
-//        UsersDbClient usersDbClient = new UsersDbClient();
-//        usersDbClient.deleteUser("salmon");
-//    }
+     @Test
+     void createUserJDBCTx() {
+         UsersDbClient usersDbClient = new UsersDbClient();
+         UserJson user = usersDbClient.createUserJDBCTx(
+                 new UserJson(
+                         null,
+                         "duck-4",
+                         CurrencyValues.RUB,
+                         null,
+                         null,
+                         null,
+                         null,
+                         null
+                 )
+         );
+         System.out.println(user);
+     }
 
 
     @Test
+    void createUserJDBC() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserJDBC(
+                new UserJson(
+                        null,
+                        "duck-5",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+
+    @Test
+    void deleteUserJdbc() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        usersDbClient.deleteUserJDBCTx("duck-3");
+    }
+
+    @Test
     void findUserByIdInUserdata() {
-        UUID userId = UUID.fromString("a18b5ba5-1f73-4164-87f7-ebfbe8dc4585");
+        UUID userId = UUID.fromString("78b327d0-78ed-4915-8df5-461d8a24a458");
 
         UsersDbClient us = new UsersDbClient();
         Optional<UserJson> user = us.findUserById(userId);
@@ -129,14 +168,6 @@ public class UserTest {
 
         System.out.println("User найден: " + user.get().id());
         // a18b5ba5-1f73-4164-87f7-ebfbe8dc4585
-    }
-
-    @Test
-    void deleteUserInUserdata() {
-        UUID userId = UUID.fromString("df82e1fe-24c9-11f0-877e-0242ac110004");
-
-        UsersDbClient us = new UsersDbClient();
-        us.deleteUserInUserdata(userId);
     }
 
     @Test
@@ -171,30 +202,6 @@ public class UserTest {
             System.out.println(authority.id());
         }
     }
-
-    @Test
-    void createUserInUserdata() {
-
-        UsersDbClient us = new UsersDbClient();
-
-        UserJson userJson =
-                new UserJson(
-                        null,
-                        "murka",
-                        CurrencyValues.USD,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-
-                );
-        UserJson user = us.createUserSpringJdbc(userJson);
-
-        System.out.println(user);
-    }
-
-
 }
 
 

@@ -11,13 +11,13 @@ import java.util.UUID;
 public class AuthorityEntity {
 
     private UUID id;
-    private AuthUserEntity userId;
+    private UUID userId;
     private Authority authority;
 
-    public AuthorityEntity(AuthUserEntity user, Authority authority) {
-        this.userId = user;
-        this.authority = authority;
-    }
+//    public AuthorityEntity(AuthUserEntity user, Authority authority) {
+//        this.userId = user;
+//        this.authority = authority;
+//    }
 
     public AuthorityEntity() {
 

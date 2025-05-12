@@ -18,19 +18,14 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public AuthorityEntity create(AuthorityEntity authority) {
-        return null;
-    }
-
-    @Override
     public void create(AuthorityEntity... authority) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authUrl()));
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         jdbcTemplate.batchUpdate(
                 "INSERT INTO authority (user_id, authority) VALUES (?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setObject(1, authority[i].getUserId().getId());
+                        ps.setObject(1, authority[i].getUserId());
                         ps.setObject(2, authority[i].getAuthority().name());
                     }
 
@@ -40,12 +35,11 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
                     }
                 }
         );
-
     }
 
     @Override
     public List<AuthorityEntity> findAll() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authUrl()));
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
 
         return jdbcTemplate.query(
                 "SELECT * FROM authority",
@@ -53,7 +47,8 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
         );
     }
 
-    @Override
     public void delete(UUID userId) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        jdbcTemplate.update("DELETE FROM authority WHERE user_id = ?", userId);
     }
 }

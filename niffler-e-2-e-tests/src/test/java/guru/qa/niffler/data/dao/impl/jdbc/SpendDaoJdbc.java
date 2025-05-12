@@ -6,7 +6,10 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.spend.CurrencyValues;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +20,6 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class SpendDaoJdbc implements SpendDao {
 
     private static final Config CFG = Config.getInstance();
-
-
 
     @Override
     public SpendEntity create(SpendEntity spend) {
@@ -120,7 +121,7 @@ public class SpendDaoJdbc implements SpendDao {
         return spends;
     }
 
-    public void deleteSpend(SpendEntity spend) {
+    public void delete(SpendEntity spend) {
 
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM spend WHERE id = ?"

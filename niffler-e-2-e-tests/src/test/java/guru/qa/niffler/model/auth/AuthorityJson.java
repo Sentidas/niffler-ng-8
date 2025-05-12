@@ -12,7 +12,7 @@ public record AuthorityJson(
         @JsonProperty("id")
         UUID id,
         @JsonProperty("user_id")
-        AuthUserEntity user,
+        UUID user,
         @JsonProperty("authority")
         Authority authority
 ) {
