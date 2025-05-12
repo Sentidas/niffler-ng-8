@@ -5,7 +5,6 @@ import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersDbClient;
-import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,13 +13,60 @@ import java.util.UUID;
 
 public class UserTest {
 
+
+    @Test
+    void findUserByIdWithRole() {
+        UUID userId = UUID.fromString("122fbdd4-8719-4928-b535-110d60ced61f");
+
+        UsersDbClient us = new UsersDbClient();
+        Optional<AuthUserJson> user = us.findUserByIdRepositorySpring(userId);
+
+        System.out.println("User найден: '" + user.get().username() + "' c ролями: " +  String.join(", ", user.get().authorities()));
+    }
+
+    @Test
+    void createUserRepositoryJdbc() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserRepository(
+                new UserJson(
+                        null,
+                        "duck-33",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    @Test
+    void createUserRepositorySpring() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserRepositorySpring(
+                new UserJson(
+                        null,
+                        "duck-44",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
     @Test
     void createUserSpringTx() {
         UsersDbClient usersDbClient = new UsersDbClient();
         UserJson user = usersDbClient.createUserSpringTx(
                 new UserJson(
                         null,
-                        "duck-1",
+                        "duck-5",
                         CurrencyValues.RUB,
                         null,
                         null,
@@ -106,23 +152,23 @@ public class UserTest {
     }
 
     // JDBC TESTS
-     @Test
-     void createUserJDBCTx() {
-         UsersDbClient usersDbClient = new UsersDbClient();
-         UserJson user = usersDbClient.createUserJDBCTx(
-                 new UserJson(
-                         null,
-                         "duck-4",
-                         CurrencyValues.RUB,
-                         null,
-                         null,
-                         null,
-                         null,
-                         null
-                 )
-         );
-         System.out.println(user);
-     }
+    @Test
+    void createUserJDBCTx() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserJDBCTx(
+                new UserJson(
+                        null,
+                        "duck-4",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
 
 
     @Test
