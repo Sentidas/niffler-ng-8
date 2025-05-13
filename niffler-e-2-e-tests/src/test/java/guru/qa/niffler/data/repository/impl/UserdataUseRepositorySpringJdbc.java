@@ -106,7 +106,6 @@ public class UserdataUseRepositorySpringJdbc implements UserdataUserRepository {
         );
     }
 
-
     @Override
     public void addFriend(UserEntity requester, UserEntity addressee) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
@@ -136,7 +135,6 @@ public class UserdataUseRepositorySpringJdbc implements UserdataUserRepository {
                 addressee.getId(),
                 addressee.getId(),
                 requester.getId());
-
     }
 }
 

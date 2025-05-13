@@ -5,7 +5,10 @@ import guru.qa.niffler.model.auth.AuthorityJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,44 +24,58 @@ public class UserTest {
         UsersDbClient us = new UsersDbClient();
         Optional<AuthUserJson> user = us.findUserByIdRepositorySpring(userId);
 
-        System.out.println("User найден: '" + user.get().username() + "' c ролями: " +  String.join(", ", user.get().authorities()));
+        System.out.println("User найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
     }
+    static UsersDbClient usersDbClient = new UsersDbClient();
+    @ValueSource(strings = {
+            "duck-200",
+    })
+    @ParameterizedTest
+    void createUserRepositoryHibernate(String username) {
 
-    @Test
-    void createUserRepositoryJdbc() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserRepository(
-                new UserJson(
-                        null,
-                        "duck-33",
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
+        UserJson user = usersDbClient.createUserRepositoryHibernate(
+                username, "12345"
         );
+
+        usersDbClient.addIncomeInvitationRepositoryHibernate(user, 2);
         System.out.println(user);
     }
 
-    @Test
-    void createUserRepositorySpring() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserRepositorySpring(
-                new UserJson(
-                        null,
-                        "duck-44",
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
+//    @Test
+//    void createUserRepositoryJdbc() {
+//        UsersDbClient usersDbClient = new UsersDbClient();
+//        UserJson user = usersDbClient.createUserRepository(
+//                new UserJson(
+//                        null,
+//                        "duck-33",
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null,
+//                        null,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
+//
+//    @Test
+//    void createUserRepositorySpring() {
+//        UsersDbClient usersDbClient = new UsersDbClient();
+//        UserJson user = usersDbClient.createUserRepositorySpring(
+//                new UserJson(
+//                        null,
+//                        "duck-44",
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null,
+//                        null,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
 
     @Test
     void createUserSpringTx() {

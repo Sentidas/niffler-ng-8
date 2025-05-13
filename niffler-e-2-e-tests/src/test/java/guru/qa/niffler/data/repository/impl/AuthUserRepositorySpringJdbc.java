@@ -61,7 +61,6 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
                     }
                 }
         );
-
         return user;
     }
 
@@ -82,6 +81,11 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
                         id
                 )
         );
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findByUserName(String username) {
+        return Optional.empty();
     }
 
 }

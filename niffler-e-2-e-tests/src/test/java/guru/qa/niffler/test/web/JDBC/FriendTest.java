@@ -25,12 +25,10 @@ public class FriendTest {
         usersDbClient.addOutcomeInvitationRepositoryJdbc("fox", "duck");
     }
 
+
+
     // SPRING JDBC
-    @Test
-    void addOutcomeInvitationRepositorySpring() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        usersDbClient.addOutcomeInvitationRepositorySpring("duck", "gorilla");
-    }
+
 
     @Test
     void addFriendRepositorySpring() {
