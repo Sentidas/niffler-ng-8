@@ -1,6 +1,7 @@
 package guru.qa.niffler.test.web.JDBC;
 
 import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendDbClient;
 import org.junit.jupiter.api.Test;
@@ -22,13 +23,13 @@ public class CategoryAndSpendTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "корм для оленя",
+                                "корм для медведя",
                                 "duck",
                                 false
                         ),
-                        null,
+                        CurrencyValues.EUR,
                         1000.0,
-                        "100000 dog",
+                        "100000 bear",
                         "duck"
                 )
         );

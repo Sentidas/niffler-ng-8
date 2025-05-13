@@ -26,7 +26,7 @@ public class AuthAuthorityEntityRowMapper implements RowMapper<AuthorityEntity> 
 
         AuthUserEntity resultUser = new AuthUserEntity();
         resultUser.setId(userId);
-        result.setUserId(resultUser.getId());
+        result.setUser(resultUser);
 
         return result;
     }
