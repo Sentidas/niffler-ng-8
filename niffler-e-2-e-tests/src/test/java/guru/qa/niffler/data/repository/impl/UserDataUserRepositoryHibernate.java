@@ -46,13 +46,14 @@ public class UserDataUserRepositoryHibernate implements UserdataUserRepository {
     }
 
     @Override
-    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
+    public UserEntity update(UserEntity user) {
         entityManager.joinTransaction();
-        addressee.addFriends(FriendshipStatus.PENDING, requester);
+        entityManager.merge(user);
+        return user;
     }
 
     @Override
-    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
+    public void sendInvitation(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
         requester.addFriends(FriendshipStatus.PENDING, addressee);
     }
@@ -64,4 +65,12 @@ public class UserDataUserRepositoryHibernate implements UserdataUserRepository {
         addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
     }
 
+    @Override
+    public void remove(UserEntity user) {
+        entityManager.joinTransaction();
+        UserEntity removableUser = entityManager.find(UserEntity.class, user.getId());
+        if(removableUser !=null) {
+            entityManager.remove(removableUser);
+        }
+    }
 }

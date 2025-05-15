@@ -65,6 +65,27 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     }
 
     @Override
+    public AuthUserEntity update(AuthUserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "UPDATE \"user\" SET username = ?, password = ?, enabled = ?, account_non_expired = ?, " +
+                            "account_non_locked = ?, credentials_non_expired = ? WHERE id = ?");
+
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setBoolean(3, user.getEnabled());
+            ps.setBoolean(4, user.getAccountNonExpired());
+            ps.setBoolean(5, user.getAccountNonLocked());
+            ps.setBoolean(6, user.getCredentialsNonExpired());
+            ps.setObject(7, user.getId());
+            return ps;
+        });
+        return user;
+    }
+
+    @Override
     public Optional<AuthUserEntity> findById(UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
 
@@ -84,8 +105,30 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     }
 
     @Override
-    public Optional<AuthUserEntity> findByUserName(String username) {
-        return Optional.empty();
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+
+        return Optional.ofNullable(
+                jdbcTemplate.query(
+                        "SELECT " +
+                                "u.id AS user_id, u.username, u.password, u.enabled, " +
+                                "u.account_non_expired, u.account_non_locked, u.credentials_non_expired, " +
+                                "a.id AS authority_id, a.authority " +
+                                "FROM \"user\" u " +
+                                "JOIN authority a ON u.id = a.user_id " +
+                                "WHERE u.username = ?",
+                        AuthUserResultSetExtractor.instance,
+                        username
+                )
+        );
     }
 
+    @Override
+    public void remove(AuthUserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        int rolesDeleted = jdbcTemplate.update("DELETE FROM authority WHERE user_id = ?", user.getId());
+        int usersDeleted = jdbcTemplate.update("DELETE FROM \"user\" WHERE id = ?", user.getId());
+        System.out.println("Удалено ролей из auth.authority: " + rolesDeleted + " строки");
+        System.out.println("Удалено пользователей из auth.user: " + usersDeleted + " строка");
+    }
 }

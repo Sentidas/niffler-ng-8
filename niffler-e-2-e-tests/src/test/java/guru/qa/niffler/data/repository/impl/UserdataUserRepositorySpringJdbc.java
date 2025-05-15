@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserdataUseRepositorySpringJdbc implements UserdataUserRepository {
+public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository {
 
     private static final Config CFG = Config.getInstance();
 
@@ -71,7 +71,29 @@ public class UserdataUseRepositorySpringJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
+    public UserEntity update(UserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, " +
+                            "full_name = ?, photo = ?, photo_small = ? WHERE id = ?");
+
+            ps.setString(1, user.getUsername());
+            ps.setObject(2, user.getCurrency().name());
+            ps.setString(3, user.getFirstname());
+            ps.setString(4, user.getSurname());
+            ps.setString(5, user.getFullname());
+            ps.setBytes(6, user.getPhoto());
+            ps.setBytes(7, user.getPhotoSmall());
+            ps.setObject(8, user.getId());
+            return ps;
+        });
+        return user;
+    }
+
+    @Override
+    public void sendInvitation(UserEntity requester, UserEntity addressee) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
 
         jdbcTemplate.update(con -> {
@@ -89,41 +111,11 @@ public class UserdataUseRepositorySpringJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
-
-        jdbcTemplate.update(con -> {
-                    PreparedStatement ps = con.prepareStatement(
-                            "INSERT INTO friendship (requester_id, addressee_id, status, created_date) " +
-                                    "VALUES ( ?, ?, ?, ?)");
-
-                    ps.setObject(1, addressee.getId());
-                    ps.setObject(2, requester.getId());
-                    ps.setString(3, String.valueOf(FriendshipStatus.PENDING));
-                    ps.setDate(4, new java.sql.Date(new Date().getTime()));
-                    return ps;
-                }
-        );
-    }
-
-    @Override
     public void addFriend(UserEntity requester, UserEntity addressee) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
 
-        // Проверяем наличие заявки со статусом PENDING
-        Integer result = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM friendship WHERE requester_id = ? AND addressee_id = ? AND status = ?",
-                Integer.class,
-                requester.getId(),
-                addressee.getId(),
-                String.valueOf(FriendshipStatus.PENDING));
-
-        if (result == 0) {
-            throw new IllegalStateException("Нет заявки от " + requester.getUsername() + " к " + addressee.getUsername());
-        }
-
-        // Добавляем обратную заявку
-        addIncomeInvitation(requester, addressee);
+        sendInvitation(requester, addressee);
+        sendInvitation(addressee, requester);
 
         // Меняем статус на ACCEPTED для двух заявок
         jdbcTemplate.update(
@@ -135,6 +127,12 @@ public class UserdataUseRepositorySpringJdbc implements UserdataUserRepository {
                 addressee.getId(),
                 addressee.getId(),
                 requester.getId());
+    }
+
+    @Override
+    public void remove(UserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+        jdbcTemplate.update("DELETE FROM \"user\" WHERE id = ?", user.getId());
     }
 }
 

@@ -1,269 +1,125 @@
 package guru.qa.niffler.test.web.JDBC;
 
-import guru.qa.niffler.model.auth.AuthUserJson;
-import guru.qa.niffler.model.auth.AuthorityJson;
+import guru.qa.niffler.model.FullUserJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.service.UsersDbClient;
-import guru.qa.niffler.utils.RandomDataUtils;
+import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class UserTest {
 
-
-    @Test
-    void findUserByIdWithRole() {
-        UUID userId = UUID.fromString("122fbdd4-8719-4928-b535-110d60ced61f");
-
-        UsersDbClient us = new UsersDbClient();
-        Optional<AuthUserJson> user = us.findUserByIdRepositorySpring(userId);
-
-        System.out.println("User найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
-    }
     static UsersDbClient usersDbClient = new UsersDbClient();
+
     @ValueSource(strings = {
+            "duck-100",
             "duck-200",
     })
     @ParameterizedTest
-    void createUserRepositoryHibernate(String username) {
+    void createUser(String username) {
 
-        UserJson user = usersDbClient.createUserRepositoryHibernate(
+        UserJson user = usersDbClient.createUser(
                 username, "12345"
         );
-
-        usersDbClient.addIncomeInvitationRepositoryHibernate(user, 2);
-        System.out.println(user);
     }
 
-//    @Test
-//    void createUserRepositoryJdbc() {
-//        UsersDbClient usersDbClient = new UsersDbClient();
-//        UserJson user = usersDbClient.createUserRepository(
-//                new UserJson(
-//                        null,
-//                        "duck-33",
-//                        CurrencyValues.RUB,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null
-//                )
-//        );
-//        System.out.println(user);
-//    }
-//
-//    @Test
-//    void createUserRepositorySpring() {
-//        UsersDbClient usersDbClient = new UsersDbClient();
-//        UserJson user = usersDbClient.createUserRepositorySpring(
-//                new UserJson(
-//                        null,
-//                        "duck-44",
-//                        CurrencyValues.RUB,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null
-//                )
-//        );
-//        System.out.println(user);
-//    }
+    @Test
+    void removeUser() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        usersDbClient.removeUser("duck-100");
+    }
 
     @Test
-    void createUserSpringTx() {
+    void updateUser() {
         UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserSpringTx(
+        UserJson updatedUser =
                 new UserJson(
                         null,
-                        "duck-5",
+                        "cat",
                         CurrencyValues.RUB,
+                        "murk",
                         null,
-                        null,
-                        null,
+                        "angry catty",
                         null,
                         null
-                )
-        );
-        System.out.println(user);
+                );
+        usersDbClient.updateUser("catty", updatedUser);
     }
 
     @Test
-    void createUserSpringTxChained() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserSpringTxChained(
-                new UserJson(
-                        null,
-                        "duck-2",
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
-
-    @Test
-    void createUserSpring() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserSpring(
-                new UserJson(
-                        null,
-                        "duck-3",
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
-
-
-    @Test
-    void findAllUsersInUserDataSpringJDBC() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        List<UserJson> users = usersDbClient.findAllUdUsersSpringJdbc();
-        System.out.println("Общий список пользователей из Userdata: ");
-        for (UserJson user : users) {
-            System.out.println(user.username());
-        }
-    }
-
-    @Test
-    void findAllUsersInAuthSpringJDBC() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        List<AuthUserJson> users = usersDbClient.findAllAuthUsersSpringJdbc();
-        System.out.println("Общий список пользователей из Auth: ");
-        for (AuthUserJson user : users) {
-            System.out.println(user.username());
-        }
-    }
-
-    @Test
-    void findAllAuthoritiesInAuthSpringJDBC() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        List<AuthorityJson> authorities = usersDbClient.findAllAuthoritiesSpringJdbc();
-        System.out.println("Общий список id всех прав всех пользователей из Auth: ");
-        for (AuthorityJson authority : authorities) {
-            System.out.println(authority.id());
-        }
-    }
-
-    @Test
-    void deleteUserSpring() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        usersDbClient.deleteUserSpringTx("duck-4");
-    }
-
-    // JDBC TESTS
-    @Test
-    void createUserJDBCTx() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserJDBCTx(
-                new UserJson(
-                        null,
-                        "duck-4",
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
-
-
-    @Test
-    void createUserJDBC() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserJDBC(
-                new UserJson(
-                        null,
-                        "duck-5",
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
-
-
-    @Test
-    void deleteUserJdbc() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        usersDbClient.deleteUserJDBCTx("duck-3");
-    }
-
-    @Test
-    void findUserByIdInUserdata() {
-        UUID userId = UUID.fromString("78b327d0-78ed-4915-8df5-461d8a24a458");
-
+    void findFullUserById() {
         UsersDbClient us = new UsersDbClient();
-        Optional<UserJson> user = us.findUserById(userId);
+        UUID userId = UUID.fromString("c193778e-3fd2-48c4-9a54-90736987ea89");
+        Optional<FullUserJson> user = us.findFullUserByById(userId);
 
-        System.out.println("User найден: " + user.get().username());
+        System.out.println("FullUser найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
+        System.out.println("FullUser найден: '" + user.get().username() + "' c именами: " + user.get().firstname() + ", " + user.get().surname() + ", " + user.get().fullname());
+        System.out.println("FullUser найден: '" + user.get().username() + "' c основной валютой: " + user.get().currency());
     }
 
     @Test
-    void findUserByUsernameInUserData() {
-
+    void findFullUserByUserName() {
         UsersDbClient us = new UsersDbClient();
-        Optional<UserJson> user = us.findUserByUsername("duck");
+        Optional<FullUserJson> user = us.findFullUserByUsername("fox");
 
-        System.out.println("User найден: " + user.get().id());
-        // a18b5ba5-1f73-4164-87f7-ebfbe8dc4585
+        System.out.println("FullUser найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
+        System.out.println("FullUser найден: '" + user.get().username() + "' c именами: " + user.get().firstname() + ", " + user.get().surname() + ", " + user.get().fullname());
+        System.out.println("FullUser найден: '" + user.get().username() + "' c основной валютой: " + user.get().currency());
     }
 
     @Test
-    void findAllUsersInUserData() {
-
+    void createOutcomeInvitations() {
         UsersDbClient usersDbClient = new UsersDbClient();
-        List<UserJson> users = usersDbClient.findAllUdUsers();
-        System.out.println("Общий список пользователей из Userdata: ");
-        for (UserJson user : users) {
-            System.out.println(user.username());
-        }
+        UserJson targetUser =
+                new UserJson(
+                        null,
+                        "fox",
+                        CurrencyValues.EUR,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+        usersDbClient.createOutcomeInvitations(targetUser, 2);
+    }
+
+@Test
+    void createIncomeInvitations() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson targetUser =
+                new UserJson(
+                        null,
+                        "fox",
+                        CurrencyValues.EUR,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+        usersDbClient.createIncomeInvitations(targetUser, 1);
     }
 
     @Test
-    void findAllUsersInAuth() {
-
+    void addFriends() {
         UsersDbClient usersDbClient = new UsersDbClient();
-        List<AuthUserJson> users = usersDbClient.findAllAuthUsers();
-        System.out.println("Общий список пользователей из Auth: ");
-        for (AuthUserJson user : users) {
-            System.out.println(user.username());
-        }
-    }
-
-    @Test
-    void findAllAuthoritiesInAuth() {
-
-        UsersDbClient usersDbClient = new UsersDbClient();
-        List<AuthorityJson> authorities = usersDbClient.findAllAuthorities();
-        System.out.println("Общий список id всех прав всех пользователей из Auth: ");
-        for (AuthorityJson authority : authorities) {
-            System.out.println(authority.id());
-        }
+        UserJson targetUser =
+                new UserJson(
+                        null,
+                        "fox",
+                        CurrencyValues.EUR,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+        usersDbClient.addFriends(targetUser, 2);
     }
 }
 
