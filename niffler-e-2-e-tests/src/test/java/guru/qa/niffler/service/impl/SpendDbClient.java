@@ -1,142 +1,188 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.dao.CategoryDao;
-import guru.qa.niffler.data.dao.SpendDao;
-import guru.qa.niffler.data.dao.impl.jdbc.CategoryDaoJdbc;
-import guru.qa.niffler.data.dao.impl.jdbc.SpendDaoJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.repository.SpendRepository;
+import guru.qa.niffler.data.repository.impl.SpendRepositoryHibernate;
 import guru.qa.niffler.data.tpl.JdbcTransactionTemplate;
+import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
+import guru.qa.niffler.service.SpendClient;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 
-public class SpendDbClient {
+public class SpendDbClient implements SpendClient {
 
     private static final Config CFG = Config.getInstance();
 
-    private final SpendDao spendDao = new SpendDaoJdbc();
-    private final CategoryDao categoryDao = new CategoryDaoJdbc();
+    private final SpendRepository spendRepository = new SpendRepositoryHibernate();
 
     private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(
             CFG.spendJdbcUrl()
     );
 
-    // CATEGORY JDBC
+    private final XaTransactionTemplate xaTxTemplate = new XaTransactionTemplate(
+            CFG.spendJdbcUrl()
+    );
 
-    public CategoryJson createCategory(CategoryJson category) {
-        return jdbcTxTemplate.execute(() -> CategoryJson.fromEntity(
-                categoryDao.create(CategoryEntity.fromJson(category)))
-        );
-    }
-
-    public void updateCategory(CategoryJson category) {
-        jdbcTxTemplate.execute(() ->
-                CategoryJson.fromEntity(
-                        categoryDao.update(CategoryEntity.fromJson(category)))
-        );
-    }
-
-    public void deleteCategory(UUID categoryId) {
-        jdbcTxTemplate.execute(() -> {
-            Optional<CategoryEntity> category = categoryDao
-                    .findCategoryById(categoryId);
-
-            if (category.isPresent()) {
-                categoryDao.delete(category.get());
-            } else {
-                throw new IllegalArgumentException("Категория для удаления не найдена: " + categoryId);
-            }
-            return null;
-        });
-    }
-
-    public Optional<CategoryJson> findCategoryByNameAndUserName(String username, String categoryName) {
-        return jdbcTxTemplate.execute(() -> {
-            Optional<CategoryEntity> category = categoryDao
-                    .findCategoryByUsernameAndCategoryName(username, categoryName);
-            return category.map(CategoryJson::fromEntity);
-        });
-    }
-
-    public Optional<CategoryJson> findCategoryById(UUID categoryId) {
-        return jdbcTxTemplate.execute(() -> {
-            Optional<CategoryEntity> category = categoryDao
-                    .findCategoryById(categoryId);
-            return category.map(CategoryJson::fromEntity);
-        });
-    }
-
-    public List<CategoryJson> findAllCategoriesByUserName(String username) {
-        return jdbcTxTemplate.execute(() -> {
-            List<CategoryEntity> categories = categoryDao
-                    .findAllByUsername(username);
-
-            return categories.stream()
-                    .map(CategoryJson::fromEntity)
-                    .toList();
-        });
-    }
-
-    public List<CategoryJson> findAllCategories() {
-        return jdbcTxTemplate.execute(() -> {
-            List<CategoryEntity> categories = categoryDao.findAll();
-
-            return categories.stream()
-                    .map(CategoryJson::fromEntity)
-                    .toList();
-        });
-    }
-
-    // SPEND JDBC
-
-    public SpendJson createSpend(SpendJson spend) {
-        return jdbcTxTemplate.execute(() -> {
+    @Override
+    public SpendJson create(SpendJson spend) {
+        return xaTxTemplate.execute(() -> {
                     SpendEntity spendEntity = SpendEntity.fromJson(spend);
 
                     if (spendEntity.getCategory().getId() == null) {
 
-                        Optional<CategoryEntity> existingCategory = categoryDao
-                                .findCategoryByUsernameAndCategoryName(spend.category().username(), spend.category().name());
+                        Optional<CategoryEntity> existingCategory = spendRepository
+                                .findCategoryByUsernameAndName(spend.category().username(), spend.category().name());
+
                         if (existingCategory.isPresent()) {
                             spendEntity.setCategory(existingCategory.get());
                         } else {
-                            CategoryEntity categoryEntity = categoryDao
-                                    .create(spendEntity.getCategory());
+                            CategoryEntity categoryEntity = spendRepository
+                                    .createCategory(spendEntity.getCategory());
                             spendEntity.setCategory(categoryEntity);
                         }
                     }
                     return SpendJson.fromEntity(
-                            spendDao.create(spendEntity)
+                            spendRepository.create(spendEntity)
                     );
                 }
         );
 
     }
 
-    public void deleteSpend(UUID spendId) {
-        jdbcTxTemplate.execute(() -> {
-            Optional<SpendEntity> spend = spendDao
-                    .findSpendById(spendId);
+    @Override
+    public CategoryJson createCategory(CategoryJson category) {
+        return xaTxTemplate.execute(() -> CategoryJson.fromEntity(
+                spendRepository.createCategory(CategoryEntity.fromJson(category)))
+        );
+    }
 
-            if (spend.isPresent()) {
-                spendDao.delete(spend.get());
+    //    public SpendJson updateSpend(SpendJson spend) {
+//        return jdbcTxTemplate.execute(() ->
+//                SpendJson.fromEntity(
+//                        spendRepository.update(SpendEntity.fromJson(spend)))
+//        );
+//    }
+    @Override
+    public SpendJson update(SpendJson updateSpend) {
+        return xaTxTemplate.execute(() -> {
+
+            UUID spendId = updateSpend.id();
+
+            SpendEntity spendEntity = spendRepository.findById(spendId)
+                    .orElseThrow(() -> new IllegalStateException("Spend not found: " + spendId));
+
+            if (updateSpend.username() != null) {
+                spendEntity.setUsername(updateSpend.username());
+            }
+            if (updateSpend.description() != null) {
+                spendEntity.setDescription(updateSpend.description());
+            }
+            if (updateSpend.amount() != null) {
+                spendEntity.setAmount(updateSpend.amount());
+            }
+            if (updateSpend.currency() != null) {
+                spendEntity.setCurrency(updateSpend.currency());
+            }
+
+            if (updateSpend.category() != null && updateSpend.category().id() != null) {
+                // 🔍 находим CategoryEntity, а не SpendEntity!
+                CategoryEntity category = spendRepository.findCategoryById(updateSpend.category().id())
+                        .orElseThrow(() -> new IllegalStateException("Category not found: " + updateSpend.category().id()));
+                spendEntity.setCategory(category); // ✅ сюда передаём CategoryEntity
+            }
+
+            spendRepository.update(spendEntity);
+            return SpendJson.fromEntity(spendEntity);
+        });
+    }
+
+    @Override
+    public CategoryJson updateCategory(CategoryJson updateCategory) {
+        return xaTxTemplate.execute(() -> {
+
+            UUID categoryId = updateCategory.id();
+
+            CategoryEntity categoryEntity = spendRepository.findCategoryById(categoryId)
+                    .orElseThrow(() -> new IllegalStateException("Category not found: " + categoryId));
+
+            if (updateCategory.name() != null) {
+                categoryEntity.setName(updateCategory.name());
+            }
+
+            if (updateCategory.username() != null) {
+                categoryEntity.setUsername(updateCategory.username());
+            }
+            if (updateCategory.archived() != null) {
+                categoryEntity.setArchived(updateCategory.archived());
+            }
+
+            spendRepository.updateCategory(categoryEntity);
+
+            return CategoryJson.fromEntity(categoryEntity);
+
+        });
+    }
+
+    @Override
+    public void removeCategory(CategoryJson categoryJson) {
+        xaTxTemplate.execute(() -> {
+            Optional<CategoryEntity> category = spendRepository
+                    .findCategoryById(categoryJson.id());
+
+            if (category.isPresent()) {
+                spendRepository.removeCategory(category.get());
             } else {
-                throw new IllegalArgumentException("Spend для удаления не найден: " + spendId);
+                throw new IllegalArgumentException("Категория для удаления не найдена: " + categoryJson.id());
             }
             return null;
         });
     }
 
-    public Optional<SpendJson> findSpendById(UUID spendId) {
-        return jdbcTxTemplate.execute(() -> {
-            Optional<SpendEntity> spend = spendDao
-                    .findSpendById(spendId);
+    @Override
+    public void remove(SpendJson spendJson) {
+        xaTxTemplate.execute(() -> {
+            Optional<SpendEntity> spend = spendRepository
+                    .findById(spendJson.id());
+
+            if (spend.isPresent()) {
+                spendRepository.remove(spend.get());
+            } else {
+                throw new IllegalArgumentException("Spend для удаления не найден: " + spendJson.id());
+            }
+            return null;
+        });
+    }
+
+    @Override
+    public Optional<CategoryJson> findCategoryByUsernameAndSpendName(String username, String name) {
+        return xaTxTemplate.execute(() -> {
+            Optional<CategoryEntity> category = spendRepository
+                    .findCategoryByUsernameAndName(username, name);
+            return category.map(CategoryJson::fromEntity);
+        });
+    }
+
+    @Override
+    public Optional<CategoryJson> findCategoryById(UUID categoryId) {
+        return xaTxTemplate.execute(() -> {
+            Optional<CategoryEntity> category = spendRepository
+                    .findCategoryById(categoryId);
+            return category.map(CategoryJson::fromEntity);
+        });
+    }
+
+
+    @Override
+    public Optional<SpendJson> findById(UUID spendId) {
+        return xaTxTemplate.execute(() -> {
+            Optional<SpendEntity> spend = spendRepository
+                    .findById(spendId);
 
             if (spend.isPresent()) {
                 return Optional.of(SpendJson.fromEntity(spend.get()));
@@ -146,26 +192,17 @@ public class SpendDbClient {
         });
     }
 
+    @Override
+    public Optional<SpendJson> findByUsernameAndDescription(String username, String description) {
+        return xaTxTemplate.execute(() -> {
+            Optional<SpendEntity> spend = spendRepository
+                    .findByUsernameAndDescription(username, description);
 
-    public List<SpendJson> findAllSpendByUserName(String username) {
-        return jdbcTxTemplate.execute(() -> {
-            List<SpendEntity> spendsEntity = spendDao
-                    .findAllByUsername(username);
-
-            return spendsEntity.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
-        });
-    }
-
-    public List<SpendJson> findAllSpends() {
-        return jdbcTxTemplate.execute(() -> {
-            List<SpendEntity> spendsEntity = spendDao
-                    .findAll();
-
-            return spendsEntity.stream()
-                    .map(SpendJson::fromEntity)
-                    .toList();
+            if (spend.isPresent()) {
+                return Optional.of(SpendJson.fromEntity(spend.get()));
+            } else {
+                return Optional.empty();
+            }
         });
     }
 }

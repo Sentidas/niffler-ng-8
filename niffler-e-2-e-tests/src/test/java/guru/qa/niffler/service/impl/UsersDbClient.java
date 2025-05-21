@@ -94,6 +94,9 @@ public class UsersDbClient implements UsersClient {
 
     public UserJson updateUser(String username, UserJson updatedUser) {
         return xaTxTemplate.execute(() -> {
+
+          //  String username  = Optional.of(authUserRepository.findByUsername(updatedUser.username()));
+
             AuthUserEntity authUser = authUserRepository.findByUsername(username)
                     .orElseThrow(() -> new IllegalStateException("User not found in auth: " + username));
 
@@ -139,6 +142,7 @@ public class UsersDbClient implements UsersClient {
             return UserJson.fromEntity(user);
         });
     }
+
 
     public Optional<FullUserJson> findFullUserByById(UUID userId) {
         return xaTxTemplate.execute(() -> {
