@@ -17,9 +17,9 @@ public class CategoryEntityRowMapper implements RowMapper<CategoryEntity> {
     @Override
     public CategoryEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         CategoryEntity result = new CategoryEntity();
-        result.setId(rs.getObject("id", UUID.class));
-        result.setName(rs.getString("name"));
-        result.setUsername(rs.getString("username"));
+        result.setId(rs.getObject("category_id", UUID.class));
+        result.setName(rs.getString("category_name"));
+        result.setUsername(rs.getString("category_username"));
         result.setArchived(rs.getBoolean("archived"));
         return result;
     }

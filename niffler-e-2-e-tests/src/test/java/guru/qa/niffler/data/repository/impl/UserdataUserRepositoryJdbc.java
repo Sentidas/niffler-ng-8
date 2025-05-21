@@ -116,7 +116,34 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
+    public UserEntity update(UserEntity user) {
+        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+                "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, " +
+                        "full_name = ?, photo = ?, photo_small = ? WHERE id = ?"
+        )) {
+            ps.setString(1, user.getUsername());
+            ps.setObject(2, user.getCurrency().name());
+            ps.setString(3, user.getFirstname());
+            ps.setString(4, user.getSurname());
+            ps.setString(5, user.getFullname());
+            ps.setBytes(6, user.getPhoto());
+            ps.setBytes(7, user.getPhotoSmall());
+            ps.setObject(8, user.getId());
+
+            int rowsUpdate = ps.executeUpdate();
+            if (rowsUpdate == 0) {
+                throw new IllegalStateException("Пользователь не найден с ID:" + user.getId());
+            }
+            System.out.println("Обновлено в userdata.user '" + rowsUpdate + "' строк");
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Ошибка при обновлении пользователя в userdata", e);
+        }
+        return user;
+    }
+
+    @Override
+    public void sendInvitation(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO friendship (requester_id, addressee_id, status, created_date) " +
                         "VALUES ( ?, ?, ?, ?)")) {
@@ -133,60 +160,43 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
-        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "INSERT INTO friendship (requester_id, addressee_id, status, created_date) " +
-                        "VALUES ( ?, ?, ?, ?)")) {
-            ps.setObject(1, addressee.getId());
-            ps.setObject(2, requester.getId());
-            ps.setString(3, String.valueOf(FriendshipStatus.PENDING));
-            ps.setDate(4, new java.sql.Date(new Date().getTime()));
+    public void addFriend(UserEntity requester, UserEntity addressee) {
 
-            ps.executeUpdate();
+        sendInvitation(requester, addressee);
+        sendInvitation(addressee, requester);
 
+        // Меняем статус на ACCEPTED для двух записей
+        try (PreparedStatement update = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+                "UPDATE friendship SET status = ? WHERE " +
+                        "(requester_id = ? AND addressee_id = ?) OR " +
+                        "(requester_id = ? AND addressee_id = ?)"
+        )) {
+            update.setString(1, String.valueOf(FriendshipStatus.ACCEPTED));
+            update.setObject(2, requester.getId());
+            update.setObject(3, addressee.getId());
+            update.setObject(4, addressee.getId());
+            update.setObject(5, requester.getId());
+
+            update.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void addFriend(UserEntity requester, UserEntity addressee) {
-        try {
-            // Проверяем наличие заявки со статусом PENDING
-            try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                    "SELECT * FROM friendship WHERE requester_id = ? AND addressee_id = ? AND status = ?"
-            )) {
-                ps.setObject(1, requester.getId());
-                ps.setObject(2, addressee.getId());
-                ps.setString(3, String.valueOf(FriendshipStatus.PENDING));
+@Override
+public void remove(UserEntity user) {
+    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+            "DELETE FROM \"user\" WHERE username = ?"
+    )) {
+        ps.setObject(1, user.getUsername());
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next()) {
-                        throw new IllegalStateException("Нет заявки от " + requester.getUsername() + " к " + addressee.getUsername());
-                    }
-                }
-            }
+        int rowDeleted = ps.executeUpdate();
+        System.out.println("Удалено из userdata.user '" + rowDeleted + "' строк");
 
-            // Добавляем обратную заявку
-            addIncomeInvitation(requester, addressee);
-
-            // Меняем статус на ACCEPTED для двух записей
-            try (PreparedStatement update = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                    "UPDATE friendship SET status = ? WHERE " +
-                            "(requester_id = ? AND addressee_id = ?) OR " +
-                            "(requester_id = ? AND addressee_id = ?)"
-            )) {
-                update.setString(1, String.valueOf(FriendshipStatus.ACCEPTED));
-                update.setObject(2, requester.getId());
-                update.setObject(3, addressee.getId());
-                update.setObject(4, addressee.getId());
-                update.setObject(5, requester.getId());
-
-                update.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
 }
+}
+
 

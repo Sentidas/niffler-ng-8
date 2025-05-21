@@ -9,11 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
+public class SpendAndCategoryEntityRowMapper implements RowMapper<SpendEntity> {
 
-    public static final SpendEntityRowMapper instance = new SpendEntityRowMapper();
+    public static final SpendAndCategoryEntityRowMapper instance = new SpendAndCategoryEntityRowMapper();
 
-    private SpendEntityRowMapper() {
+    private SpendAndCategoryEntityRowMapper() {
     }
 
     @Override
@@ -30,6 +30,9 @@ public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
         CategoryEntity resultCategory = new CategoryEntity();
         resultCategory.setId(categoryId);
         result.setCategory(resultCategory);
+        resultCategory.setUsername(rs.getString("category_username"));
+        resultCategory.setName(rs.getString("category_name"));
+        resultCategory.setArchived(rs.getBoolean("archived"));
         return result;
     }
 }

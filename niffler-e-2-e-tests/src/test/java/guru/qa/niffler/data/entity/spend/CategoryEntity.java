@@ -7,8 +7,12 @@ import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static jakarta.persistence.FetchType.EAGER;
 
 @Getter
 @Setter
@@ -28,6 +32,9 @@ public class CategoryEntity implements Serializable {
 
   @Column(nullable = false)
   private boolean archived;
+
+  @OneToMany(fetch = EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "category")
+  private List<SpendEntity> spends = new ArrayList<>();
 
   public static CategoryEntity fromJson(CategoryJson json) {
     CategoryEntity ce = new CategoryEntity();

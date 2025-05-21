@@ -3,12 +3,10 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
-
-import java.util.UUID;
 
 public class CategoryExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
@@ -29,7 +27,8 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                                 null,
                                 nameCategory,
                                 anno.username(),
-                                false
+                                false,
+                                null
                         );
 
                         CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
@@ -52,7 +51,8 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                     categoryJson.id(),
                     categoryJson.name(),
                     categoryJson.username(),
-                    true
+                    true,
+                    null
             );
 
             spendDbClient.updateCategory(archivedCategory);

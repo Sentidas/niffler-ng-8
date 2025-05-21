@@ -4,7 +4,7 @@ import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -33,7 +33,8 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                         null,
                                         anno.spendings()[0].category(),
                                         anno.username(),
-                                        false
+                                        false,
+                                        null
                                 ),
                                 spending.currency(),
                                 spending.amount(),
@@ -41,7 +42,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                 anno.username()
                         );
 
-                        SpendJson created = spendDbClient.createSpend(spendJson);
+                        SpendJson created = spendDbClient.create(spendJson);
                         context.getStore(NAMESPACE).put(context.getUniqueId(), created);
                     }
                 });
