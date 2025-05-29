@@ -40,16 +40,4 @@ public record AuthUserJson(
                         roles
                 );
         }
-
-//        public AuthUserJson withEncodedPassword(String encodedPassword) {
-//                return new AuthUserJson(
-//                        this.id,
-//                        this.username,
-//                        encodedPassword,
-//                        this.enabled,
-//                        this.accountNonExpired,
-//                        this.accountNonExpired,
-//                        this.credentialsNonExpired
-//                );
-//        }
 }

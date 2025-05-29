@@ -3,11 +3,10 @@ package guru.qa.niffler.test.web.JDBC;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,19 +16,20 @@ public class CategoryAndSpendTest {
     void createSpend() {
         SpendDbClient spendDbClient = new SpendDbClient();
 
-        SpendJson spend = spendDbClient.createSpend(
+        SpendJson spend = spendDbClient.create(
                 new SpendJson(
                         null,
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "корм для медведя",
+                                "корм для капибары",
                                 "duck",
-                                false
+                                false,
+                                null
                         ),
                         CurrencyValues.EUR,
                         1000.0,
-                        "100000 bear",
+                        "Школа122",
                         "duck"
                 )
         );
@@ -38,59 +38,126 @@ public class CategoryAndSpendTest {
 
 
     @Test
-    void findSpend() {
-        UUID spendId = UUID.fromString("8e400fe8-db3c-4126-b87d-2e776e82de91");
+    void updateSpend() {
+        SpendDbClient spendDbClient = new SpendDbClient();
+        UUID spendId = UUID.fromString("f0275470-3551-11f0-ab5b-0242ac110004");
+
+        SpendJson spend = spendDbClient.update(
+                new SpendJson(
+                        spendId,
+                        new Date(),
+                        null,
+                        CurrencyValues.USD,
+                        111.00,
+                        "корм для капибары - spend3",
+                        "duck"
+                )
+        );
+        System.out.println(spend);
+    }
+
+    @Test
+    void updateSpend2() {
+        SpendDbClient spendDbClient = new SpendDbClient();
+        UUID spendId = UUID.fromString("f0275470-3551-11f0-ab5b-0242ac110004");
+
+        SpendJson spend = spendDbClient.update(
+                new SpendJson(
+                        spendId,
+                        null,
+                        new CategoryJson(
+                                UUID.fromString("4c33c61c-2dab-11f0-b440-0242ac110004"),
+                                null,
+                                null,
+                                null,
+                                null
+                        ),
+                        CurrencyValues.USD,
+                        777.0,
+                        null,
+                        "mouse"
+                )
+        );
+        System.out.println(spend);
+    }
+
+
+    @Test
+    void findSpendById() {
+        UUID spendId = UUID.fromString("f0240338-3551-11f0-ab5b-0242ac110004");
         // UUID spendId = UUID.fromString("e18b9e81-fe04-4cc8-a055-54c8ed5ffe33");
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        Optional<SpendJson> spend = spendDbClient.findSpendById(spendId);
+        Optional<SpendJson> spend = spendDbClient.findById(spendId);
 
         spend.ifPresentOrElse(
-                categoryJson -> System.out.println("Spend найден: " + spend.get().description()),
+                spendJson -> {
+                    System.out.println("Spend найден: " + spend.get().description());
+                    System.out.println("Spend категории: " + spend.get().category().name());
+                },
                 () -> System.out.println("Spend с таким Id не найден"));
     }
 
     @Test
-    void findAllSpendsUser() {
-
+    void findSpendByUsernameAndDescription() {
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<SpendJson> spends = spendDbClient.findAllSpendByUserName("duck");
-        System.out.println("Spends пользователя: ");
-        for (SpendJson spend : spends) {
-            System.out.println(spend.description() + " ");
-        }
+        Optional<SpendJson> spend = spendDbClient.findByUsernameAndDescription("duck", "Школа_62");
+
+        spend.ifPresentOrElse(
+                spendJson -> {
+                    System.out.println("Spend найден: " + spend.get().description());
+                    System.out.println("Spend категории: " + spend.get().category().name());
+                },
+                () -> System.out.println("Spend с таким Id не найден"));
     }
+
 
     @Test
     void deleteSpend() {
-        // UUID spendId = UUID.fromString("410177ba-2105-11f0-bfca-0242ac110004");
-        UUID spendId = UUID.fromString("f9f514a6-2dae-11f0-96e1-0242ac110004");
-
         SpendDbClient spendDbClient = new SpendDbClient();
-        spendDbClient.deleteSpend(spendId);
+        UUID spendId = UUID.fromString("4d371614-4837-43ea-abe2-59bc16bf664e");
+        SpendJson spend =
+                new SpendJson(
+                        spendId,
+                        null,
+                       null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+        spendDbClient.remove(spend);
     }
 
-    @Test
-    void findAllSpends() {
-
-        SpendDbClient spendDbClient = new SpendDbClient();
-        List<SpendJson> spends = spendDbClient.findAllSpends();
-        System.out.println("Общий список spends : ");
-        for (SpendJson spend : spends) {
-            System.out.println(spend.description() + " ");
-        }
-    }
 
     @Test
     void createCategory() {
         SpendDbClient spendDbClient = new SpendDbClient();
-
         CategoryJson category = spendDbClient.createCategory(
                 new CategoryJson(
                         null,
-                        "hob99",
+                        "dance999",
                         "duck",
-                        true
+                        false,
+                        null
+                )
+        );
+        System.out.println(category);
+    }
+
+    @Test
+    void updateCategory() {
+        SpendDbClient spendDbClient = new SpendDbClient();
+        UUID categoryId = UUID.fromString("864b87ca-3613-11f0-a4a5-0242ac110004");
+
+        CategoryJson category = spendDbClient.updateCategory(
+                new CategoryJson(
+                        categoryId,
+                        "морские забавы9",
+                        "duck",
+                        false,
+                        null
                 )
         );
         System.out.println(category);
@@ -99,12 +166,15 @@ public class CategoryAndSpendTest {
 
     @Test
     void findCategoryById() {
-        UUID categoryId = UUID.fromString("3ae7c675-6abd-4cf1-ac54-1d35cd34e300");
+        UUID categoryId = UUID.fromString("f0240338-3551-11f0-ab5b-0242ac110004");
         SpendDbClient spendDbClient = new SpendDbClient();
         Optional<CategoryJson> category = spendDbClient.findCategoryById(categoryId);
 
         category.ifPresentOrElse(
-                categoryJson -> System.out.println("Категория найдена: " + categoryJson.name()),
+                categoryJson -> {
+                    System.out.println("Категория найдена: " + categoryJson.name());
+                    System.out.println("Spends категории:" + categoryJson.spends());
+                },
                 () -> System.out.println("Категория с таким Id не найдена"));
     }
 
@@ -112,39 +182,30 @@ public class CategoryAndSpendTest {
     void findCategoryByNameAndUserName() {
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        Optional<CategoryJson> category = spendDbClient.findCategoryByNameAndUserName("duck", "Такси_42");
+        Optional<CategoryJson> category = spendDbClient.findCategoryByUsernameAndSpendName("duck", "корм для капибары");
 
-        System.out.println("Категория найдена: " + category.get().name());
+        category.ifPresentOrElse(
+                categoryJson -> {
+                    System.out.println("Категория найдена: " + categoryJson.name());
+                    System.out.println("Spends категории:" + categoryJson.spends());
+                },
+                () -> System.out.println("Категория с таким Id не найдена"));
     }
 
-    @Test
-    void findAllCategoriesByUserName() {
-
-        SpendDbClient spendDbClient = new SpendDbClient();
-        List<CategoryJson> categories = spendDbClient.findAllCategoriesByUserName("duck");
-        System.out.println("Список категорий: ");
-        for (CategoryJson category : categories) {
-            System.out.println(category.name());
-        }
-    }
 
     @Test
     void deleteCategory() {
-        // UUID categoryId = UUID.fromString("91326cc6-2105-11f0-bc4d-0242ac110004");
-        UUID categoryId = UUID.fromString("4d48d926-2daf-11f0-9710-0242ac110004");
-        SpendDbClient spendDbClient = new SpendDbClient();
-        spendDbClient.deleteCategory(categoryId);
-    }
+        UUID categoryId = UUID.fromString("4c33c61c-2dab-11f0-b440-0242ac110004");
+        CategoryJson category =  new CategoryJson(
+                        categoryId,
+                        null,
+                        null,
+                        false,
+                        null
+                );
 
-    @Test
-    void findAllCategories() {
-
         SpendDbClient spendDbClient = new SpendDbClient();
-        List<CategoryJson> categories = spendDbClient.findAllCategories();
-        System.out.println("Общий список категорий: ");
-        for (CategoryJson category : categories) {
-            System.out.println(category.name());
-        }
+        spendDbClient.removeCategory(category);
     }
 }
 
