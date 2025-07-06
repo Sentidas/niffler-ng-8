@@ -5,7 +5,7 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.extractor.AuthUserResultSetExtractor;
 import guru.qa.niffler.data.repository.AuthUserRepository;
-import guru.qa.niffler.data.tpl.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -91,13 +91,21 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
 
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "SELECT " +
-                                "u.id AS user_id, u.username, u.password, u.enabled, " +
-                                "u.account_non_expired, u.account_non_locked, u.credentials_non_expired, " +
-                                "a.id AS authority_id, a.authority " +
-                                "FROM \"user\" u " +
-                                "JOIN authority a ON u.id = a.user_id " +
-                                "WHERE u.id = ?",
+                        """
+                                    SELECT
+                                        u.id AS user_id,
+                                        u.username,
+                                        u.password,
+                                        u.enabled,
+                                        u.account_non_expired,
+                                        u.account_non_locked,
+                                        u.credentials_non_expired,
+                                        a.id AS authority_id,
+                                        a.authority
+                                    FROM "user" u
+                                    JOIN authority a ON u.id = a.user_id
+                                    WHERE u.id = ?
+                                """,
                         AuthUserResultSetExtractor.instance,
                         id
                 )
@@ -110,13 +118,21 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
 
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "SELECT " +
-                                "u.id AS user_id, u.username, u.password, u.enabled, " +
-                                "u.account_non_expired, u.account_non_locked, u.credentials_non_expired, " +
-                                "a.id AS authority_id, a.authority " +
-                                "FROM \"user\" u " +
-                                "JOIN authority a ON u.id = a.user_id " +
-                                "WHERE u.username = ?",
+                        """
+                                SELECT 
+                                    u.id AS user_id,
+                                    u.username,
+                                    u.password,
+                                    u.enabled,
+                                    u.account_non_expired,
+                                    u.account_non_locked,
+                                    u.credentials_non_expired,
+                                    a.id AS authority_id,
+                                    a.authority
+                                FROM "user" u
+                                JOIN authority a ON u.id = a.user_id
+                                WHERE u.username = ?
+                                """,
                         AuthUserResultSetExtractor.instance,
                         username
                 )

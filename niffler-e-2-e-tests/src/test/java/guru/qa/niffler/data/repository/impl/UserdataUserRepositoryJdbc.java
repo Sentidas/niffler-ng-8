@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.tpl.Connections.holder;
+import static guru.qa.niffler.data.jdbc.Connections.holder;
 
 public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 
@@ -167,9 +167,12 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 
         // Меняем статус на ACCEPTED для двух записей
         try (PreparedStatement update = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "UPDATE friendship SET status = ? WHERE " +
-                        "(requester_id = ? AND addressee_id = ?) OR " +
-                        "(requester_id = ? AND addressee_id = ?)"
+                """
+                        UPDATE friendship
+                        SET status = ?
+                        WHERE (requester_id = ? AND addressee_id = ?)
+                           OR (requester_id = ? AND addressee_id = ?)
+                        """
         )) {
             update.setString(1, String.valueOf(FriendshipStatus.ACCEPTED));
             update.setObject(2, requester.getId());
@@ -183,20 +186,20 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
         }
     }
 
-@Override
-public void remove(UserEntity user) {
-    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-            "DELETE FROM \"user\" WHERE username = ?"
-    )) {
-        ps.setObject(1, user.getUsername());
+    @Override
+    public void remove(UserEntity user) {
+        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+                "DELETE FROM \"user\" WHERE username = ?"
+        )) {
+            ps.setObject(1, user.getUsername());
 
-        int rowDeleted = ps.executeUpdate();
-        System.out.println("Удалено из userdata.user '" + rowDeleted + "' строк");
+            int rowDeleted = ps.executeUpdate();
+            System.out.println("Удалено из userdata.user '" + rowDeleted + "' строк");
 
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
-}
 }
 
 

@@ -39,21 +39,22 @@ public class UserTest {
         UserJson updatedUser =
                 new UserJson(
                         null,
-                        "cat",
+                        "duck-500",
                         CurrencyValues.RUB,
                         "murk",
                         null,
                         "angry catty",
                         null,
+                        null,
                         null
                 );
-        usersDbClient.updateUser("catty", updatedUser);
+        usersDbClient.updateUser("duck-200", updatedUser);
     }
 
     @Test
     void findFullUserById() {
         UsersDbClient us = new UsersDbClient();
-        UUID userId = UUID.fromString("c193778e-3fd2-48c4-9a54-90736987ea89");
+        UUID userId = UUID.fromString("c98a52fe-cbdc-4dd9-a379-01025cf2c59d");
         Optional<FullUserJson> user = us.findFullUserByById(userId);
 
         System.out.println("FullUser найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
@@ -66,9 +67,16 @@ public class UserTest {
         UsersDbClient us = new UsersDbClient();
         Optional<FullUserJson> user = us.findFullUserByUsername("fox");
 
-        System.out.println("FullUser найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
-        System.out.println("FullUser найден: '" + user.get().username() + "' c именами: " + user.get().firstname() + ", " + user.get().surname() + ", " + user.get().fullname());
-        System.out.println("FullUser найден: '" + user.get().username() + "' c основной валютой: " + user.get().currency());
+        if (user.isEmpty()) {
+            System.out.println("Пользователь 'fox' не найден в базе.");
+            return;
+        }
+
+        FullUserJson u = user.get(); // теперь безопасно
+
+        System.out.println("FullUser найден: '" + u.username() + "' c ролями: " + String.join(", ", u.authorities()));
+        System.out.println("FullUser найден: '" + u.username() + "' c именами: " + u.firstname() + ", " + u.surname() + ", " + u.fullname());
+        System.out.println("FullUser найден: '" + u.username() + "' c основной валютой: " + u.currency());
     }
 
     @Test
@@ -77,8 +85,9 @@ public class UserTest {
         UserJson targetUser =
                 new UserJson(
                         null,
-                        "fox",
+                        "panda",
                         CurrencyValues.EUR,
+                        null,
                         null,
                         null,
                         null,
@@ -94,8 +103,9 @@ public class UserTest {
         UserJson targetUser =
                 new UserJson(
                         null,
-                        "fox",
+                        "panda",
                         CurrencyValues.EUR,
+                        null,
                         null,
                         null,
                         null,
@@ -111,13 +121,15 @@ public class UserTest {
         UserJson targetUser =
                 new UserJson(
                         null,
-                        "fox",
+                        "horse",
                         CurrencyValues.EUR,
                         null,
                         null,
                         null,
                         null,
+                        null,
                         null
+
                 );
         usersDbClient.addFriends(targetUser, 2);
     }

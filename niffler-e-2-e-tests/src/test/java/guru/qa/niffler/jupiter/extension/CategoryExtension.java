@@ -1,16 +1,22 @@
 package guru.qa.niffler.jupiter.extension;
 
+import com.github.javafaker.Cat;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.impl.SpendDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-public class CategoryExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CategoryExtension implements BeforeEachCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-    private final SpendDbClient spendDbClient = new SpendDbClient();
+    private final SpendDbClient spendClient = new SpendDbClient();
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -18,57 +24,54 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(anno -> {
 
-                    if (anno.categories().length > 0) {
-                        Category category = anno.categories()[0];
+                    if (ArrayUtils.isNotEmpty(anno.categories())) {
+                        UserJson createdUser = UserExtension.createdUser();
+                        final String username = createdUser != null
+                                ? createdUser.username()
+                                : anno.username();
 
-                        String nameCategory = RandomDataUtils.randomCategoryName();
+                        final List<CategoryJson> createdCategories = new ArrayList<>();
 
-                        CategoryJson categoryJson = new CategoryJson(
-                                null,
-                                nameCategory,
-                                anno.username(),
-                                false,
-                                null
-                        );
+                        for (Category categoryAnno : anno.categories()) {
+                            final String categoryName = "".equals(categoryAnno.name())
+                                    ? RandomDataUtils.randomCategoryName()
+                                    : categoryAnno.name();
 
-                        CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
+                            CategoryJson categoryJson = new CategoryJson(
+                                    null,
+                                    categoryName,
+                                    username,
+                                    categoryAnno.archived(),
+                                    null
+                            );
+                            createdCategories.add(
+                                    spendClient.createCategory(categoryJson));
+                        }
 
-                        System.out.println("Категория '" + nameCategory + "' создана. " + "Статус архивности: " + category.archived());
-                        context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
+                        if (createdUser != null) {
+                            createdUser.testData().categories().addAll(
+                                    createdCategories
+                            );
+                        } else {
+                            context.getStore(NAMESPACE).put(
+                                    context.getUniqueId(),
+                                    createdCategories);
+                        }
                     }
                 });
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
-
-        CategoryJson categoryJson = context.getStore(NAMESPACE)
-                .get(context.getUniqueId(), CategoryJson.class);
-
-        if (categoryJson != null && !categoryJson.archived()) {
-
-            CategoryJson archivedCategory = new CategoryJson(
-                    categoryJson.id(),
-                    categoryJson.name(),
-                    categoryJson.username(),
-                    true,
-                    null
-            );
-
-            spendDbClient.updateCategory(archivedCategory);
-            System.out.println("После окончания теста у категории '" + archivedCategory.name() + "' изменен статус архивности на: " + archivedCategory.archived());
-
-
-        }
-    }
-
-    @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().isAssignableFrom(CategoryJson.class);
+        return parameterContext.getParameter().getType().isAssignableFrom(CategoryJson[].class);
     }
 
     @Override
-    public CategoryJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), CategoryJson.class);
-    }
+    @SuppressWarnings("unchecked")
+    public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        return (CategoryJson[]) extensionContext.getStore(NAMESPACE)
+                .get(extensionContext.getUniqueId(),List.class)
+                .stream()
+                .toArray(CategoryJson[] :: new);
+   }
 }

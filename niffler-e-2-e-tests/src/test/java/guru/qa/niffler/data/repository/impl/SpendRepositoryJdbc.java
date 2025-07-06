@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.tpl.Connections.holder;
+import static guru.qa.niffler.data.jdbc.Connections.holder;
 
 public class SpendRepositoryJdbc implements SpendRepository {
 
@@ -58,12 +58,23 @@ public class SpendRepositoryJdbc implements SpendRepository {
     public Optional<SpendEntity> findById(UUID id) {
 
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "SELECT " +
-                        "s.id AS spend_id, s.username AS spend_username, s.spend_date, s.currency, s.amount, s.description, s.category_id AS spend_category_id, " +
-                        "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived " +
-                        "FROM spend s " +
-                        "JOIN category c ON s.category_id = c.id " +
-                        "WHERE s.id = ?"
+                """
+                        SELECT 
+                            s.id AS spend_id,
+                            s.username AS spend_username,
+                            s.spend_date,
+                            s.currency,
+                            s.amount,
+                            s.description,
+                            s.category_id AS spend_category_id,
+                            c.id AS category_id,
+                            c.name AS category_name,
+                            c.username AS category_username,
+                            c.archived
+                        FROM spend s
+                        JOIN category c ON s.category_id = c.id
+                        WHERE s.id = ?
+                        """
         )) {
             ps.setObject(1, id);
 
@@ -92,12 +103,23 @@ public class SpendRepositoryJdbc implements SpendRepository {
     public Optional<SpendEntity> findByUsernameAndDescription(String username, String description) {
 
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "SELECT " +
-                        "s.id AS spend_id, s.username AS spend_username, s.spend_date, s.currency, s.amount, s.description, s.category_id AS spend_category_id, " +
-                        "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived " +
-                        "FROM spend s " +
-                        "JOIN category c ON s.category_id = c.id " +
-                        "WHERE s.username = ? AND s.description = ?"
+                """
+                        SELECT 
+                            s.id AS spend_id,
+                            s.username AS spend_username,
+                            s.spend_date,
+                            s.currency,
+                            s.amount,
+                            s.description,
+                            s.category_id AS spend_category_id,
+                            c.id AS category_id,
+                            c.name AS category_name,
+                            c.username AS category_username,
+                            c.archived
+                        FROM spend s
+                        JOIN category c ON s.category_id = c.id
+                        WHERE s.username = ? AND s.description = ?
+                        """
         )) {
             ps.setString(1, username);
             ps.setString(2, description);
@@ -222,13 +244,23 @@ public class SpendRepositoryJdbc implements SpendRepository {
     public Optional<CategoryEntity> findCategoryById(UUID id) {
 
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "SELECT " +
-                        "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived, " +
-                        "s.id AS spend_id, s.username AS spend_username, s.spend_date AS spend_date, s.currency, " +
-                        "s.amount, s.description, s.category_id AS spend_category_id " +
-                        "FROM category c  " +
-                        "LEFT JOIN spend s ON c.id = s.category_id " +
-                        "WHERE c.id = ?"
+                """
+                        SELECT 
+                            c.id AS category_id,
+                            c.name AS category_name,
+                            c.username AS category_username,
+                            c.archived,
+                            s.id AS spend_id,
+                            s.username AS spend_username,
+                            s.spend_date AS spend_date,
+                            s.currency,
+                            s.amount,
+                            s.description,
+                            s.category_id AS spend_category_id
+                        FROM category c
+                        LEFT JOIN spend s ON c.id = s.category_id
+                        WHERE c.id = ?
+                        """
         )) {
             ps.setObject(1, id);
 
@@ -265,13 +297,23 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public Optional<CategoryEntity> findCategoryByUsernameAndName(String username, String categoryName) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "SELECT " +
-                        "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived, " +
-                        "s.id AS spend_id, s.username AS spend_username, s.spend_date AS spend_date, s.currency, " +
-                        "s.amount, s.description, s.category_id AS spend_category_id " +
-                        "FROM category c  " +
-                        "LEFT JOIN spend s ON c.id = s.category_id " +
-                        "WHERE c.username = ? AND c.name = ?"
+                """
+                        SELECT 
+                            c.id AS category_id,
+                            c.name AS category_name,
+                            c.username AS category_username,
+                            c.archived,
+                            s.id AS spend_id,
+                            s.username AS spend_username,
+                            s.spend_date AS spend_date,
+                            s.currency,
+                            s.amount,
+                            s.description,
+                            s.category_id AS spend_category_id
+                        FROM category c
+                        LEFT JOIN spend s ON c.id = s.category_id
+                        WHERE c.username = ? AND c.name = ?
+                        """
         )) {
             ps.setString(1, username);
             ps.setString(2, categoryName);
