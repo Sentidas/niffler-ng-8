@@ -55,18 +55,17 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                             );
 
                             createdSpendings.add(
-                                    spendClient.create(spendJson));
+                                    spendClient.createSpend(spendJson));
                         }
 
                         if (createdUser != null) {
                             createdUser.testData().spends().addAll(
                                     createdSpendings
                             );
-                        } else {
+                        }
                             context.getStore(NAMESPACE).put(
                                     context.getUniqueId(),
                                     createdSpendings);
-                        }
                     }
                 });
     }

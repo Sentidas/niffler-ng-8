@@ -18,4 +18,8 @@ public @interface User {
     String username() default "";
     Category[] categories() default {};
     Spend[] spendings() default {};
+    int friends() default 0;
+    int incomeInvitation() default 0;
+    int outcomeInvitation() default 0;
+
 }

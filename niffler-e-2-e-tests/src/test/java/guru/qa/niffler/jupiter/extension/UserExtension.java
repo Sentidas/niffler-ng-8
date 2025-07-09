@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.impl.UsersDbClient;
@@ -10,7 +10,8 @@ import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import javax.annotation.Nullable;
-import javax.print.attribute.standard.MediaSize;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
@@ -23,23 +24,41 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(anno -> {
+                    UserJson user;
 
                     if ("".equals(anno.username())) {
+                        // Случай 1: username не задан — создаём нового
                         final String username = RandomDataUtils.randomUsername();
 
-                        UserJson user = usersClient.createUser(
+                        user = usersClient.createUser(
                                 username,
                                 defaultPassword
                         );
+                        List<UserJson> friends = usersClient.addFriends(user, anno.friends());
+                        List<UserJson> incomeInvitations = usersClient.createIncomeInvitations(user, anno.incomeInvitation());
+                        List<UserJson> outcomeInvitations = usersClient.createOutcomeInvitations(user, anno.outcomeInvitation());
 
-                        context.getStore(NAMESPACE).put(
-                                context.getUniqueId(),
-                                user.withPassword(
-                                        defaultPassword
+                        user = user.withTestData(
+                                new TestData(
+                                        defaultPassword,
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        friends,
+                                        incomeInvitations,
+                                        outcomeInvitations
                                 )
                         );
-
+                    } else {
+                        // Случай 2: username задан — ищем, если не найден в БД - пока ошибка
+                        user = usersClient.findUserByUsername(anno.username())
+                                .orElseThrow(() -> new IllegalStateException("User " + anno.username() + " not found"))
+                                .withPassword(defaultPassword);
                     }
+
+                    context.getStore(NAMESPACE).put(
+                            context.getUniqueId(),
+                            user
+                    );
                 });
     }
 

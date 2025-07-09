@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import com.github.javafaker.Cat;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
@@ -52,11 +51,11 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
                             createdUser.testData().categories().addAll(
                                     createdCategories
                             );
-                        } else {
-                            context.getStore(NAMESPACE).put(
-                                    context.getUniqueId(),
-                                    createdCategories);
                         }
+                        context.getStore(NAMESPACE).put(
+                                context.getUniqueId(),
+                                createdCategories);
+
                     }
                 });
     }
@@ -70,8 +69,9 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
     @SuppressWarnings("unchecked")
     public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return (CategoryJson[]) extensionContext.getStore(NAMESPACE)
-                .get(extensionContext.getUniqueId(),List.class)
+                .get(extensionContext.getUniqueId(), List.class)
                 .stream()
-                .toArray(CategoryJson[] :: new);
-   }
+                .toArray(CategoryJson[]::new);
+
+    }
 }
