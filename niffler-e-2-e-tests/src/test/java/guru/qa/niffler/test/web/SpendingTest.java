@@ -27,16 +27,38 @@ public class SpendingTest {
             ))
 
     @Test
-    void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson spend) {
+    void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson[] spend) throws InterruptedException {
 
         final String newDescription = "For me";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithCredentials("duck", "12345")
-                .editSpending(spend.description())
+                .editSpending(spend[0].description())
                 .editDescription(newDescription)
                 .save();
 
         new MainPage().checkThatTableContains(newDescription);
+    }
+
+    @Test
+    void spendingShouldBeVisibleInTableActionAfterSearch() {
+
+        final String description = "new spend111";
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .loginWithCredentials("duck", "12345");
+
+        new MainPage().checkThatTableContains(description);
+    }
+
+    @Test
+    void categoryNameShouldBeVisibleInTableActionAfterSearch() {
+
+        final String categoryName = "Йога0023a";
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .loginWithCredentials("duck", "12345");
+
+        new MainPage().checkThatTableContains(categoryName);
     }
 }

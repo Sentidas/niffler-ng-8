@@ -18,7 +18,8 @@ public class MainPage {
             profileButton = $("button[aria-label=Menu]"),
             profileLink = $("a[href='/profile']"),
             friendsLink = $("a[href='/people/friends']"),
-            peopleLink = $("a[href='/people/all']");
+            peopleLink = $("a[href='/people/all']"),
+            searchPanel = $("input[placeholder=Search]");
 
 
 
@@ -45,16 +46,23 @@ public class MainPage {
         return new FriendsPage();
     }
 
-    public FriendsPage goToPeoplePage() {
+    public void goToPeoplePage() {
         peopleLink.click();
-        return new FriendsPage();
+
     }
 
 
     public void checkThatTableContains(String spendingDescription) {
-        tableRows.find(text(spendingDescription))
-                .should(visible);
+        SelenideElement row = tableRows.findBy(text(spendingDescription));
+        if (!row.exists()) {
+            searchPanel.click();
+            searchPanel.setValue(spendingDescription).pressEnter();
+            tableRows.find(text(spendingDescription))
+                    .should(visible);
+        }
     }
+
+
 
     public MainPage checkStatisticsIsVisible() {
         statisticsSection.shouldBe(visible);
