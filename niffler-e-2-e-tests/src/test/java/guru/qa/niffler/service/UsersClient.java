@@ -1,8 +1,9 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.model.FullUserJson;
+import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,13 +15,15 @@ public interface UsersClient {
 
     void removeUser(String username);
 
-    void createIncomeInvitations(UserJson targetUser, int count);
+    List<UserJson>  createIncomeInvitations(UserJson targetUser, int count);
 
-    void createOutcomeInvitations(UserJson targetUser, int count);
+    List<UserJson> createOutcomeInvitations(UserJson targetUser, int count);
 
-    void addFriends(UserJson targetUser, int count);
+    List<UserJson>  addFriends(UserJson targetUser, int count);
 
-    Optional<FullUserJson> findFullUserByById(UUID userId);
+    Optional<UserJson> findUserByUsername(String username);
+
+    Optional<FullUserJson> findUserByIdWithAuth(UUID userId);
 
     Optional<FullUserJson> findFullUserByUsername(String username);
 }

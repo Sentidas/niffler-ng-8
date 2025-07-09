@@ -9,7 +9,7 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 import guru.qa.niffler.data.repository.impl.*;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
-import guru.qa.niffler.model.FullUserJson;
+import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
@@ -17,9 +17,7 @@ import guru.qa.niffler.utils.RandomDataUtils;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 public class UsersDbClient implements UsersClient {
@@ -42,7 +40,7 @@ public class UsersDbClient implements UsersClient {
 
                     authUserRepository.create(authUser);
                     return UserJson.fromEntity(
-                            userdataUserRepository.create(userEntity(username))
+                            userdataUserRepository.create(userEntity(username)), null
                     );
                 }
         );
@@ -95,7 +93,7 @@ public class UsersDbClient implements UsersClient {
     public UserJson updateUser(String username, UserJson updatedUser) {
         return xaTxTemplate.execute(() -> {
 
-          //  String username  = Optional.of(authUserRepository.findByUsername(updatedUser.username()));
+            //  String username  = Optional.of(authUserRepository.findByUsername(updatedUser.username()));
 
             AuthUserEntity authUser = authUserRepository.findByUsername(username)
                     .orElseThrow(() -> new IllegalStateException("User not found in auth: " + username));
@@ -125,13 +123,16 @@ public class UsersDbClient implements UsersClient {
                 user.setSurname(updatedUser.surname());
             }
 
-            if (updatedUser.photo() != null) {
-                user.setPhoto(updatedUser.photo());
+            if (updatedUser.photo() != null && updatedUser.photo().startsWith("data:image")) {
+                String base64 = updatedUser.photo().substring(updatedUser.photo().indexOf(",") + 1);
+                user.setPhoto(Base64.getDecoder().decode(base64));
             }
 
-            if (updatedUser.photoSmall() != null) {
-                user.setPhotoSmall(updatedUser.photoSmall());
+            if (updatedUser.photoSmall() != null && updatedUser.photo().startsWith("data:image")) {
+                String base64 = updatedUser.photo().substring(updatedUser.photo().indexOf(",") + 1);
+                user.setPhotoSmall(Base64.getDecoder().decode(base64));
             }
+
 
             if (updatedUser.fullname() != null) {
                 user.setFullname(updatedUser.fullname());
@@ -139,12 +140,12 @@ public class UsersDbClient implements UsersClient {
 
             userdataUserRepository.update(user);
 
-            return UserJson.fromEntity(user);
+            return UserJson.fromEntity(user, null);
         });
     }
 
 
-    public Optional<FullUserJson> findFullUserByById(UUID userId) {
+    public Optional<FullUserJson> findUserByIdWithAuth(UUID userId) {
         return xaTxTemplate.execute(() -> {
 
                     Optional<UserEntity> user = userdataUserRepository.findById(userId);
@@ -163,6 +164,14 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    public Optional<UserJson> findUserByUsername(String username) {
+        return xaTxTemplate.execute(() ->
+                userdataUserRepository.findByUsername(username)
+                        .map(entity -> UserJson.fromEntity(entity, null))
+        );
+    }
+
+
     public Optional<FullUserJson> findFullUserByUsername(String username) {
         return xaTxTemplate.execute(() -> {
                     Optional<AuthUserEntity> authUser = authUserRepository.findByUsername(username);
@@ -180,73 +189,80 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
-    public void createIncomeInvitations(UserJson targetUser, int count) {
+    public List<UserJson> createIncomeInvitations(UserJson targetUser, int count) {
+        List<UserJson> incomeInvitations = new ArrayList<>();
+
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findByUsername(
                     targetUser.username()
             ).orElseThrow();
 
             for (int i = 0; i < count; i++) {
-                xaTxTemplate.execute(() -> {
+                UserJson addressee = xaTxTemplate.execute(() -> {
 
-                            String username = RandomDataUtils.randomUsername();
+                    String username = RandomDataUtils.randomUsername();
 
-                            AuthUserEntity authUser = authUserEntity(username, "12345");
-                            authUserRepository.create(authUser);
-                            UserEntity addressee = userdataUserRepository.create(userEntity(username));
+                    AuthUserEntity authUser = authUserEntity(username, "12345");
+                    authUserRepository.create(authUser);
+                    UserEntity fromUser = userdataUserRepository.create(userEntity(username));
 
-                            userdataUserRepository.sendInvitation(addressee, targetEntity);
-                            return null;
-                        }
-                );
+                    userdataUserRepository.sendInvitation(fromUser, targetEntity);
+                    return UserJson.fromEntity(fromUser, null);
+                });
+                incomeInvitations.add(addressee);
             }
         }
+        return incomeInvitations;
     }
 
-    public void createOutcomeInvitations(UserJson targetUser, int count) {
+    public List<UserJson> createOutcomeInvitations(UserJson targetUser, int count) {
+        List<UserJson> outcomeInvitations = new ArrayList<>();
+
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findByUsername(
                     targetUser.username()
             ).orElseThrow();
 
             for (int i = 0; i < count; i++) {
-                xaTxTemplate.execute(() -> {
+                String username = RandomDataUtils.randomUsername();
 
-                            String username = RandomDataUtils.randomUsername();
+                UserJson addressee = xaTxTemplate.execute(() -> {
+                    AuthUserEntity authUser = authUserEntity(username, "12345");
+                    authUserRepository.create(authUser);
+                    UserEntity toUser = userdataUserRepository.create(userEntity(username));
 
-                            AuthUserEntity authUser = authUserEntity(username, "12345");
-                            authUserRepository.create(authUser);
-                            UserEntity addressee = userdataUserRepository.create(userEntity(username));
-
-                            userdataUserRepository.sendInvitation(targetEntity, addressee);
-                            return null;
-                        }
-                );
+                    userdataUserRepository.sendInvitation(targetEntity, toUser);
+                    return UserJson.fromEntity(toUser, null);
+                });
+                outcomeInvitations.add(addressee);
             }
         }
+        return outcomeInvitations;
     }
 
-    public void addFriends(UserJson targetUser, int count) {
+    public List<UserJson> addFriends(UserJson targetUser, int count) {
+        List<UserJson> friends = new ArrayList<>();
+
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findByUsername(
                     targetUser.username()
             ).orElseThrow();
 
             for (int i = 0; i < count; i++) {
+                String username = RandomDataUtils.randomUsername();
 
-                xaTxTemplate.execute(() -> {
-                            String username = RandomDataUtils.randomUsername();
+                UserJson friend = xaTxTemplate.execute(() -> {
+                    AuthUserEntity authUser = authUserEntity(username, "12345");
+                    authUserRepository.create(authUser);
+                    UserEntity user = userdataUserRepository.create(userEntity(username));
 
-                            AuthUserEntity authUser = authUserEntity(username, "12345");
-                            authUserRepository.create(authUser);
-                            UserEntity addressee = userdataUserRepository.create(userEntity(username));
-
-                            userdataUserRepository.addFriend(targetEntity, addressee);
-                            return null;
-                        }
-                );
+                    userdataUserRepository.addFriend(targetEntity, user);
+                    return UserJson.fromEntity(user, null);
+                });
+                friends.add(friend);
             }
         }
+        return friends;
     }
 }
 

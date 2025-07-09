@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.spend.CurrencyValues;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Base64;
 import java.util.UUID;
 
 public record UserJson(
@@ -21,16 +20,21 @@ public record UserJson(
         String firstname,
         @JsonProperty("surname")
         String surname,
-        @JsonProperty("full_name")
+        @JsonProperty("fullname")
         String fullname,
         @JsonProperty("photo")
-        byte[] photo,
-        @JsonProperty("photo_small")
-        byte[] photoSmall,
+        String photo,
+        @JsonProperty("photoSmall")
+        String photoSmall,
+        @JsonProperty("friendshipStatus")
+        FriendshipStatus friendshipStatus,
         @JsonIgnore
-        TestData testData) {
+        TestData testData
+) {
 
-    public static UserJson fromEntity(UserEntity entity) {
+    public static UserJson fromEntity(UserEntity entity, FriendshipStatus friendshipStatus) {
+
+
         return new UserJson(
                 entity.getId(),
                 entity.getUsername(),
@@ -38,10 +42,20 @@ public record UserJson(
                 entity.getFirstname(),
                 entity.getSurname(),
                 entity.getFullname(),
-                entity.getPhoto(),
-                entity.getPhotoSmall(),
+
+                entity.getPhoto() != null
+                        ? "data:image/png;base64," + Base64.getEncoder().encodeToString(entity.getPhoto())
+                        : null,
+
+                entity.getPhotoSmall() != null
+                        ? "data:image/png;base64," + Base64.getEncoder().encodeToString(entity.getPhotoSmall())
+                        : null,
+                friendshipStatus,
                 new TestData(
                         null,
+                        new ArrayList<>(),
+                        new ArrayList<>(),
+                        new ArrayList<>(),
                         new ArrayList<>(),
                         new ArrayList<>()
                 )
@@ -53,7 +67,10 @@ public record UserJson(
                 new TestData(
                         password,
                         testData.categories(),
-                        testData.spends()
+                        testData.spends(),
+                        testData.friends(),
+                        testData.incomeInvitations(),
+                        testData.outcomeInvitations()
                 )
         );
     }
@@ -68,6 +85,7 @@ public record UserJson(
                 fullname,
                 photo,
                 photoSmall,
+                friendshipStatus,
                 testData
         );
     }

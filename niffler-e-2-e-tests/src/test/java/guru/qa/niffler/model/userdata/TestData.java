@@ -7,5 +7,9 @@ import java.util.List;
 
 public record TestData(String password,
                        List<CategoryJson> categories,
-                       List<SpendJson> spends) {
+                       List<SpendJson> spends,
+                       List<UserJson> friends,
+                       List<UserJson> incomeInvitations,
+                       List<UserJson> outcomeInvitations
+) {
 }

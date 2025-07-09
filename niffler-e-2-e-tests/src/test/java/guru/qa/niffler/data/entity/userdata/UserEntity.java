@@ -106,8 +106,21 @@ public class UserEntity implements Serializable {
     ue.setFirstname(json.firstname());
     ue.setSurname(json.surname());
     ue.setFullname(json.fullname());
-    ue.setPhoto(json.photo());
-    ue.setPhotoSmall(json.photoSmall());
+    //ue.setPhoto(json.photo());
+    // 🔽 Конвертируем base64 → byte[]
+    if (json.photo() != null && json.photo().startsWith("data:image")) {
+      String base64 = json.photo().substring(json.photo().indexOf(",") + 1);
+      ue.setPhoto(Base64.getDecoder().decode(base64));
+    } else {
+      ue.setPhoto(null);
+    }
+    if (json.photoSmall() != null && json.photoSmall().startsWith("data:image")) {
+      String base64 = json.photoSmall().substring(json.photoSmall().indexOf(",") + 1);
+      ue.setPhotoSmall(Base64.getDecoder().decode(base64));
+    } else {
+      ue.setPhotoSmall(null);
+    }
+
     return ue;
   }
 

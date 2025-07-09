@@ -30,7 +30,7 @@ public class SpendDbClient implements SpendClient {
     );
 
     @Override
-    public SpendJson create(SpendJson spend) {
+    public SpendJson createSpend(SpendJson spend) {
         return xaTxTemplate.execute(() -> {
                     SpendEntity spendEntity = SpendEntity.fromJson(spend);
 
@@ -69,7 +69,7 @@ public class SpendDbClient implements SpendClient {
 //        );
 //    }
     @Override
-    public SpendJson update(SpendJson updateSpend) {
+    public SpendJson updateSpend(SpendJson updateSpend) {
         return xaTxTemplate.execute(() -> {
 
             UUID spendId = updateSpend.id();
@@ -130,7 +130,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
-    public void removeCategory(CategoryJson categoryJson) {
+    public Optional<CategoryJson> removeCategory(CategoryJson categoryJson) {
         xaTxTemplate.execute(() -> {
             Optional<CategoryEntity> category = spendRepository
                     .findCategoryById(categoryJson.id());
@@ -142,10 +142,11 @@ public class SpendDbClient implements SpendClient {
             }
             return null;
         });
+        return null;
     }
 
     @Override
-    public void remove(SpendJson spendJson) {
+    public void removeSpend(SpendJson spendJson) {
         xaTxTemplate.execute(() -> {
             Optional<SpendEntity> spend = spendRepository
                     .findById(spendJson.id());
@@ -179,7 +180,7 @@ public class SpendDbClient implements SpendClient {
 
 
     @Override
-    public Optional<SpendJson> findById(UUID spendId) {
+    public Optional<SpendJson> findSpendByIdAndUsername(UUID spendId, String username) {
         return xaTxTemplate.execute(() -> {
             Optional<SpendEntity> spend = spendRepository
                     .findById(spendId);

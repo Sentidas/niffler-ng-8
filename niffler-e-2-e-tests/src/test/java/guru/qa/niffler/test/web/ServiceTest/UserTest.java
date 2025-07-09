@@ -1,6 +1,6 @@
-package guru.qa.niffler.test.web.JDBC;
+package guru.qa.niffler.test.web.ServiceTest;
 
-import guru.qa.niffler.model.FullUserJson;
+import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.impl.UsersDbClient;
@@ -39,14 +39,14 @@ public class UserTest {
         UserJson updatedUser =
                 new UserJson(
                         null,
-                        "duck-500",
-                        CurrencyValues.RUB,
+                        "duck-200",
+                        CurrencyValues.USD,
                         "murk",
                         null,
                         "angry catty",
                         null,
                         null,
-                        null
+                        null, null
                 );
         usersDbClient.updateUser("duck-200", updatedUser);
     }
@@ -54,8 +54,8 @@ public class UserTest {
     @Test
     void findFullUserById() {
         UsersDbClient us = new UsersDbClient();
-        UUID userId = UUID.fromString("c98a52fe-cbdc-4dd9-a379-01025cf2c59d");
-        Optional<FullUserJson> user = us.findFullUserByById(userId);
+        UUID userId = UUID.fromString("eab13506-5ca7-11f0-acb5-0242ac110002");
+        Optional<FullUserJson> user = us.findUserByIdWithAuth(userId);
 
         System.out.println("FullUser найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
         System.out.println("FullUser найден: '" + user.get().username() + "' c именами: " + user.get().firstname() + ", " + user.get().surname() + ", " + user.get().fullname());
@@ -65,7 +65,7 @@ public class UserTest {
     @Test
     void findFullUserByUserName() {
         UsersDbClient us = new UsersDbClient();
-        Optional<FullUserJson> user = us.findFullUserByUsername("fox");
+        Optional<FullUserJson> user = us.findFullUserByUsername("duck-200");
 
         if (user.isEmpty()) {
             System.out.println("Пользователь 'fox' не найден в базе.");
@@ -85,14 +85,14 @@ public class UserTest {
         UserJson targetUser =
                 new UserJson(
                         null,
-                        "panda",
+                        "duck-200",
                         CurrencyValues.EUR,
                         null,
                         null,
                         null,
                         null,
                         null,
-                        null
+                        null, null
                 );
         usersDbClient.createOutcomeInvitations(targetUser, 2);
     }
@@ -103,14 +103,14 @@ public class UserTest {
         UserJson targetUser =
                 new UserJson(
                         null,
-                        "panda",
+                        "duck-200",
                         CurrencyValues.EUR,
                         null,
                         null,
                         null,
                         null,
                         null,
-                        null
+                        null, null
                 );
         usersDbClient.createIncomeInvitations(targetUser, 1);
     }
@@ -121,14 +121,14 @@ public class UserTest {
         UserJson targetUser =
                 new UserJson(
                         null,
-                        "horse",
+                        "duck-200",
                         CurrencyValues.EUR,
                         null,
                         null,
                         null,
                         null,
                         null,
-                        null
+                        null, null
 
                 );
         usersDbClient.addFriends(targetUser, 2);

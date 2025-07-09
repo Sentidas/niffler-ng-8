@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.web.JDBC;
+package guru.qa.niffler.test.web.ServiceTest;
 
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
@@ -16,15 +16,15 @@ public class CategoryAndSpendTest {
     void createSpend() {
         SpendDbClient spendDbClient = new SpendDbClient();
 
-        SpendJson spend = spendDbClient.create(
+        SpendJson spend = spendDbClient.createSpend(
                 new SpendJson(
                         null,
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "корм для капибары",
+                                "корм для капибары666",
                                 "duck",
-                                false,
+                                true,
                                 null
                         ),
                         CurrencyValues.EUR,
@@ -42,7 +42,7 @@ public class CategoryAndSpendTest {
         SpendDbClient spendDbClient = new SpendDbClient();
         UUID spendId = UUID.fromString("f0275470-3551-11f0-ab5b-0242ac110004");
 
-        SpendJson spend = spendDbClient.update(
+        SpendJson spend = spendDbClient.updateSpend(
                 new SpendJson(
                         spendId,
                         new Date(),
@@ -61,7 +61,7 @@ public class CategoryAndSpendTest {
         SpendDbClient spendDbClient = new SpendDbClient();
         UUID spendId = UUID.fromString("f0275470-3551-11f0-ab5b-0242ac110004");
 
-        SpendJson spend = spendDbClient.update(
+        SpendJson spend = spendDbClient.updateSpend(
                 new SpendJson(
                         spendId,
                         null,
@@ -85,10 +85,11 @@ public class CategoryAndSpendTest {
     @Test
     void findSpendById() {
         UUID spendId = UUID.fromString("f0240338-3551-11f0-ab5b-0242ac110004");
+        String username = "duck";
         // UUID spendId = UUID.fromString("e18b9e81-fe04-4cc8-a055-54c8ed5ffe33");
 
         SpendDbClient spendDbClient = new SpendDbClient();
-        Optional<SpendJson> spend = spendDbClient.findById(spendId);
+        Optional<SpendJson> spend = spendDbClient.findSpendByIdAndUsername(spendId, username);
 
         spend.ifPresentOrElse(
                 spendJson -> {
@@ -127,7 +128,7 @@ public class CategoryAndSpendTest {
                         null
                 );
 
-        spendDbClient.remove(spend);
+        spendDbClient.removeSpend(spend);
     }
 
 
