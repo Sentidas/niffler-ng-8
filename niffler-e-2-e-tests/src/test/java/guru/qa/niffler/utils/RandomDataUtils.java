@@ -2,6 +2,10 @@ package guru.qa.niffler.utils;
 
 import com.github.javafaker.Faker;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -31,7 +35,7 @@ public class RandomDataUtils {
         do {
             username = faker.animal().name();
         } while (username.length() < 3);
-        return username;
+        return username + new Random().nextInt(100);
     }
 
     public static String randomName() {
@@ -50,4 +54,15 @@ public class RandomDataUtils {
         return CATEGORIES.get(RANDOM.nextInt(CATEGORIES.size())) + "_" + RANDOM.nextInt(100);
     }
 
+    public static String randomPhoto() {
+        int index = RANDOM.nextInt(10) + 1; // 1..10
+        Path path = Paths.get("niffler-e-2-e-tests/src/test/resources/photos/" + index + ".png");
+
+        try {
+            byte[] bytes = Files.readAllBytes(path);
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при чтении изображения: " + path, e);
+        }
+    }
 }

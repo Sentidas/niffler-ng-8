@@ -2,9 +2,13 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
+import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.page.FriendsPage;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.PeoplePage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -14,18 +18,21 @@ import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Typ
 
 
 @ExtendWith({UsersQueueExtension.class, BrowserExtension.class})
-public class FriendsTest {
+public class PeopleTest {
 
     public static Config CFG = Config.getInstance();
 
     @Test
-    void friendShouldBePresentInFriendsTable(@UserType(WITH_FRIEND) StaticUser user) {
+    void newPersonShouldBePresentInPeopleTable(UserJson user) throws InterruptedException {
+        System.out.println(user.username() + " - ищем пользователя");
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .loginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
-                .goToFriendsPage()
-                .checkFriendIsInFriendsList(user.friend());
+                .goToPeoplePage();
 
+        PeoplePage peoplePage = new PeoplePage();
+        Thread.sleep(9000);
+        peoplePage.checkPersonIsInPeopleList(user.username());
     }
 
     @Test
@@ -42,8 +49,8 @@ public class FriendsTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
-                .goToPeoplePage()
-                .checkNoOutgoingInvitationsPresent();
+                .goToPeoplePage();
+                new FriendsPage().checkNoOutgoingInvitationsPresent();
     }
 
     @Test
@@ -60,7 +67,7 @@ public class FriendsTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
-                .goToPeoplePage()
-                .checkOutgoingInvitationHasWaitingStatus(user.outcome());
+                .goToPeoplePage();
+               new FriendsPage().checkOutgoingInvitationHasWaitingStatus(user.outcome());
     }
 }

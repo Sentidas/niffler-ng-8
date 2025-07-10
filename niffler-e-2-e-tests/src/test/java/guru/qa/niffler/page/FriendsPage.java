@@ -1,5 +1,7 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Condition.text;
@@ -12,11 +14,28 @@ public class FriendsPage {
             requestsList = $("#requests"),
             peopleList = $("#all"),
             friendsPanel = $("#simple-tabpanel-friends"),
+            cleanBtn = $("#input-clear"),
+            searchPanel = $("input[placeholder=Search]"),
             allPeopleBar = $(byText("All people"));
+    private final ElementsCollection friendRow = friendsList.$$("tr");
 
 
     public void checkFriendIsInFriendsList(String friendName) {
-        friendsList.shouldHave(text(friendName));
+            searchPanel.click();
+            searchPanel.setValue(friendName).pressEnter();
+            friendsList.shouldHave(text(friendName));
+            cleanBtn.click();
+
+    }
+
+
+    public void checkPersonIsInPeopleList(String friendName) {
+        SelenideElement row = friendRow.findBy(text(friendName));
+        if (!row.exists()) {
+            searchPanel.click();
+            searchPanel.setValue(friendName).pressEnter();
+            friendsList.shouldHave(text(friendName));
+        }
     }
 
     public void checkIncomingInvitationVisible(String requestName) {

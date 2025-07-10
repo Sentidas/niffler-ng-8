@@ -6,7 +6,8 @@ import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.extractor.SpendResultSetExtractor;
 import guru.qa.niffler.data.mapper.SpendAndCategoryEntityRowMapper;
 import guru.qa.niffler.data.repository.SpendRepository;
-import guru.qa.niffler.data.tpl.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -123,12 +124,23 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
 
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "SELECT " +
-                                "s.id AS spend_id, s.username AS spend_username, s.spend_date, s.currency, s.amount, s.description, s.category_id AS spend_category_id, " +
-                                "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived " +
-                                "FROM category c " +
-                                "LEFT JOIN spend s ON c.id = s.category_id " +
-                                "WHERE c.id = ?",
+                        """
+                                SELECT 
+                                    s.id AS spend_id,
+                                    s.username AS spend_username,
+                                    s.spend_date,
+                                    s.currency,
+                                    s.amount,
+                                    s.description,
+                                    s.category_id AS spend_category_id,
+                                    c.id AS category_id,
+                                    c.name AS category_name,
+                                    c.username AS category_username,
+                                    c.archived
+                                FROM category c
+                                LEFT JOIN spend s ON c.id = s.category_id
+                                WHERE c.id = ?
+                                """,
                         SpendResultSetExtractor.instance,
                         id
                 )
@@ -140,9 +152,12 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
 
         Boolean exists = jdbcTemplate.queryForObject(
-                "SELECT EXISTS (" +
-                        "SELECT 1 FROM category " +
-                        "WHERE username = ? AND name = ?)",
+                """
+                        SELECT EXISTS (
+                            SELECT 1 FROM category
+                            WHERE username = ? AND name = ?
+                        )
+                        """,
                 Boolean.class,
                 username,
                 categoryName
@@ -154,12 +169,23 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
 
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "SELECT " +
-                                "s.id AS spend_id, s.username AS spend_username, s.spend_date, s.currency, s.amount, s.description, s.category_id AS spend_category_id, " +
-                                "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived " +
-                                "FROM category c " +
-                                "LEFT JOIN spend s ON c.id = s.category_id " +
-                                "WHERE c.username = ? AND c.name = ?",
+                        """
+                                SELECT 
+                                    s.id AS spend_id,
+                                    s.username AS spend_username,
+                                    s.spend_date,
+                                    s.currency,
+                                    s.amount,
+                                    s.description,
+                                    s.category_id AS spend_category_id,
+                                    c.id AS category_id,
+                                    c.name AS category_name,
+                                    c.username AS category_username,
+                                    c.archived
+                                FROM category c
+                                LEFT JOIN spend s ON c.id = s.category_id
+                                WHERE c.username = ? AND c.name = ?
+                                """,
                         SpendResultSetExtractor.instance,
                         username,
                         categoryName
@@ -170,38 +196,67 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     @Override
     public Optional<SpendEntity> findById(UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
-
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(
-                        "SELECT " +
-                                "s.id AS spend_id, s.username AS spend_username, s.spend_date, s.currency, s.amount, s.description, s.category_id AS spend_category_id, " +
-                                "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived " +
-                                "FROM spend s " +
-                                "JOIN category c ON s.category_id = c.id " +
-                                "WHERE s.id = ?",
-                        SpendAndCategoryEntityRowMapper.instance,
-                        id
-                )
-        );
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject(
+                            """
+                                    SELECT 
+                                        s.id AS spend_id,
+                                        s.username AS spend_username,
+                                        s.spend_date,
+                                        s.currency,
+                                        s.amount,
+                                        s.description,
+                                        s.category_id AS spend_category_id,
+                                        c.id AS category_id,
+                                        c.name AS category_name,
+                                        c.username AS category_username,
+                                        c.archived
+                                    FROM spend s
+                                    JOIN category c ON s.category_id = c.id
+                                    WHERE s.id = ?
+                                    """,
+                            SpendAndCategoryEntityRowMapper.instance,
+                            id
+                    )
+            );
+        } catch (
+                EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<SpendEntity> findByUsernameAndDescription(String username, String description) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
-
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(
-                        "SELECT " +
-                                "s.id AS spend_id, s.username AS spend_username, s.spend_date, s.currency, s.amount, s.description, s.category_id AS spend_category_id, " +
-                                "c.id AS category_id, c.name AS category_name, c.username AS category_username, c.archived " +
-                                "FROM spend s " +
-                                "JOIN category c ON s.category_id = c.id " +
-                                "WHERE s.username = ? AND s.description = ?",
-                        SpendAndCategoryEntityRowMapper.instance,
-                        username,
-                        description
-                )
-        );
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject(
+                            """
+                                    SELECT 
+                                        s.id AS spend_id,
+                                        s.username AS spend_username,
+                                        s.spend_date,
+                                        s.currency,
+                                        s.amount,
+                                        s.description,
+                                        s.category_id AS spend_category_id,
+                                        c.id AS category_id,
+                                        c.name AS category_name,
+                                        c.username AS category_username,
+                                        c.archived
+                                    FROM spend s
+                                    JOIN category c ON s.category_id = c.id
+                                    WHERE s.username = ? AND s.description = ?
+                                    """,
+                            SpendAndCategoryEntityRowMapper.instance,
+                            username,
+                            description
+                    )
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
