@@ -73,7 +73,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
     }
 
     public static @Nullable UserJson createdUser() {
-        final ExtensionContext context = TestsMethodContextExtension.context();
+        final ExtensionContext context = TestMethodContextExtension.context();
         return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
     }
 }
