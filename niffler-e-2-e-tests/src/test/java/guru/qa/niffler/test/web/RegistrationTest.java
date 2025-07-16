@@ -1,7 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.pages.LoginPage;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 

@@ -12,4 +12,25 @@ public record TestData(String password,
                        List<UserJson> incomeInvitations,
                        List<UserJson> outcomeInvitations
 ) {
+    public TestData withUpdatedSpends(List<SpendJson> updatedSpends) {
+        return new TestData(
+                password,
+                categories,
+                updatedSpends,
+                friends,
+                incomeInvitations,
+                outcomeInvitations
+        );
+    }
+
+    public TestData withUpdatedCategories(List<CategoryJson> updatedCategories) {
+        return new TestData(
+                password,
+                updatedCategories,
+                spends,
+                friends,
+                incomeInvitations,
+                outcomeInvitations
+        );
+    }
 }

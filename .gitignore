@@ -8,6 +8,7 @@ build
 !**/src/test/**/build/
 allure-results/
 niffler-e-2-e-tests/*.log
+logs/
 
 ### STS ###
 .apt_generated

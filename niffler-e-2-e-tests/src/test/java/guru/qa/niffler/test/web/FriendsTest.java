@@ -6,20 +6,19 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.page.FriendsPage;
-import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.page.MainPage;
-import guru.qa.niffler.page.PeoplePage;
+import guru.qa.niffler.page.pages.FriendsPage;
+import guru.qa.niffler.page.pages.LoginPage;
+import guru.qa.niffler.page.pages.MainPage;
+import guru.qa.niffler.page.pages.PeoplePage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
-@ExtendWith({UsersQueueExtension.class, BrowserExtension.class})
-public class FriendsNewTest {
+@ExtendWith(BrowserExtension.class)
+public class FriendsTest {
 
     public static Config CFG = Config.getInstance();
 
@@ -29,7 +28,7 @@ public class FriendsNewTest {
     void friendShouldNotBePresentInFriendsTable(UserJson user) {
         System.out.println(user.username() + " - ищем пользователя");
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.testData().password())
+                .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToFriendsPage();
 
@@ -46,7 +45,7 @@ public class FriendsNewTest {
         FriendsPage friendsPage = new FriendsPage();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.testData().password())
+                .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToFriendsPage();
 
@@ -66,7 +65,7 @@ public class FriendsNewTest {
         FriendsPage friendsPage = new FriendsPage();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.testData().password())
+                .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToFriendsPage();
 
@@ -86,7 +85,7 @@ public class FriendsNewTest {
         PeoplePage peoplePage = new PeoplePage();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.testData().password())
+                .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToPeoplePage();
 
@@ -117,7 +116,7 @@ public class FriendsNewTest {
         FriendsPage friendsPage = new FriendsPage();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.testData().password())
+                .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToPeoplePage();
 

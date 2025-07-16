@@ -1,6 +1,5 @@
-package guru.qa.niffler.page;
+package guru.qa.niffler.page.pages;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
@@ -19,15 +18,12 @@ public class FriendsPage {
             allPeopleBar = $(byText("All people"));
     private final ElementsCollection friendRow = friendsList.$$("tr");
 
-
     public void checkFriendIsInFriendsList(String friendName) {
             searchPanel.click();
             searchPanel.setValue(friendName).pressEnter();
             friendsList.shouldHave(text(friendName));
             cleanBtn.click();
-
     }
-
 
     public void checkPersonIsInPeopleList(String friendName) {
         SelenideElement row = friendRow.findBy(text(friendName));

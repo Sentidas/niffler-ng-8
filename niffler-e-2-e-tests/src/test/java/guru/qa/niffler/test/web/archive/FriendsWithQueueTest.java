@@ -1,11 +1,11 @@
-package guru.qa.niffler.test.web;
+package guru.qa.niffler.test.web.archive;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
-import guru.qa.niffler.page.FriendsPage;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.pages.FriendsPage;
+import guru.qa.niffler.page.pages.LoginPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -22,7 +22,7 @@ public class FriendsWithQueueTest {
     @Test
     void friendsTableShouldBeEmptyForNewUser(@UserType(EMPTY) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToFriendsPage()
                 .checkFriendsListIsEmpty();
@@ -31,7 +31,7 @@ public class FriendsWithQueueTest {
     @Test
     void peopleTableShouldBeEmptyWithoutInvitation(@UserType(EMPTY) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToPeoplePage();
 
@@ -41,7 +41,7 @@ public class FriendsWithQueueTest {
     @Test
     void incomeInvitationBePresentInFriendsTable(@UserType(WITH_INCOME_REQUEST) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToFriendsPage()
                 .checkIncomingInvitationVisible(user.income());
@@ -50,7 +50,7 @@ public class FriendsWithQueueTest {
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(@UserType(WITH_OUTCOME_REQUEST) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToPeoplePage();
                 new FriendsPage().checkOutgoingInvitationHasWaitingStatus(user.outcome());

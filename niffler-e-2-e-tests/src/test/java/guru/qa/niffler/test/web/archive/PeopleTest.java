@@ -1,14 +1,13 @@
-package guru.qa.niffler.test.web;
+package guru.qa.niffler.test.web.archive;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.page.FriendsPage;
-import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.page.PeoplePage;
+import guru.qa.niffler.page.pages.FriendsPage;
+import guru.qa.niffler.page.pages.LoginPage;
+import guru.qa.niffler.page.pages.PeoplePage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -25,8 +24,9 @@ public class PeopleTest {
     @Test
     void newPersonShouldBePresentInPeopleTable(UserJson user) throws InterruptedException {
         System.out.println(user.username() + " - ищем пользователя");
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.testData().password())
+                .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToPeoplePage();
 
@@ -38,7 +38,7 @@ public class PeopleTest {
     @Test
     void friendsTableShouldBeEmptyForNewUser(@UserType(EMPTY) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToFriendsPage()
                 .checkFriendsListIsEmpty();
@@ -47,7 +47,7 @@ public class PeopleTest {
     @Test
     void peopleTableShouldBeEmptyWithoutInvitation(@UserType(EMPTY) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToPeoplePage();
                 new FriendsPage().checkNoOutgoingInvitationsPresent();
@@ -56,7 +56,7 @@ public class PeopleTest {
     @Test
     void incomeInvitationBePresentInFriendsTable(@UserType(WITH_INCOME_REQUEST) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToFriendsPage()
                 .checkIncomingInvitationVisible(user.income());
@@ -65,7 +65,7 @@ public class PeopleTest {
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(@UserType(WITH_OUTCOME_REQUEST) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .loginWithCredentials(user.username(), user.password())
+                .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToPeoplePage();
                new FriendsPage().checkOutgoingInvitationHasWaitingStatus(user.outcome());
