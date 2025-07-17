@@ -2,6 +2,8 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.pages.LoginPage;
 import guru.qa.niffler.page.pages.MainPage;
 import org.junit.jupiter.api.Test;
@@ -9,19 +11,17 @@ import org.junit.jupiter.api.Test;
 public class LoginTest {
     public static Config CFG = Config.getInstance();
 
-    @Test
-    void shouldLoginSuccessfully() {
+    @User
+    void shouldLoginSuccessfully(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .setUserName("duck")
-                .setPassword("12345")
-                .submitLogin();
+                .successLoginWithCredentials(user.username(), user.testData().password());
 
         new MainPage().checkHistoryOfSpendingIsVisible()
                 .checkStatisticsIsVisible()
                 .checkToolBarIsVisible();
     }
 
-    @Test
+    @User
     void loginShouldFailWithWrongCredentials() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .setUserName("raven")
@@ -30,7 +30,7 @@ public class LoginTest {
         new LoginPage().checkErrorMessage("Неверные учетные данные пользователя");
     }
 
-    @Test
+    @User
     void passwordShouldBeVisibleAfterClickOnVisibilityToggle() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .setPassword("12345")
