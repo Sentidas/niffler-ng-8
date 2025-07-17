@@ -6,10 +6,12 @@ import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import io.qameta.allure.Step;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +32,9 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     private static final String defaultPassword = "12345";
 
 
+    @Nonnull
     @Override
+    @Step("Create user using API")
     public UserJson createUser(String username, String password) {
         throw new RuntimeException("NYI method createUser");
     }

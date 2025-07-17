@@ -14,9 +14,11 @@ import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 
@@ -26,14 +28,16 @@ public class UsersDbClient implements UsersClient {
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     private final AuthUserRepository authUserRepository = new AuthUserRepositoryHibernate();
-    private final UserdataUserRepository userdataUserRepository = new UserdataUserRepositorySpringJdbc();
+    private final UserdataUserRepository userdataUserRepository = new UserDataUserRepositoryHibernate();
 
     private final XaTransactionTemplate xaTxTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
             CFG.userdataJdbcUrl()
     );
 
-
+    @Nonnull
+    @Override
+    @Step("Create user using SQL")
     public UserJson createUser(String username, String password) {
         return xaTxTemplate.execute(() -> {
                     AuthUserEntity authUser = authUserEntity(username, password);
