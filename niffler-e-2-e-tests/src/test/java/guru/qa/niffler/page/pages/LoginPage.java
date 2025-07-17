@@ -1,9 +1,11 @@
-package guru.qa.niffler.page;
+package guru.qa.niffler.page.pages;
 
 import com.codeborne.selenide.SelenideElement;
 
+import java.time.Duration;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
+
 
 public class LoginPage {
 
@@ -14,9 +16,8 @@ public class LoginPage {
             errorMessageText = $("p.form__error"),
             togglePasswordVisibility = $("button.form__password-button");
 
-
-    public MainPage loginWithCredentials(String username, String password) {
-        usernameInput.setValue(username);
+    public MainPage successLoginWithCredentials(String username, String password) {
+        usernameInput.shouldBe(visible, Duration.ofSeconds(5)).setValue(username);
         passwordInput.setValue(password);
         submitButton.click();
         return new MainPage();

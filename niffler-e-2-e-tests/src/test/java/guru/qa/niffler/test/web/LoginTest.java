@@ -2,8 +2,8 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.page.pages.LoginPage;
+import guru.qa.niffler.page.pages.MainPage;
 import org.junit.jupiter.api.Test;
 
 public class LoginTest {
@@ -12,7 +12,7 @@ public class LoginTest {
     @Test
     void shouldLoginSuccessfully() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .setUserName("raven")
+                .setUserName("duck")
                 .setPassword("12345")
                 .submitLogin();
 

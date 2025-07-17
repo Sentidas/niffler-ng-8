@@ -30,4 +30,14 @@ public record CategoryJson(
                 spends
         );
     }
+
+    public CategoryJson withArchived(boolean archived) {
+        return new CategoryJson(
+                this.id(),
+                this.name(),
+                this.username(),
+                archived,
+                null
+        );
+    }
 }

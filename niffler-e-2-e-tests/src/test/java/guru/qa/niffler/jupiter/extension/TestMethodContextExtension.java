@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 
-public class TestsMethodContextExtension implements BeforeEachCallback, AfterEachCallback {
+public class TestMethodContextExtension implements BeforeEachCallback, AfterEachCallback {
 
   private static final ThreadLocal<ExtensionContext> store = new ThreadLocal<>();
 
