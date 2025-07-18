@@ -1,6 +1,7 @@
 package guru.qa.niffler.page.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.components.SpendingTable;
 import guru.qa.niffler.page.components.StatSection;
@@ -84,8 +85,16 @@ public class MainPage {
         spendingTable.checkThatSpendTableContains(spendingDescription);
     }
 
-    public BufferedImage getStatPieChart() throws IOException {
-        return statSection.getStatPieChart();
+    public BufferedImage chartScreenshot() throws IOException {
+        return statSection.chartScreenshot();
+    }
+
+    public void checkColorLegends(Color color) {
+         statSection.checkColorLegends(color);
+    }
+
+    public void checkColorsLegends(Color... color) {
+         statSection.checkColorsLegends(color);
     }
 
     public MainPage checkThatPieChartUpdate(BufferedImage beforeImage, BufferedImage afterImage) throws IOException {
@@ -115,4 +124,6 @@ public class MainPage {
         assertLegendsMatch(expectedLegends, actualLegends);
         return this;
     }
+
+
 }
