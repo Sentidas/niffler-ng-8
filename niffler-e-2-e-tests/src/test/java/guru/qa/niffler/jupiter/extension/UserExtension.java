@@ -4,6 +4,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
+import guru.qa.niffler.service.impl.UserApiClient;
 import guru.qa.niffler.service.impl.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;

@@ -6,6 +6,8 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.SpendClient;
+import guru.qa.niffler.service.impl.SpendApiClient;
 import guru.qa.niffler.service.impl.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -22,7 +24,7 @@ import java.util.List;
 public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendingExtension.class);
-    private final SpendDbClient spendClient = new SpendDbClient();
+    private final SpendClient spendClient = new SpendDbClient();
 
 
     @Override
