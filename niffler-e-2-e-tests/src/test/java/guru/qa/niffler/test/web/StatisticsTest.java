@@ -47,7 +47,7 @@ public class StatisticsTest {
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
-        BufferedImage beforeUpdate = mainPage.getStatPieChart();
+        BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage
                 .editSpend("Дизайнер курс")
@@ -86,7 +86,7 @@ public class StatisticsTest {
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
-        BufferedImage beforeUpdate = mainPage.getStatPieChart();
+        BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.editSpend("Дизайнер курс")
                 .editDescription("Дизайнер курс VIP")
@@ -124,7 +124,7 @@ public class StatisticsTest {
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
-        BufferedImage beforeUpdate = mainPage.getStatPieChart();
+        BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.editSpend("Бронь гостиницы")
                 .editCategory("Обучение")
@@ -161,7 +161,7 @@ public class StatisticsTest {
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
-        BufferedImage beforeUpdate = mainPage.getStatPieChart();
+        BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.openAvatarMenu()
                 .goToProfilePage()
@@ -200,7 +200,7 @@ public class StatisticsTest {
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
-        BufferedImage beforeUpdate = mainPage.getStatPieChart();
+        BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.deleteSpend("Путешествие на Алтай", "Билеты в Барнаул", userContext);
         mainPage.deleteSpend("Путешествие на Алтай", "Бронь гостиницы", userContext);
@@ -241,7 +241,7 @@ public class StatisticsTest {
                 .checkLegendsNameAndSum(user);
 
 
-        BufferedImage beforeUpdate = mainPage.getStatPieChart();
+        BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.editSpend("Дизайнер курс")
                 .editAmount(506000.11)
