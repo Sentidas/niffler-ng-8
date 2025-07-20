@@ -3,6 +3,7 @@ package guru.qa.niffler.model.spend;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public record CategoryJson(
     Boolean archived,
     List<String> spends) {
 
-    public static CategoryJson fromEntity(CategoryEntity entity) {
+    public static @Nonnull CategoryJson fromEntity(@Nonnull CategoryEntity entity) {
         List<String> spends = entity.getSpends().stream()
                 .map(a -> a.getDescription())
                 .toList();

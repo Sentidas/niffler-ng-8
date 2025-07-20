@@ -2,8 +2,10 @@ package guru.qa.niffler.page.components;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import org.assertj.core.api.SoftAssertions;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
