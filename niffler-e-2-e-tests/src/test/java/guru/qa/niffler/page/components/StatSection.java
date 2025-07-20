@@ -8,6 +8,8 @@ import guru.qa.niffler.utils.ScreenDiffResult;
 
 import javax.imageio.ImageIO;
 import guru.qa.niffler.condition.Color;
+import org.assertj.core.api.SoftAssertions;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.Duration;
@@ -87,6 +89,20 @@ public class StatSection {
     public StatSection checkColorsLegends(Color... expectedColors) {
         bubbles.should(StatConditions.color(expectedColors));
         return this;
+    }
+
+    public static void assertLegendsMatch(List<String> expectedLegends, List<String> actualLegends) {
+
+        SoftAssertions softly = new SoftAssertions();
+
+        softly.assertThat(actualLegends).hasSameSizeAs(expectedLegends);
+
+        for (int i = 0; i < expectedLegends.size() && i < actualLegends.size(); i++) {
+            softly.assertThat(actualLegends.get(i))
+                    .isEqualTo(expectedLegends.get(i));
+
+        }
+        softly.assertAll();
     }
 
 }

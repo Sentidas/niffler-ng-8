@@ -16,7 +16,6 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.page.utils.ExpectedLegendGenerator.getSortedExpectedLegends;
-import static guru.qa.niffler.page.assertions.LegendAssert.assertLegendsMatch;
 
 public class MainPage {
     private final SpendingTable spendingTable = new SpendingTable();
@@ -121,7 +120,7 @@ public class MainPage {
         List<String> actualLegends = statSection.getActualLegendsFromUI();
         System.out.println("реальные траты" + actualLegends);
 
-        assertLegendsMatch(expectedLegends, actualLegends);
+        StatSection.assertLegendsMatch(expectedLegends, actualLegends);
         return this;
     }
 

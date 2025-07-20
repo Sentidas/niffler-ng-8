@@ -10,9 +10,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient {
 
     private static final Config CFG = Config.getInstance();
@@ -26,31 +31,36 @@ public class SpendApiClient {
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-    public SpendJson createSpend(SpendJson spend) {
+    public @Nullable SpendJson createSpend(SpendJson spend) {
         Response<SpendJson> response = executeWithHandling(spendApi.addSpend(spend));
         checkResponse(response, 201);
         return response.body();
     }
 
-    public SpendJson editSpend(SpendJson spend) {
+    public @Nullable SpendJson editSpend(SpendJson spend) {
         Response<SpendJson> response = executeWithHandling(spendApi.editSpend(spend));
         checkResponse(response, 200);
         return response.body();
     }
 
-    public SpendJson getSpend(String id, String username) {
+    public @Nullable SpendJson getSpend(String id, String username) {
         Response<SpendJson> response = executeWithHandling(spendApi.getSpend(id, username));
         checkResponse(response, 200);
         return response.body();
     }
 
-    public List<SpendJson> getSpends(String username, CurrencyValues filterCurrency, String fromDate, String toDate) {
+    public @Nonnull List<SpendJson> getSpends(String username,
+                                              @Nullable CurrencyValues filterCurrency,
+                                              @Nullable String fromDate,
+                                              @Nullable String toDate) {
         Response<List<SpendJson>> response = executeWithHandling(spendApi.getSpends(username, filterCurrency, fromDate, toDate));
         checkResponse(response, 200);
-        return response.body();
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
 
-    public List<SpendJson> getSpends(String username) {
+    public @Nonnull List<SpendJson> getSpends(String username) {
         Response<List<SpendJson>> response = executeWithHandling(spendApi.getSpends(username, null, null, null));
         checkResponse(response, 200);
         return response.body();
@@ -61,28 +71,30 @@ public class SpendApiClient {
         checkResponse(response, 202);
     }
 
-    public CategoryJson createCategory(CategoryJson category) {
+    public @Nullable CategoryJson createCategory(CategoryJson category) {
         Response<CategoryJson> response = executeWithHandling(spendApi.addCategory(category));
         checkResponse(response, 200);
         return response.body();
     }
 
-    public CategoryJson editCategory(CategoryJson category) {
+    public @Nullable CategoryJson editCategory(CategoryJson category) {
         Response<CategoryJson> response = executeWithHandling(spendApi.updateCategory(category));
         checkResponse(response, 200);
         return response.body();
     }
 
-    public List<CategoryJson> getCategories(String username, Boolean excludeArchived) {
+    public @Nonnull List<CategoryJson> getCategories(String username, Boolean excludeArchived) {
         Response<List<CategoryJson>> response = executeWithHandling(spendApi.getCategories(username, excludeArchived));
         checkResponse(response, 200);
         return response.body();
     }
 
-    public List<CategoryJson> getCategories(String username) {
+    public @Nonnull List<CategoryJson> getCategories(String username) {
         Response<List<CategoryJson>> response = executeWithHandling(spendApi.getCategories(username, null));
         checkResponse(response, 200);
-        return response.body();
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
 
 
