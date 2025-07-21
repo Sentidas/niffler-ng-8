@@ -5,14 +5,18 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendClient;
+import io.qameta.allure.Step;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient extends BaseApiClient implements SpendClient {
 
     private static final Config CFG = Config.getInstance();
@@ -28,6 +32,7 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
 
 
     @Override
+    @Step("Create spend using API")
     public SpendJson createSpend(SpendJson spend) {
 
         findCategoryByUsernameAndSpendName(spend.username(), spend.category().name())
@@ -37,12 +42,13 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
 
     }
 
-
+    @Nonnull
     private List<CategoryJson> existingCategories(String username) {
         return execute(spendApi.getCategories(username, false));
 
     }
 
+    @Nonnull
     private List<SpendJson> existingSpends(String username) {
         return execute(spendApi.getSpends(username, null, null, null));
 
@@ -50,27 +56,32 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
 
 
     @Override
+    @Step("Update spend using API")
     public SpendJson updateSpend(SpendJson spend) {
         return execute(spendApi.editSpend(spend));
     }
 
     @Override
+    @Step("Create category using API")
     public CategoryJson createCategory(CategoryJson category) {
         return execute(spendApi.addCategory(category));
     }
 
     @Override
+    @Step("Update category using API")
     public CategoryJson updateCategory(CategoryJson category) {
         return execute(spendApi.updateCategory(category));
 
     }
 
     @Override
+    @Step("Get spend by id using API")
     public Optional<SpendJson> findSpendByIdAndUsername(UUID id, String username) {
         return Optional.ofNullable(execute(spendApi.getSpend(id.toString(), username)));
     }
 
     @Override
+    @Step("Get spend by description using API")
     public Optional<SpendJson> findByUsernameAndDescription(String username, String description) {
         List<SpendJson> existsSpends = existingSpends(username);
         return existsSpends.stream()
@@ -79,6 +90,7 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
     }
 
     @Override
+    @Step("Get category '{1}' using API")
     public Optional<CategoryJson> findCategoryByUsernameAndSpendName(String username, String categoryName) {
 
         List<CategoryJson> existsCategories = existingCategories(username);
@@ -89,6 +101,7 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
     }
 
     @Override
+    @Step("Delete spend using API")
     public void removeSpend(SpendJson spend) {
 
         UUID spendId = spend.id();
@@ -103,6 +116,7 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
 
 
     @Override
+    @Step("Get category by id using API")
     public Optional<CategoryJson> findCategoryById(UUID id) {
         throw new RuntimeException("NYI method findCategoryById");
     }

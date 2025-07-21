@@ -19,9 +19,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
-
+@ParametersAreNonnullByDefault
 public class UsersDbClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
@@ -35,7 +36,7 @@ public class UsersDbClient implements UsersClient {
             CFG.userdataJdbcUrl()
     );
 
-    @Nonnull
+
     @Override
     @Step("Create user using SQL")
     public UserJson createUser(String username, String password) {
@@ -78,7 +79,7 @@ public class UsersDbClient implements UsersClient {
         return authUser;
     }
 
-
+    @Step("Delete user '{0}' using SQL")
     public void removeUser(String username) {
         xaTxTemplate.execute(() -> {
             AuthUserEntity authUser = authUserRepository.findByUsername(username)
@@ -94,6 +95,7 @@ public class UsersDbClient implements UsersClient {
         });
     }
 
+    @Step("Update user '{0}' using SQL")
     public UserJson updateUser(String username, UserJson updatedUser) {
         return xaTxTemplate.execute(() -> {
 
@@ -148,7 +150,7 @@ public class UsersDbClient implements UsersClient {
         });
     }
 
-
+    @Step("Get user using SQL with id:'{0}'")
     public Optional<FullUserJson> findUserByIdWithAuth(UUID userId) {
         return xaTxTemplate.execute(() -> {
 
@@ -168,6 +170,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Step("Get user '{0}' using SQL")
     public Optional<UserJson> findUserByUsername(String username) {
         return xaTxTemplate.execute(() ->
                 userdataUserRepository.findByUsername(username)
@@ -175,7 +178,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
-
+    @Step("Get user '{0}' with authority using SQL")
     public Optional<FullUserJson> findFullUserByUsername(String username) {
         return xaTxTemplate.execute(() -> {
                     Optional<AuthUserEntity> authUser = authUserRepository.findByUsername(username);
@@ -193,6 +196,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Step("Create {1} income invitation using SQL")
     public List<UserJson> createIncomeInvitations(UserJson targetUser, int count) {
         List<UserJson> incomeInvitations = new ArrayList<>();
 
@@ -219,6 +223,7 @@ public class UsersDbClient implements UsersClient {
         return incomeInvitations;
     }
 
+    @Step("Create {1} outcome invitation using SQL")
     public List<UserJson> createOutcomeInvitations(UserJson targetUser, int count) {
         List<UserJson> outcomeInvitations = new ArrayList<>();
 
@@ -244,6 +249,7 @@ public class UsersDbClient implements UsersClient {
         return outcomeInvitations;
     }
 
+    @Step("Add {1} friends using SQL")
     public List<UserJson> addFriends(UserJson targetUser, int count) {
         List<UserJson> friends = new ArrayList<>();
 

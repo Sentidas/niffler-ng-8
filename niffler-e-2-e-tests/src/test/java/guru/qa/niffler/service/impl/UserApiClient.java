@@ -12,11 +12,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class UserApiClient extends BaseApiClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
@@ -40,6 +42,7 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
+    @Step("Update user using API")
     public UserJson updateUser(String username, UserJson user) {
         return execute(userApi.updateUserInfo(user));
     }
@@ -51,6 +54,8 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
+    @Nonnull
+    @Step("Create {1} income invitation using API")
     public List<UserJson> createIncomeInvitations(UserJson targetUser, int count) {
         List<UserJson> incomeInvitations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -63,6 +68,8 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
+    @Nonnull
+    @Step("Create {1} outcome invitation using API")
     public List<UserJson> createOutcomeInvitations(UserJson targetUser, int count) {
         List<UserJson> outcomeInvitations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -75,6 +82,8 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
+    @Nonnull
+    @Step("Add {1} friends using API")
     public List<UserJson> addFriends(UserJson targetUser, int count) {
         List<UserJson> friends = new ArrayList<>();
         UserJson addressee;
@@ -91,6 +100,8 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
+    @Nonnull
+    @Step("Get user '{0}' using API")
     public Optional<UserJson> findUserByUsername(String username) {
         return Optional.ofNullable(execute(userApi.currentUser(username)));
     }

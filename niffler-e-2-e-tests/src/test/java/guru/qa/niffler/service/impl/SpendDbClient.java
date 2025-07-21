@@ -10,7 +10,9 @@ import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendClient;
+import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ public class SpendDbClient implements SpendClient {
     );
 
     @Override
+    @Step("Create spend using SQL")
     public SpendJson createSpend(SpendJson spend) {
         return xaTxTemplate.execute(() -> {
                     SpendEntity spendEntity = SpendEntity.fromJson(spend);
@@ -56,19 +59,16 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Create category using SQL")
     public CategoryJson createCategory(CategoryJson category) {
         return xaTxTemplate.execute(() -> CategoryJson.fromEntity(
                 spendRepository.createCategory(CategoryEntity.fromJson(category)))
         );
     }
 
-    //    public SpendJson updateSpend(SpendJson spend) {
-//        return jdbcTxTemplate.execute(() ->
-//                SpendJson.fromEntity(
-//                        spendRepository.update(SpendEntity.fromJson(spend)))
-//        );
-//    }
+
     @Override
+    @Step("Update spend using SQL")
     public SpendJson updateSpend(SpendJson updateSpend) {
         return xaTxTemplate.execute(() -> {
 
@@ -103,6 +103,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Update category using SQL")
     public CategoryJson updateCategory(CategoryJson updateCategory) {
         return xaTxTemplate.execute(() -> {
 
@@ -130,6 +131,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Delete category using SQL")
     public Optional<CategoryJson> removeCategory(CategoryJson categoryJson) {
         xaTxTemplate.execute(() -> {
             Optional<CategoryEntity> category = spendRepository
@@ -146,6 +148,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Delete spend using SQL")
     public void removeSpend(SpendJson spendJson) {
         xaTxTemplate.execute(() -> {
             Optional<SpendEntity> spend = spendRepository
@@ -161,6 +164,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Get category '{1}' using SQL")
     public Optional<CategoryJson> findCategoryByUsernameAndSpendName(String username, String name) {
         return xaTxTemplate.execute(() -> {
             Optional<CategoryEntity> category = spendRepository
@@ -170,6 +174,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Get category by id using SQL")
     public Optional<CategoryJson> findCategoryById(UUID categoryId) {
         return xaTxTemplate.execute(() -> {
             Optional<CategoryEntity> category = spendRepository
@@ -180,6 +185,7 @@ public class SpendDbClient implements SpendClient {
 
 
     @Override
+    @Step("Get spend by id using SQL")
     public Optional<SpendJson> findSpendByIdAndUsername(UUID spendId, String username) {
         return xaTxTemplate.execute(() -> {
             Optional<SpendEntity> spend = spendRepository
@@ -194,6 +200,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Get spend by description using SQL")
     public Optional<SpendJson> findByUsernameAndDescription(String username, String description) {
         return xaTxTemplate.execute(() -> {
             Optional<SpendEntity> spend = spendRepository
