@@ -3,10 +3,14 @@ package guru.qa.niffler.service.impl;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 
+@ParametersAreNonnullByDefault
 public class BaseApiClient {
 
+    @Nonnull
     protected <T> T execute(Call<T> call) {
         try {
             Response<T> response = call.execute();

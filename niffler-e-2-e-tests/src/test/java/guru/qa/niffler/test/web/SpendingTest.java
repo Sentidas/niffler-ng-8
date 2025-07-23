@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.LocalDate;
 
 
 @ExtendWith(BrowserExtension.class)
@@ -24,27 +25,21 @@ public class SpendingTest {
 
     private static final Config CFG = Config.getInstance();
 
-    @User(
-            username = "duck",
-            spendings = @Spend(
-                    category = "Обучение",
-                    description = "Обучение 2.0",
-                    amount = 89000.00,
-                    currency = CurrencyValues.RUB
-            ))
-
     @Test
-    void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson[] spend) {
+    void createSpendWithDate() throws InterruptedException {
 
-        final String newDescription = "For me";
+        LocalDate date = LocalDate.of(2012, 6, 22);
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLoginWithCredentials("duck", "12345")
-                .editSpend(spend[0].description())
-                .editDescription(newDescription)
+                .createSpend()
+                .setSpendDescription("Билеты на Ямайку")
+                .selectCategory("Путешествие")
+                .setSpendAmount(500000.00)
+                .selectDate(date)
                 .save();
 
-        new MainPage().checkThatSpendTableContains(newDescription);
+        new MainPage().checkThatSpendTableContainsWithData("Билеты на Ямайку", date);
     }
 
     @User(
@@ -91,5 +86,29 @@ public class SpendingTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkStatPieChart(expectedStatPieChart);
+    }
+
+
+    @User(
+            username = "duck",
+            spendings = @Spend(
+                    category = "Обучение",
+                    description = "Обучение 2.0",
+                    amount = 89000.00,
+                    currency = CurrencyValues.RUB
+            ))
+
+    @Test
+    void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson[] spend) {
+
+        final String newDescription = "For me";
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLoginWithCredentials("duck", "12345")
+                .editSpend(spend[0].description())
+                .setSpendDescription(newDescription)
+                .save();
+
+        new MainPage().checkThatSpendTableContains(newDescription);
     }
 }
