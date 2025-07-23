@@ -6,22 +6,25 @@ import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
+import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@ParametersAreNonnullByDefault
 public class SpendApiClient extends BaseApiClient implements SpendClient {
 
     private static final Config CFG = Config.getInstance();
 
-    private final OkHttpClient client = new OkHttpClient.Builder().build();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .addNetworkInterceptor(new AllureOkHttp3()
+                    .setRequestTemplate("http-request.ftl")
+                    .setResponseTemplate("http-response.ftl"))
+            .build();
+
     private final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(CFG.spendUrl())
             .client(client)
@@ -32,7 +35,7 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
 
 
     @Override
-    @Step("Create spend using API")
+    @Step("Create spend using SQL")
     public SpendJson createSpend(SpendJson spend) {
 
         findCategoryByUsernameAndSpendName(spend.username(), spend.category().name())
@@ -42,13 +45,12 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
 
     }
 
-    @Nonnull
+
     private List<CategoryJson> existingCategories(String username) {
         return execute(spendApi.getCategories(username, false));
 
     }
 
-    @Nonnull
     private List<SpendJson> existingSpends(String username) {
         return execute(spendApi.getSpends(username, null, null, null));
 
