@@ -48,8 +48,4 @@ enum LocalConfig implements Config {
     return "jdbc:postgresql://127.0.0.1:5432/niffler-spend";
   }
 
-  @Override
-  public String ghUrl() {
-    return "https://api.github.com/";
-  }
 }

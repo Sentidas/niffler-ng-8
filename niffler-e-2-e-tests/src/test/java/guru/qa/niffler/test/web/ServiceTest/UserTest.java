@@ -1,19 +1,24 @@
 package guru.qa.niffler.test.web.ServiceTest;
 
+import guru.qa.niffler.jupiter.extension.UsersClientExtension;
 import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@ExtendWith(UsersClientExtension.class)
 public class UserTest {
 
-    static UsersDbClient usersDbClient = new UsersDbClient();
+   // static UsersDbClient usersDbClient = new UsersDbClient();
+    private UsersClient usersClient;
 
     @ValueSource(strings = {
             "duck-100",
@@ -22,20 +27,20 @@ public class UserTest {
     @ParameterizedTest
     void createUser(String username) {
 
-        UserJson user = usersDbClient.createUser(
+        UserJson user = usersClient.createUser(
                 username, "12345"
         );
     }
 
     @Test
     void removeUser() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        usersDbClient.removeUser("duck-100");
+     //   UsersDbClient usersDbClient = new UsersDbClient();
+        usersClient.removeUser("duck-100");
     }
 
     @Test
     void updateUser() {
-        UsersDbClient usersDbClient = new UsersDbClient();
+    //    UsersDbClient usersDbClient = new UsersDbClient();
         UserJson updatedUser =
                 new UserJson(
                         null,
@@ -48,14 +53,14 @@ public class UserTest {
                         null,
                         null, null
                 );
-        usersDbClient.updateUser("duck-200", updatedUser);
+        usersClient.updateUser("duck-200", updatedUser);
     }
 
     @Test
     void findFullUserById() {
-        UsersDbClient us = new UsersDbClient();
+      //  UsersDbClient us = new UsersDbClient();
         UUID userId = UUID.fromString("eab13506-5ca7-11f0-acb5-0242ac110002");
-        Optional<FullUserJson> user = us.findUserByIdWithAuth(userId);
+        Optional<FullUserJson> user = usersClient.findUserByIdWithAuth(userId);
 
         System.out.println("FullUser найден: '" + user.get().username() + "' c ролями: " + String.join(", ", user.get().authorities()));
         System.out.println("FullUser найден: '" + user.get().username() + "' c именами: " + user.get().firstname() + ", " + user.get().surname() + ", " + user.get().fullname());
@@ -64,8 +69,8 @@ public class UserTest {
 
     @Test
     void findFullUserByUserName() {
-        UsersDbClient us = new UsersDbClient();
-        Optional<FullUserJson> user = us.findFullUserByUsername("duck-200");
+      //  UsersDbClient us = new UsersDbClient();
+        Optional<FullUserJson> user = usersClient.findFullUserByUsername("duck-200");
 
         if (user.isEmpty()) {
             System.out.println("Пользователь 'fox' не найден в базе.");
@@ -81,7 +86,7 @@ public class UserTest {
 
     @Test
     void createOutcomeInvitations() {
-        UsersDbClient usersDbClient = new UsersDbClient();
+      //  UsersDbClient usersDbClient = new UsersDbClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -94,12 +99,12 @@ public class UserTest {
                         null,
                         null, null
                 );
-        usersDbClient.createOutcomeInvitations(targetUser, 2);
+        usersClient.createOutcomeInvitations(targetUser, 2);
     }
 
 @Test
     void createIncomeInvitations() {
-        UsersDbClient usersDbClient = new UsersDbClient();
+      //  UsersDbClient usersDbClient = new UsersDbClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -112,12 +117,12 @@ public class UserTest {
                         null,
                         null, null
                 );
-        usersDbClient.createIncomeInvitations(targetUser, 1);
+    usersClient.createIncomeInvitations(targetUser, 1);
     }
 
     @Test
     void addFriends() {
-        UsersDbClient usersDbClient = new UsersDbClient();
+      //  UsersDbClient usersDbClient = new UsersDbClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -131,7 +136,7 @@ public class UserTest {
                         null, null
 
                 );
-        usersDbClient.addFriends(targetUser, 2);
+        usersClient.addFriends(targetUser, 2);
     }
 }
 
