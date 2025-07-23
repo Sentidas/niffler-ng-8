@@ -22,6 +22,48 @@ public class FriendsTest {
 
     public static Config CFG = Config.getInstance();
 
+
+    @User(
+            incomeInvitation = 2
+    )
+    @DisplayName("Принять приглашение")
+    void incomeInvitationsShouldBePresentInFriendsTable2(UserJson user) {
+        System.out.println("добавили пользователя:" + user.username());
+
+        String friendName = user.testData().incomeInvitations().get(0).username();
+
+        System.out.println("приглашение отправил:" + friendName);
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLoginWithCredentials(user.username(), user.testData().password())
+                .openAvatarMenu()
+                .goToFriendsPage()
+                .acceptIncomingInvitation(friendName)
+                .checkAcceptAlertMessage(friendName)
+                .checkFriendIsInFriendsList(friendName);
+    }
+
+    @User(
+            incomeInvitation = 2
+    )
+    @DisplayName("Отклонить приглашение")
+    void incomeInvitationsShouldBePresentInFriendsTable3(UserJson user) {
+        System.out.println("добавили пользователя:" + user.username());
+
+        String friendName = user.testData().incomeInvitations().get(0).username();
+
+        System.out.println("приглашение отправил:" + friendName);
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLoginWithCredentials(user.username(), user.testData().password())
+                .openAvatarMenu()
+                .goToFriendsPage()
+                .declineIncomingInvitation(friendName)
+                .checkDeclineAlertMessage(friendName)
+                .checkNoPresentFriendIsInFriendsList(friendName);
+    }
+
+
     @Test
     @User
     @DisplayName("У нового пользователя нет друзей в списке")
@@ -75,6 +117,7 @@ public class FriendsTest {
         }
 
     }
+
 
     @Test
     @User(

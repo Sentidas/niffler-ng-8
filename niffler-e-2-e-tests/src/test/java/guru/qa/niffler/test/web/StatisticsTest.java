@@ -51,7 +51,7 @@ public class StatisticsTest {
 
         mainPage
                 .editSpend("Дизайнер курс")
-                .editDescription("Курсы макраме")
+                .setSpendDescription("Курсы макраме")
                 .save(userContext);
 
         mainPage.checkLegendsNameAndSum(userContext.getExpectedUser());
@@ -89,8 +89,8 @@ public class StatisticsTest {
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.editSpend("Дизайнер курс")
-                .editDescription("Дизайнер курс VIP")
-                .editAmount(506000.11)
+                .setSpendDescription("Дизайнер курс VIP")
+                .setSpendAmount(506000.11)
                 .save(userContext);
 
         mainPage.checkLegendsNameAndSum(userContext.getExpectedUser());
@@ -127,7 +127,7 @@ public class StatisticsTest {
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.editSpend("Бронь гостиницы")
-                .editCategory("Обучение")
+                .selectCategory("Обучение")
                 .save(userContext);
 
         mainPage.checkLegendsNameAndSum(userContext.getExpectedUser());
@@ -244,7 +244,7 @@ public class StatisticsTest {
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
 
         mainPage.editSpend("Дизайнер курс")
-                .editAmount(506000.11)
+                .setSpendAmount(506000.11)
                 .save(userContext);
 
         mainPage.deleteSpend("Путешествие на Алтай", "Билеты в Барнаул", userContext);
