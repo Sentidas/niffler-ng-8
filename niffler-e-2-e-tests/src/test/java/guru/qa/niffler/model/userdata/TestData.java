@@ -12,6 +12,23 @@ public record TestData(String password,
                        List<UserJson> incomeInvitations,
                        List<UserJson> outcomeInvitations
 ) {
+
+    public List<String> friendsUsernames() {
+        return extractUsernames(friends);
+    }
+
+    public List<String> incomeInvitationsUsernames() {
+        return extractUsernames(incomeInvitations);
+    }
+
+    public List<String> outcomeInvitationsUsernames() {
+        return extractUsernames(outcomeInvitations);
+    }
+
+    private List<String> extractUsernames(List<UserJson> users) {
+        return users.stream().map(UserJson::username).toList();
+    }
+
     public TestData withUpdatedSpends(List<SpendJson> updatedSpends) {
         return new TestData(
                 password,

@@ -26,7 +26,8 @@ public class FriendsTest {
     @User
     @DisplayName("У нового пользователя нет друзей в списке")
     void friendShouldNotBePresentInFriendsTable(UserJson user) {
-        System.out.println(user.username() + " - ищем пользователя");
+        System.out.println("добавили пользователя:" + user.username());
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
@@ -40,7 +41,7 @@ public class FriendsTest {
     @DisplayName("При добавлении друзей новому пользователю они отображаются в списке друзей")
     void friendShouldBePresentInFriendsTable(UserJson user) {
 
-        System.out.println(user.username() + " - ищем пользователя");
+        System.out.println("добавили пользователя:" + user.username());
         System.out.println("Друзья пользователя: " + user.testData().friends());
         FriendsPage friendsPage = new FriendsPage();
 

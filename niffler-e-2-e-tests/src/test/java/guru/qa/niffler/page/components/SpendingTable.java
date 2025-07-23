@@ -15,7 +15,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class SpendingTable {
+public class SpendingTable extends BaseComponent {
 
 
     private final ElementsCollection tableRows = $$("#spendings tbody tr");
@@ -23,6 +23,10 @@ public class SpendingTable {
             searchPanel = $("input[placeholder=Search]"),
 
     deleteDialogBtm = $("div[role='dialog']").$(byText("Delete"));
+
+    public SpendingTable() {
+        super($("#root header"));
+    }
 
 
     public void editSpend(String description) {

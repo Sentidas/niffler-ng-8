@@ -1,9 +1,11 @@
 package guru.qa.niffler.service.impl;
 
+import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
+import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;
@@ -27,6 +29,10 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
             .client(client)
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
+
+    private final AuthApi authApi = new RestClient.DefaultRestClient(CFG.authUrl()).create(AuthApi.class);
+    private final UserdataApi userdataApi = new RestClient.DefaultRestClient(CFG.userdataUrl()).create(UserdataApi.class);
+
 
     private final UserdataApi userApi = retrofit.create(UserdataApi.class);
     private static final String defaultPassword = "12345";

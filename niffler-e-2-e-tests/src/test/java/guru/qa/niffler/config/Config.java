@@ -1,5 +1,7 @@
 package guru.qa.niffler.config;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface Config {
 
   static Config getInstance() {
@@ -7,24 +9,35 @@ public interface Config {
             ? DockerConfig.INSTANCE
             : LocalConfig.INSTANCE;
   }
-
+  @NotNull
   String frontUrl();
 
+  @NotNull
   String spendUrl();
 
+  @NotNull
   String spendJdbcUrl();
 
+  @NotNull
   String authUrl();
 
+  @NotNull
   String authJdbcUrl();
 
-  String ghUrl();
+  @NotNull
+  default String ghUrl() {
+    return "https://api.github.com/";
+  }
 
+  @NotNull
   String gatewayUrl();
 
+  @NotNull
   String userdataUrl();
 
+  @NotNull
   String userdataJdbcUrl();
 
+  @NotNull
   String currencyJdbcUrl();
 }
