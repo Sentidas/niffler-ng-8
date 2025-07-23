@@ -22,6 +22,20 @@ public class ProfileTest {
 
     private static final Config CFG = Config.getInstance();
 
+
+    @Test
+    void updateNameInProfile() {
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLoginWithCredentials("duck", "12345")
+                .openAvatarMenu()
+                .goToProfilePage()
+                .setName("duccY")
+                .saveChanges();
+    }
+
+
+
     @ScreenShotTest("img/avatar_expected.png")
     @User
     void checkUploadAvatarInProfile(UserJson user, BufferedImage expectedAvatar) throws IOException {
@@ -88,6 +102,7 @@ public class ProfileTest {
                 .checkActiveCategoryPresent(user.testData().categories().get(0).name());
 
     }
+
     @User(
             categories = @Category(
                     archived = true
