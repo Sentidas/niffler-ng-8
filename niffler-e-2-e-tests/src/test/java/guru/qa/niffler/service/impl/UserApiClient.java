@@ -127,4 +127,8 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     public Optional<FullUserJson> findFullUserByUsername(String username) {
         throw new RuntimeException("NYI method findFullUserByUsername");
     }
+
+    public List<UserJson> getAllUsers(String username) {
+        return execute(userApi.allUsers(username, null));
+    }
 }
