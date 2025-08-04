@@ -116,7 +116,6 @@ public abstract class RestClient {
         }
     }
 
-
     public static final class DefaultRestClient extends RestClient {
 
         public DefaultRestClient(String baseUrl, boolean followRedirect) {
