@@ -9,16 +9,18 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class Header {
+public class Header extends BaseComponent<Header> {
 
-    private final SelenideElement self = $("header div.MuiToolbar-root"),
-            mainLink = self.$("a[href='/main']"),
+    private final SelenideElement mainLink = self.$("a[href='/main']"),
             profileLink = $("a[href='/profile']"),
             friendsLink = $("a[href='/people/friends']"),
             peopleLink = $("a[href='/people/all']"),
             profileBtn = self.$("button[aria-label=Menu]"),
             newSpendingBtn = self.$("a[href='/spending']");
-    ;
+
+    public Header() {
+        super($("header div.MuiToolbar-root"));
+    }
 
     @Step("Open user menu")
     public void openAvatarMenu() {

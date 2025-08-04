@@ -25,7 +25,7 @@ public class ColorTest {
             spendings = {
                     @Spend(category = "Обучение", description = "Дизайнер курс", amount = 95000),
                     @Spend(category = "Ремонт", description = "Модная ванная", amount = 5005700),
-                //    @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000.11, currency = CurrencyValues.RUB)
+                    //    @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000.11, currency = CurrencyValues.RUB)
             }
     )
 
@@ -47,6 +47,6 @@ public class ColorTest {
 
         mainPage.checkLegendsNameAndSum(userContext.getExpectedUser());
 
-       mainPage.checkColorsLegends(Color.green, Color.yellow);
+        mainPage.checkColorsLegends(Color.green, Color.yellow);
     }
 }

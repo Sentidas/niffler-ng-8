@@ -1,11 +1,10 @@
 package guru.qa.niffler.test.web.ServiceTest;
 
 import guru.qa.niffler.jupiter.extension.UsersClientExtension;
-import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.spend.CurrencyValues;
+import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,15 +16,14 @@ import java.util.UUID;
 @ExtendWith(UsersClientExtension.class)
 public class UserTest {
 
-   // static UsersDbClient usersDbClient = new UsersDbClient();
     private UsersClient usersClient;
 
     @ValueSource(strings = {
-            "duck-100",
-            "duck-200",
+            "duck-11",
+            "duck-22",
     })
     @ParameterizedTest
-    void createUser(String username) {
+    void createUser(String username) throws InterruptedException {
 
         UserJson user = usersClient.createUser(
                 username, "12345"
@@ -34,13 +32,11 @@ public class UserTest {
 
     @Test
     void removeUser() {
-     //   UsersDbClient usersDbClient = new UsersDbClient();
         usersClient.removeUser("duck-100");
     }
 
     @Test
     void updateUser() {
-    //    UsersDbClient usersDbClient = new UsersDbClient();
         UserJson updatedUser =
                 new UserJson(
                         null,
@@ -58,7 +54,6 @@ public class UserTest {
 
     @Test
     void findFullUserById() {
-      //  UsersDbClient us = new UsersDbClient();
         UUID userId = UUID.fromString("eab13506-5ca7-11f0-acb5-0242ac110002");
         Optional<FullUserJson> user = usersClient.findUserByIdWithAuth(userId);
 
@@ -69,7 +64,6 @@ public class UserTest {
 
     @Test
     void findFullUserByUserName() {
-      //  UsersDbClient us = new UsersDbClient();
         Optional<FullUserJson> user = usersClient.findFullUserByUsername("duck-200");
 
         if (user.isEmpty()) {
@@ -77,7 +71,7 @@ public class UserTest {
             return;
         }
 
-        FullUserJson u = user.get(); // теперь безопасно
+        FullUserJson u = user.get();
 
         System.out.println("FullUser найден: '" + u.username() + "' c ролями: " + String.join(", ", u.authorities()));
         System.out.println("FullUser найден: '" + u.username() + "' c именами: " + u.firstname() + ", " + u.surname() + ", " + u.fullname());
@@ -86,7 +80,6 @@ public class UserTest {
 
     @Test
     void createOutcomeInvitations() {
-      //  UsersDbClient usersDbClient = new UsersDbClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -102,9 +95,8 @@ public class UserTest {
         usersClient.createOutcomeInvitations(targetUser, 2);
     }
 
-@Test
+    @Test
     void createIncomeInvitations() {
-      //  UsersDbClient usersDbClient = new UsersDbClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -117,12 +109,11 @@ public class UserTest {
                         null,
                         null, null
                 );
-    usersClient.createIncomeInvitations(targetUser, 1);
+        usersClient.createIncomeInvitations(targetUser, 1);
     }
 
     @Test
     void addFriends() {
-      //  UsersDbClient usersDbClient = new UsersDbClient();
         UserJson targetUser =
                 new UserJson(
                         null,

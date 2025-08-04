@@ -2,10 +2,12 @@ package guru.qa.niffler.page.components;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import org.assertj.core.api.SoftAssertions;
+import io.qameta.allure.Step;
 
 import java.time.Duration;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
@@ -15,9 +17,9 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class SpendingTable extends BaseComponent {
+public class SpendingTable extends BaseComponent<SpendingTable> {
 
-
+    SearchField searchField = new SearchField();
     private final ElementsCollection tableRows = $$("#spendings tbody tr");
     private final SelenideElement deleteBtm = $("#delete"),
             searchPanel = $("input[placeholder=Search]"),
@@ -63,13 +65,24 @@ public class SpendingTable extends BaseComponent {
                 .shouldHave(size(0), Duration.ofSeconds(3));
     }
 
-    public void checkThatSpendTableContains(String spendingDescription) {
-        SelenideElement row = tableRows.findBy(text(spendingDescription));
-        if (!row.exists()) {
-            searchPanel.click();
-            searchPanel.setValue(spendingDescription).pressEnter();
-            tableRows.find(text(spendingDescription))
-                    .should(visible);
-        }
+    @Step("Check table contains spending")
+    public void checkTableContains(String expectedSpend) {
+        SelenideElement row = tableRows.findBy(text(expectedSpend));
+        searchField.search(expectedSpend);
+
+        tableRows.find(text(expectedSpend))
+                .should(visible);
+    }
+
+    @Step("Check table contains spending with date")
+    public void checkTableContainsWithData(String expectedSpend, LocalDate date) {
+        SelenideElement row = tableRows.findBy(text(expectedSpend));
+        searchField.search(expectedSpend);
+
+        tableRows.find(text(expectedSpend))
+                .should(visible);
+
+        String expectedDate = date.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH));
+        row.$$("td span").findBy(text(expectedDate)).shouldBe(visible);
     }
 }

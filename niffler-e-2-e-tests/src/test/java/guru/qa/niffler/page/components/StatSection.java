@@ -8,6 +8,7 @@ import guru.qa.niffler.utils.ScreenDiffResult;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
+
 import guru.qa.niffler.condition.Color;
 import io.qameta.allure.Step;
 import org.assertj.core.api.SoftAssertions;
@@ -26,15 +27,19 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ParametersAreNonnullByDefault
-public class StatSection {
+public class StatSection extends BaseComponent<StatSection> {
 
 
-    private final SelenideElement self = $("#stat"),
+    private final SelenideElement
             chart = self.$("canvas[role='img']"),
             legendContainer = self.$("#legend-container"),
             statImage = self.$("canvas[role='img']");
 
     private final ElementsCollection bubbles = $("#legend-container").$$("li");
+
+    public StatSection() {
+        super($("#stat"));
+    }
 
     @Step("Wait for Statistics Chart load")
     public void waitForStatChartLoad() {

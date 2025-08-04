@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @ParametersAreNonnullByDefault
-public class UserApiClient extends BaseApiClient implements UsersClient {
+public class UsersApiClient extends BaseApiClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
     private static final String defaultPassword = "12345";

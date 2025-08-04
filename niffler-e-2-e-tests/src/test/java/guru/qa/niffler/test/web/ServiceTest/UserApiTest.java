@@ -5,7 +5,7 @@ import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.service.impl.UserApiClient;
+import guru.qa.niffler.service.impl.UsersApiClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ public class UserApiTest {
 
     @Test
     void updateUser() throws IOException {
-        UsersClient usersApiClient = new UserApiClient();
+        UsersClient usersApiClient = new UsersApiClient();
         UserJson updatedUser =
                 new UserJson(
                         null,
@@ -38,7 +38,7 @@ public class UserApiTest {
 
     @Test
     void findUserByUserName() {
-        UsersClient usersApiClient = new UserApiClient();
+        UsersClient usersApiClient = new UsersApiClient();
         Optional<UserJson> user = usersApiClient.findUserByUsername("ferret55");
 
         if (user.isEmpty()) {
@@ -52,7 +52,7 @@ public class UserApiTest {
 
     @Test
     void createOutcomeInvitations() {
-        UsersClient usersApiClient = new UserApiClient();
+        UsersClient usersApiClient = new UsersApiClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -78,7 +78,7 @@ public class UserApiTest {
 
     @Test
     void createIncomeInvitations() {
-        UsersClient usersApiClient = new UserApiClient();
+        UsersClient usersApiClient = new UsersApiClient();
         UserJson targetUser =
                 new UserJson(
                         null,
@@ -104,7 +104,7 @@ public class UserApiTest {
 
     @Test
     void addFriends() {
-        UsersClient usersApiClient = new UserApiClient();
+        UsersClient usersApiClient = new UsersApiClient();
         UserJson targetUser =
                 new UserJson(
                         null,

@@ -14,10 +14,9 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class Calendar {
+public class Calendar extends BaseComponent<Calendar> {
 
-    private final SelenideElement self = $("div.MuiDateCalendar-root"),
-            yearSelectBtn = self.$("button svg[data-testid=ArrowDropDownIcon]"),
+    private final SelenideElement yearSelectBtn = self.$("button svg[data-testid=ArrowDropDownIcon]"),
             leftSelectMonth = self.$("button svg[data-testid=ArrowLeftIcon]"),
             rightSelectMonth = self.$("button svg[data-testid=ArrowRightIcon]"),
             inputMonth = self.$("div.MuiPickersCalendarHeader-label");
@@ -25,6 +24,10 @@ public class Calendar {
     private final
     ElementsCollection years = self.$$("button.MuiPickersYear-yearButton"),
                        days = self.$$("button.MuiPickersDay-root");
+
+    public Calendar() {
+        super($("div.MuiDateCalendar-root"));
+    }
 
     @Step("Select date in calendar")
     public void selectDateInCalendar(LocalDate date) {

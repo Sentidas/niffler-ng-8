@@ -13,7 +13,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class FriendsPage {
+public class FriendsPage extends BasePage<FriendsPage> {
 
     SearchField searchField = new SearchField();
 
@@ -80,18 +80,6 @@ public class FriendsPage {
 
         row.$(byText("Decline")).click();
         declineDialogBtn.click();
-        return this;
-    }
-
-    @Step("Check accept incoming invitation alert_message")
-    public FriendsPage checkAcceptAlertMessage(String username) {
-        alertMessage.$(byText("Invitation of " + username + " accepted")).shouldHave(visible);
-        return this;
-    }
-
-    @Step("Check decline incoming invitation alert_message")
-    public FriendsPage checkDeclineAlertMessage(String username) {
-        alertMessage.$(byText("Invitation of " + username + " is declined")).shouldHave(visible);
         return this;
     }
 }
