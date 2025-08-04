@@ -22,7 +22,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.page.utils.ExpectedLegendGenerator.getSortedExpectedLegends;
 
 @ParametersAreNonnullByDefault
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
     private final SpendingTable spendingTable = new SpendingTable();
     private final StatSection statSection = new StatSection();
     private final Header header = new Header();

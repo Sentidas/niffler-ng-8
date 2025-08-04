@@ -2,16 +2,20 @@ package guru.qa.niffler.service;
 
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
+import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang.ArrayUtils;
+import retrofit2.Call;
 import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
@@ -40,14 +44,20 @@ public abstract class RestClient {
                       Interceptor... interceptors) {
 
         final OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .followRedirects(followRedirect);
-
+                .followRedirects(followRedirect)
+                // Allure interceptor
+                .addNetworkInterceptor(new AllureOkHttp3()
+                        .setRequestTemplate("http-request.ftl")
+                        .setResponseTemplate("http-response.ftl"));
+       // Other interceptors
         if (ArrayUtils.isNotEmpty(interceptors)) {
             for (Interceptor interceptor : interceptors) {
                 builder.addNetworkInterceptor(interceptor);
             }
         }
+        // Logging
         builder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(level));
+        // Cookie management
         builder.cookieJar(
                 new JavaNetCookieJar(
                         new CookieManager(
@@ -70,13 +80,48 @@ public abstract class RestClient {
         return this.retrofit.create(service);
     }
 
-    public static final class DefaultRestClient extends RestClient {
+    @Nonnull
+    protected <T> T execute(Call<T> call) {
+        try {
+            Response<T> response = call.execute();
 
+            if (!response.isSuccessful()) {
+                String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
+                throw new RuntimeException("Unexpected response code: " + response.code() + ". " + errorBody);
+            }
+            T body = response.body();
+
+            if (body == null) {
+                throw new RuntimeException("Expected non-null response body but received null");
+            }
+
+            return body;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to execute request", e);
+        }
+    }
+
+    protected <T> void executeWithoutBody(Call<T> call) {
+        try {
+            Response<T> response = call.execute();
+
+            if (!response.isSuccessful()) {
+                String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
+                throw new RuntimeException("Unexpected response code: " + response.code() + ". " + errorBody);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to execute request", e);
+        }
+    }
+
+
+    public static final class DefaultRestClient extends RestClient {
 
         public DefaultRestClient(String baseUrl, boolean followRedirect) {
             super(baseUrl, followRedirect);
         }
-
 
         public DefaultRestClient(String baseUrl) {
             super(baseUrl);

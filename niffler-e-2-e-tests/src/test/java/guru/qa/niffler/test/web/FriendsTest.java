@@ -27,7 +27,7 @@ public class FriendsTest {
             incomeInvitation = 2
     )
     @DisplayName("Принять приглашение")
-    void incomeInvitationsShouldBePresentInFriendsTable2(UserJson user) {
+    void incomeInvitationsShouldBePresentInFriendsTable2(UserJson user) throws InterruptedException {
         System.out.println("добавили пользователя:" + user.username());
 
         String friendName = user.testData().incomeInvitations().get(0).username();
@@ -39,7 +39,7 @@ public class FriendsTest {
                 .openAvatarMenu()
                 .goToFriendsPage()
                 .acceptIncomingInvitation(friendName)
-                .checkAcceptAlertMessage(friendName)
+                .checkAlertMessage("Invitation of " + friendName + " accepted")
                 .checkFriendIsInFriendsList(friendName);
     }
 
@@ -47,7 +47,7 @@ public class FriendsTest {
             incomeInvitation = 2
     )
     @DisplayName("Отклонить приглашение")
-    void incomeInvitationsShouldBePresentInFriendsTable3(UserJson user) {
+    void incomeInvitationsShouldBePresentInFriendsTable3(UserJson user) throws InterruptedException {
         System.out.println("добавили пользователя:" + user.username());
 
         String friendName = user.testData().incomeInvitations().get(0).username();
@@ -59,7 +59,7 @@ public class FriendsTest {
                 .openAvatarMenu()
                 .goToFriendsPage()
                 .declineIncomingInvitation(friendName)
-                .checkDeclineAlertMessage(friendName)
+                .checkAlertMessage("Invitation of " + friendName + " is declined")
                 .checkNoPresentFriendIsInFriendsList(friendName);
     }
 

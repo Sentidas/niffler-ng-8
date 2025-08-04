@@ -4,6 +4,7 @@ import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
+import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
@@ -15,23 +16,28 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SpendApiClient extends BaseApiClient implements SpendClient {
+public class SpendApiClient extends RestClient implements SpendClient {
 
-    private static final Config CFG = Config.getInstance();
+//    private static final Config CFG = Config.getInstance();
+//
+//    private final OkHttpClient client = new OkHttpClient.Builder()
+//            .addNetworkInterceptor(new AllureOkHttp3()
+//                    .setRequestTemplate("http-request.ftl")
+//                    .setResponseTemplate("http-response.ftl"))
+//            .build();
+//
+//    private final Retrofit retrofit = new Retrofit.Builder()
+//            .baseUrl(CFG.spendUrl())
+//            .client(client)
+//            .addConverterFactory(JacksonConverterFactory.create())
+//            .build();
 
-    private final OkHttpClient client = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new AllureOkHttp3()
-                    .setRequestTemplate("http-request.ftl")
-                    .setResponseTemplate("http-response.ftl"))
-            .build();
+    private final SpendApi spendApi;
 
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(CFG.spendUrl())
-            .client(client)
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
-    private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    public SpendApiClient() {
+        super(CFG.spendUrl());
+        spendApi = retrofit.create(SpendApi.class);
+    }
 
 
     @Override
@@ -79,7 +85,7 @@ public class SpendApiClient extends BaseApiClient implements SpendClient {
     @Override
     @Step("Get spend by id using API")
     public Optional<SpendJson> findSpendByIdAndUsername(UUID id, String username) {
-        return Optional.ofNullable(execute(spendApi.getSpend(id.toString(), username)));
+        return Optional.of(execute(spendApi.getSpend(id.toString(), username)));
     }
 
     @Override

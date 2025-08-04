@@ -8,10 +8,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class SearchField {
-    private final SelenideElement self = $("form.MuiBox-root");
+public class SearchField extends BaseComponent<SearchField> {
+
     private final SelenideElement searchInput = self.$("input[placeholder=Search]");
     private final SelenideElement clearBtn = self.$("#input-clear");
+
+    public SearchField() {
+        super($("form.MuiBox-root"));
+    }
 
     @Step("Search by query {0}")
     public SearchField search(String query) {

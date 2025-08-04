@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface UsersClient {
 
-    UserJson createUser(String username, String password);
+    UserJson createUser(String username, String password) throws InterruptedException;
 
     UserJson updateUser(String username, UserJson user);
 

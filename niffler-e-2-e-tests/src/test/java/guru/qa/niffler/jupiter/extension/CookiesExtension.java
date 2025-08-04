@@ -1,8 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
-import guru.qa.niffler.data.jdbc.Connections;
-import guru.qa.niffler.data.jpa.EntityManagers;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 

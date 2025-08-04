@@ -1,3 +1,4 @@
+/*
 package guru.qa.niffler.api;
 
 import guru.qa.niffler.model.spend.CategoryJson;
@@ -110,3 +111,4 @@ public class SpendApiClient extends RestClient {
         }
     }
 }
+*/

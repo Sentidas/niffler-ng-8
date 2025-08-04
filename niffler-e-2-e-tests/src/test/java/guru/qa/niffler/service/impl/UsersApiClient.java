@@ -1,7 +1,9 @@
 package guru.qa.niffler.service.impl;
 
+import com.google.common.base.Stopwatch;
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
@@ -9,10 +11,6 @@ import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;
-import io.qameta.allure.okhttp3.AllureOkHttp3;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,43 +18,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @ParametersAreNonnullByDefault
-public class UserApiClient extends BaseApiClient implements UsersClient {
+public class UsersApiClient extends BaseApiClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
-
-    private final OkHttpClient client = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new AllureOkHttp3()
-                    .setRequestTemplate("http-request.ftl")
-                    .setResponseTemplate("http-response.ftl"))
-            .build();
-
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(CFG.userdataUrl())
-            .client(client)
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private static final String defaultPassword = "12345";
 
     private final AuthApi authApi = new RestClient.DefaultRestClient(CFG.authUrl()).create(AuthApi.class);
     private final UserdataApi userdataApi = new RestClient.DefaultRestClient(CFG.userdataUrl()).create(UserdataApi.class);
 
 
-    private final UserdataApi userApi = retrofit.create(UserdataApi.class);
-    private static final String defaultPassword = "12345";
-
-
     @Nonnull
     @Override
-    @Step("Create user using API")
-    public UserJson createUser(String username, String password) {
-        throw new RuntimeException("NYI method createUser");
+    @Step("Create user with username '{0}' using API")
+    public UserJson createUser(String username, String password) throws InterruptedException {
+
+        executeWithoutBody(authApi.requestRegisterForm());
+        executeWithoutBody(authApi.register(username,
+                password,
+                password,
+                ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")));
+
+        long maxWaitTime = 5000L;
+        Stopwatch sw = Stopwatch.createStarted();
+
+        while (sw.elapsed(TimeUnit.MILLISECONDS) < maxWaitTime) {
+            UserJson userJson = execute(userdataApi.currentUser(username));
+            if (userJson.id() != null) {
+                return userJson;
+            } else Thread.sleep(100);
+        }
+        // Если пользователь не был создан в течение maxWaitTime
+        throw new RuntimeException("Failed to create user with username: " + username + " within " + maxWaitTime + " ms");
     }
 
     @Override
     @Step("Update user using API")
     public UserJson updateUser(String username, UserJson user) {
-        return execute(userApi.updateUserInfo(user));
+        return execute(userdataApi.updateUserInfo(user));
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
         List<UserJson> incomeInvitations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             UserJson addressee = new UsersDbClient().createUser(RandomDataUtils.randomUsername(), defaultPassword);
-            execute(userApi.sendInvitation(addressee.username(), targetUser.username()));
+            execute(userdataApi.sendInvitation(addressee.username(), targetUser.username()));
             incomeInvitations.add(addressee);
         }
         targetUser.testData().incomeInvitations().addAll(incomeInvitations);
@@ -86,7 +87,7 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
         List<UserJson> outcomeInvitations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             UserJson addressee = new UsersDbClient().createUser(RandomDataUtils.randomUsername(), defaultPassword);
-            execute(userApi.sendInvitation(targetUser.username(), addressee.username()));
+            execute(userdataApi.sendInvitation(targetUser.username(), addressee.username()));
             outcomeInvitations.add(addressee);
         }
         targetUser.testData().outcomeInvitations().addAll(outcomeInvitations);
@@ -101,8 +102,8 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
         UserJson addressee;
         for (int i = 0; i < count; i++) {
             addressee = new UsersDbClient().createUser(RandomDataUtils.randomUsername(), defaultPassword);
-            execute(userApi.sendInvitation(targetUser.username(), addressee.username()));
-            execute(userApi.acceptInvitation(addressee.username(), targetUser.username()));
+            execute(userdataApi.sendInvitation(targetUser.username(), addressee.username()));
+            execute(userdataApi.acceptInvitation(addressee.username(), targetUser.username()));
             friends.add(addressee);
             addressee.testData().friends().add(targetUser);
         }
@@ -115,7 +116,7 @@ public class UserApiClient extends BaseApiClient implements UsersClient {
     @Nonnull
     @Step("Get user '{0}' using API")
     public Optional<UserJson> findUserByUsername(String username) {
-        return Optional.ofNullable(execute(userApi.currentUser(username)));
+        return Optional.ofNullable(execute(userdataApi.currentUser(username)));
     }
 
     @Override

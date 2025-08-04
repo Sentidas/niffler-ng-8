@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class PeoplePage {
+public class PeoplePage extends BasePage<PeoplePage> {
 
     SearchField searchField = new SearchField();
 
