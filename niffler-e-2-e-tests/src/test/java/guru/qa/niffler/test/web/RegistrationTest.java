@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.page.pages.LoginPage;
+import guru.qa.niffler.service.impl.UsersApiClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,15 @@ public class RegistrationTest {
     private static final Config CFG = Config.getInstance();
     private static final String existingUsername = "Catty";
     private static final String password = "12345";
+
+    @Test
+    void registrationApiFakeTest() throws InterruptedException {
+        UsersApiClient userApiClient = new UsersApiClient();
+        String uniqueUsername = RandomDataUtils.randomUsername();
+        System.out.println("Сгенерированное имя: " + uniqueUsername);
+
+        userApiClient.createUser(uniqueUsername, "12345");
+    }
 
     @Test
     void shouldRegisterNewUser() {
@@ -88,7 +98,7 @@ public class RegistrationTest {
     }
 
     @Test
-    void shouldNotRegisterUserIfUsernameTooLong() {
+    void shouldNotRegisterUserIfUsernameTooLong() throws InterruptedException {
         String longUserName = "m6WLYoyioVWhpwgTK7FytQBNav4Y76jD0dgihDatfpi5QzVVkQP6908p6QuCFDpu";
 
         open(CFG.frontUrl(), LoginPage.class)
