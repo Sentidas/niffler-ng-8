@@ -19,6 +19,7 @@ dependencies {
     implementation "org.flywaydb:flyway-database-postgresql:${project.ext.flywayVersion}"
     implementation "wsdl4j:wsdl4j:${project.ext.wsdl4jVersion}"
     implementation "net.coobird:thumbnailator:${project.ext.thumbnailatorVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     annotationProcessor "org.projectlombok:lombok:${project.ext.lombokVersion}"
     compileOnly "org.projectlombok:lombok:${project.ext.lombokVersion}"
     runtimeOnly "org.postgresql:postgresql:${project.ext.postgresDriverVersion}"

@@ -1,5 +1,6 @@
 package guru.qa.niffler.service.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Stopwatch;
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
@@ -11,14 +12,19 @@ import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;
+import retrofit2.Response;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import static guru.qa.niffler.utils.OauthUtils.generateCodeChallenge;
+import static guru.qa.niffler.utils.OauthUtils.generateCodeVerifier;
 
 @ParametersAreNonnullByDefault
 public class UsersApiClient extends BaseApiClient implements UsersClient {
@@ -26,7 +32,7 @@ public class UsersApiClient extends BaseApiClient implements UsersClient {
     private static final Config CFG = Config.getInstance();
     private static final String defaultPassword = "12345";
 
-    private final AuthApi authApi = new RestClient.DefaultRestClient(CFG.authUrl()).create(AuthApi.class);
+    private final AuthApi authApi = new RestClient.DefaultRestClient(CFG.authUrl(), true).create(AuthApi.class);
     private final UserdataApi userdataApi = new RestClient.DefaultRestClient(CFG.userdataUrl()).create(UserdataApi.class);
 
 
@@ -54,8 +60,50 @@ public class UsersApiClient extends BaseApiClient implements UsersClient {
         throw new RuntimeException("Failed to create user with username: " + username + " within " + maxWaitTime + " ms");
     }
 
+    @Nonnull
+    @Step("Login user with username '{0}' using API")
+    public String login(String username, String password) throws IOException {
+
+        String codeVerifier = generateCodeVerifier();
+        String codeChallenge = generateCodeChallenge(codeVerifier);
+
+
+        Response<Void> responseAuth = authApi.authorize(
+                "code",
+                "client",
+                "openid",
+                "http://127.0.0.1:3000/authorized",
+                codeChallenge,
+                "S256"
+        ).execute();
+
+
+        Response<Void> responseLogin = authApi.login(
+                username,
+                password,
+                ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
+        ).execute();
+
+        String finalUrlResponseLogin = responseLogin.raw().request().url().toString();
+
+        String authCode = finalUrlResponseLogin.split("code=")[1];
+        System.out.println("code -> " + authCode);
+
+        Response<JsonNode> tokenResponse = authApi.token(
+                authCode,
+                "http://127.0.0.1:3000/authorized",
+                codeVerifier,
+                "authorization_code",
+                "client").execute();
+
+        return tokenResponse.body().get("id_token").asText();
+
+    }
+
     @Override
     @Step("Update user using API")
+
+
     public UserJson updateUser(String username, UserJson user) {
         return execute(userdataApi.updateUserInfo(user));
     }

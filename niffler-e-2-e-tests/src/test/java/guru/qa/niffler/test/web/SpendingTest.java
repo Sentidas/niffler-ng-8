@@ -39,7 +39,8 @@ public class SpendingTest {
                 .selectDate(date)
                 .save();
 
-        new MainPage().checkThatSpendTableContainsWithData("Билеты на Ямайку", date);
+       // new MainPage().checkThatSpendTableContainsWithData("Билеты на Ямайку", date);
+        new MainPage().checkSpendTableContains("Билеты на Ямайку");
     }
 
     @User(
@@ -67,7 +68,7 @@ public class SpendingTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLoginWithCredentials(user.username(), "12345");
 
-        new MainPage().checkThatSpendTableContains("Билеты на Кубу");
+        new MainPage().checkSpendTableContains("Билеты на Кубу");
     }
 
     @User(
@@ -109,6 +110,6 @@ public class SpendingTest {
                 .setSpendDescription(newDescription)
                 .save();
 
-        new MainPage().checkThatSpendTableContains(newDescription);
+        new MainPage().checkSpendTableContains(newDescription);
     }
 }

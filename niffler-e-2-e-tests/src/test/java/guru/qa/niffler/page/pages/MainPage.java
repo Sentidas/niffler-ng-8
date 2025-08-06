@@ -93,7 +93,7 @@ public class MainPage extends BasePage<MainPage> {
         return this;
     }
 
-    public void checkThatSpendTableContains(String spendingDescription) {
+    public void checkSpendTableContains(String spendingDescription) {
         spendingTable.checkTableContains(spendingDescription);
     }
 
