@@ -74,10 +74,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                                 .withPassword(defaultPassword);
                     }
 
-                    context.getStore(NAMESPACE).put(
-                            context.getUniqueId(),
-                            user
-                    );
+                    setUser(user);
                 });
     }
 
@@ -89,6 +86,14 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
     @Override
     public UserJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return createdUser();
+    }
+
+    static void setUser(UserJson user) {
+        ExtensionContext context = TestMethodContextExtension.context();
+        context.getStore(NAMESPACE).put(
+                context.getUniqueId(),
+                user
+        );
     }
 
     public static @Nullable UserJson createdUser() {

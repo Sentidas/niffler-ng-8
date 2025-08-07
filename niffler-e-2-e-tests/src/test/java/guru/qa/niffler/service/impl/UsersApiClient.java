@@ -60,45 +60,6 @@ public class UsersApiClient extends BaseApiClient implements UsersClient {
         throw new RuntimeException("Failed to create user with username: " + username + " within " + maxWaitTime + " ms");
     }
 
-    @Nonnull
-    @Step("Login user with username '{0}' using API")
-    public String login(String username, String password) throws IOException {
-
-        String codeVerifier = generateCodeVerifier();
-        String codeChallenge = generateCodeChallenge(codeVerifier);
-
-
-        Response<Void> responseAuth = authApi.authorize(
-                "code",
-                "client",
-                "openid",
-                "http://127.0.0.1:3000/authorized",
-                codeChallenge,
-                "S256"
-        ).execute();
-
-
-        Response<Void> responseLogin = authApi.login(
-                username,
-                password,
-                ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
-        ).execute();
-
-        String finalUrlResponseLogin = responseLogin.raw().request().url().toString();
-
-        String authCode = finalUrlResponseLogin.split("code=")[1];
-        System.out.println("code -> " + authCode);
-
-        Response<JsonNode> tokenResponse = authApi.token(
-                authCode,
-                "http://127.0.0.1:3000/authorized",
-                codeVerifier,
-                "authorization_code",
-                "client").execute();
-
-        return tokenResponse.body().get("id_token").asText();
-
-    }
 
     @Override
     @Step("Update user using API")

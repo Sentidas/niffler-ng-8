@@ -27,7 +27,7 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
     deleteDialogBtm = $("div[role='dialog']").$(byText("Delete"));
 
     public SpendingTable() {
-        super($("#root header"));
+        super($("#spendings"));
     }
 
 

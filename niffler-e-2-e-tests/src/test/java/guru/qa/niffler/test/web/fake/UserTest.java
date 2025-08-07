@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.web.ServiceTest;
+package guru.qa.niffler.test.web.fake;
 
 import guru.qa.niffler.jupiter.extension.UsersClientExtension;
 import guru.qa.niffler.model.spend.CurrencyValues;
