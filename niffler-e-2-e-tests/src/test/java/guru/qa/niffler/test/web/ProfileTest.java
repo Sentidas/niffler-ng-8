@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -45,6 +46,17 @@ public class ProfileTest {
                 .successLoginWithCredentials(user.username(), user.testData().password())
                 .openAvatarMenu()
                 .goToProfilePage()
+                .uploadAvatarPhoto("img/avatar.png")
+                .saveChanges()
+                .checkAvatar(expectedAvatar);
+    }
+
+    @ScreenShotTest("img/avatar_expected.png")
+    @User
+    @ApiLogin
+    void checkUploadAvatarInProfile2(BufferedImage expectedAvatar) throws IOException {
+
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .uploadAvatarPhoto("img/avatar.png")
                 .saveChanges()
                 .checkAvatar(expectedAvatar);

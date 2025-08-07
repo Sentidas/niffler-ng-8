@@ -12,11 +12,11 @@ public class OauthUtils {
 
     private static final String CODE_CHALLENGE_METHOD = "SHA-256";
 
+    private static SecureRandom secureRandom = new SecureRandom();
+
     public static String generateCodeVerifier() {
-        SecureRandom secureRandom = new SecureRandom();
         byte[] codeVerifierBytes = new byte[CODE_VERIFIER_LENGTH];
         secureRandom.nextBytes(codeVerifierBytes);
-
         return Base64.getUrlEncoder().withoutPadding().encodeToString(codeVerifierBytes);
     }
 

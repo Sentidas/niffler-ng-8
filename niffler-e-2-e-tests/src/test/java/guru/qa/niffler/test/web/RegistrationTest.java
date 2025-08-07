@@ -14,14 +14,6 @@ public class RegistrationTest {
     private static final String existingUsername = "Catty";
     private static final String password = "12345";
 
-    @Test
-    void registrationApiFakeTest() throws InterruptedException {
-        UsersApiClient userApiClient = new UsersApiClient();
-        String uniqueUsername = RandomDataUtils.randomUsername();
-        System.out.println("Сгенерированное имя: " + uniqueUsername);
-
-        userApiClient.createUser(uniqueUsername, "12345");
-    }
 
     @Test
     void shouldRegisterNewUser() {

@@ -1,16 +1,20 @@
 package guru.qa.niffler.model.userdata;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
-public record TestData(String password,
-                       List<CategoryJson> categories,
-                       List<SpendJson> spends,
-                       List<UserJson> friends,
-                       List<UserJson> incomeInvitations,
-                       List<UserJson> outcomeInvitations
+public record TestData(
+        @JsonIgnore @Nonnull String password,
+        @JsonIgnore @Nonnull List<CategoryJson> categories,
+        @JsonIgnore @Nonnull List<SpendJson> spends,
+        @JsonIgnore @Nonnull List<UserJson> friends,
+        @JsonIgnore @Nonnull List<UserJson> incomeInvitations,
+        @JsonIgnore @Nonnull List<UserJson> outcomeInvitations
 ) {
 
     public List<String> friendsUsernames() {
@@ -38,6 +42,10 @@ public record TestData(String password,
                 incomeInvitations,
                 outcomeInvitations
         );
+    }
+
+    public TestData(@Nonnull String password) {
+        this(password, new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
     }
 
     public TestData withUpdatedCategories(List<CategoryJson> updatedCategories) {

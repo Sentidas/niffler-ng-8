@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.web.ServiceTest;
+package guru.qa.niffler.test.web.fake;
 
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.CurrencyValues;

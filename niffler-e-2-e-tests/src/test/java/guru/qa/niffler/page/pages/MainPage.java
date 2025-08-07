@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
@@ -23,6 +24,9 @@ import static guru.qa.niffler.page.utils.ExpectedLegendGenerator.getSortedExpect
 
 @ParametersAreNonnullByDefault
 public class MainPage extends BasePage<MainPage> {
+
+    public static final String URL = CFG.frontUrl() + "main";
+
     private final SpendingTable spendingTable = new SpendingTable();
     private final StatSection statSection = new StatSection();
     private final Header header = new Header();
@@ -37,6 +41,15 @@ public class MainPage extends BasePage<MainPage> {
         header.openAvatarMenu();
         return this;
     }
+
+    @Step("Check that page is loaded")
+    public MainPage checkThatPageLoaded() {
+        header.getSelf().should(visible).shouldHave(text("Niffler"));
+        statSection.getSelf().should(visible).shouldHave(text("Statistics"));
+        spendingTable.getSelf().should(visible).shouldHave(text("History of Spendings"));
+        return this;
+    }
+
 
     public ProfilePage goToProfilePage() {
         header.toProfilePage();

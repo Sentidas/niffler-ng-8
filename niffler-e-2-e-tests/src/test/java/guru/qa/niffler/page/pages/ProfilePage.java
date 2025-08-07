@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ParametersAreNonnullByDefault
 public class ProfilePage extends BasePage<ProfilePage> {
 
+    public static final String URL = CFG.frontUrl() + "profile";
+
     private final Header header = new Header();
 
     private final SelenideElement
