@@ -1,7 +1,10 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import guru.qa.niffler.api.GithubApi;
+import guru.qa.niffler.service.GithubClient;
 import guru.qa.niffler.service.RestClient;
+import io.qameta.allure.Step;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
@@ -12,25 +15,27 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class GhApiClient extends RestClient {
+public class GithubApiClient extends RestClient implements GithubClient {
 
     private static final String GH_TOKEN_ENV = "GITHUB_TOKEN";
 
     private final GithubApi ghApi;
 
-    public GhApiClient() {
+    public GithubApiClient() {
         super(CFG.ghUrl());
-        this.ghApi = retrofit.create(GithubApi.class);
+        this.ghApi = create(GithubApi.class);
     }
 
-    public @Nonnull String issueState(String issueNumber) {
+    @Override
+    @Step("Get state from GHA api for issue '{0}'")
+    @Nonnull
+    public String issueState(String issueNumber) {
         final Response<JsonNode> response;
         try {
             response = ghApi.issue(
                     "Bearer " + System.getenv(GH_TOKEN_ENV),
                     issueNumber
             ).execute();
-
         } catch (IOException e) {
             throw new AssertionError(e);
         }

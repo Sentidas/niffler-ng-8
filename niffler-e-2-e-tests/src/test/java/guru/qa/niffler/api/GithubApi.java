@@ -7,7 +7,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
-public interface GhApi {
+public interface GithubApi {
 
   @GET("repos/qa-guru/niffler/issues/{issue_number}")
   @Headers({

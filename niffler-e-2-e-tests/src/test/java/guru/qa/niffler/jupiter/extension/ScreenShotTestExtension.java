@@ -48,49 +48,51 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
     public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
         final ScreenShotTest screenShotTest = context.getRequiredTestMethod().getAnnotation(ScreenShotTest.class);
 
-        File screenshotsDir = new File("build/screenshots");
-        if (!screenshotsDir.exists() && !screenshotsDir.mkdirs()) {
-            System.err.println("Failed to create 'build/screenshots'");
-        }
-
-        if (getExpected() != null) {
-            File expectedFile = new File(screenshotsDir, "expected.png");
-            ImageIO.write(getExpected(), "png", expectedFile);
-        }
-
-        if (getActual() != null) {
-            File actualFile = new File(screenshotsDir, "actual.png");
-            ImageIO.write(getActual(), "png", actualFile);
-        }
-
-        if (getDiff() != null) {
-            File diffFile = new File(screenshotsDir, "diff.png");
-            ImageIO.write(getDiff(), "png", diffFile);
-        }
-
-        if (throwable.getMessage() != null && throwable.getMessage().contains(ASSERT_SCREEN_MESSAGE)) {
-
-            ScreenDiff screenDif = new ScreenDiff(
-                    "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
-                    "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
-                    "data:image/png;base64," + encoder.encodeToString(imageToBytes(getDiff()))
-            );
-
-            Allure.addAttachment(
-                    "Screenshot diff",
-                    "application/vnd.allure.image.diff",
-                    objectMapper.writeValueAsString(screenDif)
-            );
-        }
-
-        if (screenShotTest.rewriteExpected()) {
-            BufferedImage actual = getActual();
-            if (actual != null) {
-                ImageIO.write(actual, "png", new File("src/test/resources/" + screenShotTest.value()));
+        if (screenShotTest != null) {
+            File screenshotsDir = new File("build/screenshots");
+            if (!screenshotsDir.exists() && !screenshotsDir.mkdirs()) {
+                System.err.println("Failed to create 'build/screenshots'");
             }
-        }
 
-        throw throwable;
+            if (getExpected() != null) {
+                File expectedFile = new File(screenshotsDir, "expected.png");
+                ImageIO.write(getExpected(), "png", expectedFile);
+            }
+
+            if (getActual() != null) {
+                File actualFile = new File(screenshotsDir, "actual.png");
+                ImageIO.write(getActual(), "png", actualFile);
+            }
+
+            if (getDiff() != null) {
+                File diffFile = new File(screenshotsDir, "diff.png");
+                ImageIO.write(getDiff(), "png", diffFile);
+            }
+
+            if (throwable.getMessage() != null && throwable.getMessage().contains(ASSERT_SCREEN_MESSAGE)) {
+
+                ScreenDiff screenDif = new ScreenDiff(
+                        "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
+                        "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
+                        "data:image/png;base64," + encoder.encodeToString(imageToBytes(getDiff()))
+                );
+
+                Allure.addAttachment(
+                        "Screenshot diff",
+                        "application/vnd.allure.image.diff",
+                        objectMapper.writeValueAsString(screenDif)
+                );
+            }
+
+            if (screenShotTest.rewriteExpected()) {
+                BufferedImage actual = getActual();
+                if (actual != null) {
+                    ImageIO.write(actual, "png", new File("src/test/resources/" + screenShotTest.value()));
+                }
+            }
+
+            throw throwable;
+        }
     }
 
     public static void setExpected(BufferedImage expected) {

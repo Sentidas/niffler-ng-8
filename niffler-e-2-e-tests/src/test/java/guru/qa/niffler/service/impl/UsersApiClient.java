@@ -1,6 +1,5 @@
 package guru.qa.niffler.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Stopwatch;
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
@@ -12,19 +11,14 @@ import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;
-import retrofit2.Response;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static guru.qa.niffler.utils.OauthUtils.generateCodeChallenge;
-import static guru.qa.niffler.utils.OauthUtils.generateCodeVerifier;
 
 @ParametersAreNonnullByDefault
 public class UsersApiClient extends BaseApiClient implements UsersClient {
