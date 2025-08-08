@@ -61,8 +61,9 @@ public class MainPage extends BasePage<MainPage> {
         return new FriendsPage();
     }
 
-    public void goToPeoplePage() {
+    public PeoplePage goToPeoplePage() {
         header.toPeoplePage();
+        return new PeoplePage();
     }
 
     public MainPage checkStatisticsIsVisible() {

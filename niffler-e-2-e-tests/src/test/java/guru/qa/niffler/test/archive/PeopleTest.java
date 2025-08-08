@@ -1,11 +1,13 @@
-package guru.qa.niffler.test.web.archive;
+package guru.qa.niffler.test.archive;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
+import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.pages.FriendsPage;
 import guru.qa.niffler.page.pages.LoginPage;
+import guru.qa.niffler.page.pages.PeoplePage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -15,9 +17,23 @@ import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Typ
 
 
 @ExtendWith({UsersQueueExtension.class, BrowserExtension.class})
-public class FriendsWithQueueTest {
+public class PeopleTest {
 
     public static Config CFG = Config.getInstance();
+
+    @Test
+    void newPersonShouldBePresentInPeopleTable(UserJson user) throws InterruptedException {
+        System.out.println(user.username() + " - ищем пользователя");
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLoginWithCredentials(user.username(), user.testData().password())
+                .openAvatarMenu()
+                .goToPeoplePage();
+
+        PeoplePage peoplePage = new PeoplePage();
+        Thread.sleep(9000);
+        peoplePage.checkPersonIsInPeopleList(user.username());
+    }
 
     @Test
     void friendsTableShouldBeEmptyForNewUser(@UserType(EMPTY) StaticUser user) {
@@ -34,8 +50,7 @@ public class FriendsWithQueueTest {
                 .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToPeoplePage();
-
-               new FriendsPage().checkNoOutgoingInvitationsPresent();
+                new FriendsPage().checkNoOutgoingInvitationsPresent();
     }
 
     @Test
@@ -53,6 +68,6 @@ public class FriendsWithQueueTest {
                 .successLoginWithCredentials(user.username(), user.password())
                 .openAvatarMenu()
                 .goToPeoplePage();
-                new FriendsPage().checkOutgoingInvitationHasWaitingStatus(user.outcome());
+               new FriendsPage().checkOutgoingInvitationHasWaitingStatus(user.outcome());
     }
 }

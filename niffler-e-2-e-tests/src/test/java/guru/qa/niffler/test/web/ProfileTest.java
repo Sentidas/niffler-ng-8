@@ -7,7 +7,6 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.pages.*;
 import org.junit.jupiter.api.Test;
@@ -24,37 +23,20 @@ public class ProfileTest {
     private static final Config CFG = Config.getInstance();
 
 
-    @Test
+    @ApiLogin(username = "duck", password = "12345")
     void updateNameInProfile() {
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials("duck", "12345")
-                .openAvatarMenu()
-                .goToProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .setName("duccY")
                 .saveChanges();
     }
 
 
-
-    @ScreenShotTest("img/avatar_expected.png")
-    @User
-    void checkUploadAvatarInProfile(UserJson user, BufferedImage expectedAvatar) throws IOException {
-        System.out.println("Создали пользователя:" + user.username());
-
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
-                .openAvatarMenu()
-                .goToProfilePage()
-                .uploadAvatarPhoto("img/avatar.png")
-                .saveChanges()
-                .checkAvatar(expectedAvatar);
-    }
-
-    @ScreenShotTest("img/avatar_expected.png")
     @User
     @ApiLogin
-    void checkUploadAvatarInProfile2(BufferedImage expectedAvatar) throws IOException {
+    @ScreenShotTest("img/avatar_expected.png")
+    void checkUploadAvatarInProfile(UserJson user, BufferedImage expectedAvatar) throws IOException {
+        System.out.println("Создали пользователя:" + user.username());
 
         Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .uploadAvatarPhoto("img/avatar.png")
@@ -69,33 +51,26 @@ public class ProfileTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLoginWithCredentials("duck", user.testData().password())
                 .openAvatarMenu()
-                .goToPeoplePage();
-
-        PeoplePage peoplePage = new PeoplePage();
-        peoplePage.checkPersonIsInPeopleList(user.username());
+                .goToPeoplePage()
+                .checkPersonIsInPeopleList(user.username());
     }
 
     @User
+    @ApiLogin
     void friendsTableShouldBeEmptyForNewUser(UserJson user) {
         System.out.println(user.username() + " - создали пользователя");
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
-                .openAvatarMenu()
-                .goToFriendsPage()
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkFriendsListIsEmpty();
     }
 
     @User
-    void peopleTableShouldBeEmptyWithoutInvitation(UserJson user) {
+    @ApiLogin
+    void friendsTableShouldBeEmptyWithoutInvitation(UserJson user) {
         System.out.println(user.username() + " - создали пользователя");
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
-                .openAvatarMenu()
-                .goToPeoplePage();
-
-        new FriendsPage().checkNoOutgoingInvitationsPresent();
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
+            .checkNoOutgoingInvitationsPresent();
     }
 
     @User(
@@ -104,13 +79,10 @@ public class ProfileTest {
                     archived = false
             )
     )
-    @Test
+    @ApiLogin
     void activeCategoryShouldPresentInCategoriesList(UserJson user) {
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
-                .openAvatarMenu()
-                .goToProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .checkActiveCategoryPresent(user.testData().categories().get(0).name());
 
     }
@@ -122,7 +94,6 @@ public class ProfileTest {
     )
     @Test
     void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
-        // final CategoryJson archivedCategory = user.testData().categories().getFirst();
         System.out.println("создан пользователь:" + user.username());
 
         open(CFG.frontUrl(), LoginPage.class)
