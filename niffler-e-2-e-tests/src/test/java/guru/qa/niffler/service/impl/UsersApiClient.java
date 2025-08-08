@@ -122,6 +122,16 @@ public class UsersApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
+    public List<UserJson> friends(String targetUser) {
+        return execute(userdataApi.friends(targetUser, null));
+    }
+
+    @Override
+    public List<UserJson> people(String username) {
+        return execute(userdataApi.allUsers(username, null));
+    }
+
+    @Override
     @Nonnull
     @Step("Get user '{0}' using API")
     public Optional<UserJson> findUserByUsername(String username) {

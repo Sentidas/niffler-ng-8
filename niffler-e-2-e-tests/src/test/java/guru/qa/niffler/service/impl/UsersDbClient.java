@@ -274,5 +274,15 @@ public class UsersDbClient implements UsersClient {
         }
         return friends;
     }
+
+    @Override
+    public List<UserJson> friends(String username) {
+        return List.of();
+    }
+
+    @Override
+    public List<UserJson> people(String username) {
+        return List.of();
+    }
 }
 

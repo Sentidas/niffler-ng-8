@@ -21,6 +21,10 @@ public interface UsersClient {
 
     List<UserJson>  addFriends(UserJson targetUser, int count);
 
+    List<UserJson>  friends(String username);
+
+    List<UserJson>  people(String username);
+
     Optional<UserJson> findUserByUsername(String username);
 
     Optional<FullUserJson> findUserByIdWithAuth(UUID userId);
