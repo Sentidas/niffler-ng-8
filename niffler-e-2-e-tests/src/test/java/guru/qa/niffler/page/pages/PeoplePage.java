@@ -13,6 +13,8 @@ import static com.codeborne.selenide.Selenide.$;
 @ParametersAreNonnullByDefault
 public class PeoplePage extends BasePage<PeoplePage> {
 
+    public static final String URL = CFG.authUrl() + "people/all";
+
     SearchField searchField = new SearchField();
 
     private final SelenideElement peopleList = $("#all");

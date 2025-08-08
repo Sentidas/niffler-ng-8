@@ -15,11 +15,15 @@ public interface UsersClient {
 
     void removeUser(String username);
 
-    List<UserJson>  createIncomeInvitations(UserJson targetUser, int count);
+    List<UserJson> createIncomeInvitations(UserJson targetUser, int count);
 
     List<UserJson> createOutcomeInvitations(UserJson targetUser, int count);
 
-    List<UserJson>  addFriends(UserJson targetUser, int count);
+    List<UserJson> addFriends(UserJson targetUser, int count);
+
+    List<UserJson> friends(String username);
+
+    List<UserJson> people(String username);
 
     Optional<UserJson> findUserByUsername(String username);
 

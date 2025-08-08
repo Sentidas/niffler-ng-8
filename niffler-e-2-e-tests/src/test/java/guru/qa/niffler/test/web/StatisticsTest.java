@@ -2,14 +2,10 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.Category;
-import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
-import guru.qa.niffler.jupiter.annotation.Spend;
-import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.*;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.page.pages.LoginPage;
 import guru.qa.niffler.page.pages.MainPage;
 import guru.qa.niffler.page.usercontext.ExpectedUserContext;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +31,7 @@ public class StatisticsTest {
                     @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000.11, currency = CurrencyValues.RUB)
             }
     )
-
+    @ApiLogin
     @ScreenShotTest("img/expected_stat_description_spend.png")
     void checkChartAndLegendsAfterUpdateDescriptionSpending(UserJson user, BufferedImage expected) throws IOException {
         System.out.println("Создали user: " + user.username());
@@ -43,8 +39,8 @@ public class StatisticsTest {
         ExpectedUserContext userContext = new ExpectedUserContext();
         userContext.setInitialUser(user);
 
-        MainPage mainPage = Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        MainPage mainPage = Selenide.open(MainPage.URL, MainPage.class)
+                //    .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
@@ -74,7 +70,7 @@ public class StatisticsTest {
                     @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000, currency = CurrencyValues.RUB)
             }
     )
-
+    @ApiLogin
     @ScreenShotTest("img/expected_stat_change_amount.png")
     void checkChartAndLegendsAfterAmountChange(UserJson user, BufferedImage expected) throws IOException {
         System.out.println("Создали user: " + user.username());
@@ -82,8 +78,8 @@ public class StatisticsTest {
         ExpectedUserContext userContext = new ExpectedUserContext();
         userContext.setInitialUser(user);
 
-        MainPage mainPage = Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        MainPage mainPage = Selenide.open(MainPage.URL, MainPage.class)
+                //      .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
@@ -112,7 +108,7 @@ public class StatisticsTest {
                     @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000, currency = CurrencyValues.RUB)
             }
     )
-
+    @ApiLogin
     @ScreenShotTest("img/expected_stat_change_category.png")
     void updateChartAndLegendsAfterCategoryChange(UserJson user, BufferedImage expected) throws InterruptedException, IOException {
         System.out.println("Создали user: " + user.username());
@@ -120,8 +116,8 @@ public class StatisticsTest {
         ExpectedUserContext userContext = new ExpectedUserContext();
         userContext.setInitialUser(user);
 
-        MainPage mainPage = Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        MainPage mainPage = Selenide.open(MainPage.URL, MainPage.class)
+                //  .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
@@ -149,7 +145,7 @@ public class StatisticsTest {
                     @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000, currency = CurrencyValues.RUB)
             }
     )
-
+    @ApiLogin
     @ScreenShotTest("img/expected_stat_archived_category.png")
     void updateChartAndLegendsAfterCategoryArchive(UserJson user, BufferedImage expected) throws InterruptedException, IOException {
         System.out.println("Создали user: " + user.username());
@@ -157,8 +153,8 @@ public class StatisticsTest {
         ExpectedUserContext userContext = new ExpectedUserContext();
         userContext.setInitialUser(user);
 
-        MainPage mainPage = Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        MainPage mainPage = Selenide.open(MainPage.URL, MainPage.class)
+                // .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
@@ -188,7 +184,8 @@ public class StatisticsTest {
             }
     )
 
-   // @ScreenShotTest("img/expected_stat_delete_two_spend.png")
+    // @ScreenShotTest("img/expected_stat_delete_two_spend.png")
+    @ApiLogin
     @ScreenShotTest("img/expected_stat_update_sum_delete_spend.png")
     void updateChartAndLegendsAfterDeleteTwoSpending(UserJson user, BufferedImage expected) throws InterruptedException, IOException {
         System.out.println("Создали user: " + user.username());
@@ -196,8 +193,8 @@ public class StatisticsTest {
         ExpectedUserContext userContext = new ExpectedUserContext();
         userContext.setInitialUser(user);
 
-        MainPage mainPage = Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        MainPage mainPage = Selenide.open(MainPage.URL, MainPage.class)
+                //   .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
         BufferedImage beforeUpdate = mainPage.chartScreenshot();
@@ -227,7 +224,8 @@ public class StatisticsTest {
             }
     )
 
-   // @ScreenShotTest("img/expected_stat_update_sum_delete_spend.png")
+    // @ScreenShotTest("img/expected_stat_update_sum_delete_spend.png")
+    @ApiLogin
     @ScreenShotTest("img/expected_stat_delete_two_spend.png")
     void updateChartAndLegendAfterSpendingAmountChangeAndDeletion(UserJson user, BufferedImage expected) throws InterruptedException, IOException {
 
@@ -236,8 +234,8 @@ public class StatisticsTest {
         ExpectedUserContext userContext = new ExpectedUserContext();
         userContext.setInitialUser(user);
 
-        MainPage mainPage = Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        MainPage mainPage = Selenide.open(MainPage.URL, MainPage.class)
+                //   .successLoginWithCredentials(user.username(), user.testData().password())
                 .checkLegendsNameAndSum(user);
 
 

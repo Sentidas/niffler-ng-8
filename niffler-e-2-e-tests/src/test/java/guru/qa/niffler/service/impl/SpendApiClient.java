@@ -34,13 +34,12 @@ public class SpendApiClient extends RestClient implements SpendClient {
 
     }
 
-
-    private List<CategoryJson> existingCategories(String username) {
+    public List<CategoryJson> existingCategories(String username) {
         return execute(spendApi.getCategories(username, false));
 
     }
 
-    private List<SpendJson> existingSpends(String username) {
+    public List<SpendJson> existingSpends(String username) {
         return execute(spendApi.getSpends(username, null, null, null));
 
     }
