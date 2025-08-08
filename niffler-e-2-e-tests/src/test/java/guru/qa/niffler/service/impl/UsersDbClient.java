@@ -277,12 +277,12 @@ public class UsersDbClient implements UsersClient {
 
     @Override
     public List<UserJson> friends(String username) {
-        return List.of();
+        throw new UnsupportedOperationException("friends() method is not implemented yet");
     }
 
     @Override
     public List<UserJson> people(String username) {
-        return List.of();
+        throw new UnsupportedOperationException("people() method is not implemented yet");
     }
 }
 
