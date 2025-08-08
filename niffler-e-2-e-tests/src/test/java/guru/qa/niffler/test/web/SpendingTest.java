@@ -2,15 +2,11 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.Category;
-import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
-import guru.qa.niffler.jupiter.annotation.Spend;
-import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.*;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UserJson;
-import guru.qa.niffler.page.pages.LoginPage;
 import guru.qa.niffler.page.pages.MainPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,22 +21,24 @@ public class SpendingTest {
 
     private static final Config CFG = Config.getInstance();
 
-    @Test
+
+    @User(
+            username = "duck",
+            categories = {@Category(name = "Путешествие4")})
+    @ApiLogin
     void createSpendWithDate() throws InterruptedException {
 
         LocalDate date = LocalDate.of(2012, 6, 22);
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials("duck", "12345")
+        Selenide.open(MainPage.URL, MainPage.class)
                 .createSpend()
                 .setSpendDescription("Билеты на Ямайку")
-                .selectCategory("Путешествие")
+                .selectCategory("Путешествие4")
                 .setSpendAmount(500000.00)
                 .selectDate(date)
                 .save();
 
-       // new MainPage().checkThatSpendTableContainsWithData("Билеты на Ямайку", date);
-        new MainPage().checkSpendTableContains("Билеты на Ямайку");
+        new MainPage().checkThatSpendTableContainsWithData("Билеты на Ямайку", date);
     }
 
     @User(
@@ -60,15 +58,12 @@ public class SpendingTest {
                     @Spend(category = "Путешествие", description = "Покупка одежды", amount = 7090.22),
                     @Spend(category = "Путешествие", description = "Кафе", amount = 5400)}
     )
-
-    @Test
+    @ApiLogin
     void searchCategoryNameInTableAction(UserJson user) {
         System.out.println("Создали user: " + user.username());
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), "12345");
-
-        new MainPage().checkSpendTableContains("Билеты на Кубу");
+        Selenide.open(MainPage.URL, MainPage.class)
+                .checkSpendTableContains("Билеты на Кубу");
     }
 
     @User(
@@ -81,11 +76,11 @@ public class SpendingTest {
     )
 
     @ScreenShotTest(value = "img/7.png", rewriteExpected = true)
+    @ApiLogin
     void checkRewriteExpectedImage(UserJson user, BufferedImage expectedStatPieChart) throws IOException {
         System.out.println("Создали user: " + user.username());
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials(user.username(), user.testData().password())
+        Selenide.open(MainPage.URL, MainPage.class)
                 .checkStatPieChart(expectedStatPieChart);
     }
 
@@ -99,13 +94,12 @@ public class SpendingTest {
                     currency = CurrencyValues.RUB
             ))
 
-    @Test
+    @ApiLogin
     void spendingDescriptionShouldBeUpdatedByTableAction(SpendJson[] spend) {
 
         final String newDescription = "For me";
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLoginWithCredentials("duck", "12345")
+        Selenide.open(MainPage.URL, MainPage.class)
                 .editSpend(spend[0].description())
                 .setSpendDescription(newDescription)
                 .save();

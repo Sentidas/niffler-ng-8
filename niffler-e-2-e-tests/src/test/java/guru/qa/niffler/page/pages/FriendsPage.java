@@ -15,6 +15,8 @@ import static com.codeborne.selenide.Selenide.$;
 @ParametersAreNonnullByDefault
 public class FriendsPage extends BasePage<FriendsPage> {
 
+    public static final String URL = CFG.frontUrl() + "people/friends";
+
     SearchField searchField = new SearchField();
 
     private final SelenideElement friendsList = $("#friends"),

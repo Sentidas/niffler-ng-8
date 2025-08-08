@@ -1,8 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.page.pages.LoginPage;
-import guru.qa.niffler.service.impl.UsersApiClient;
+import guru.qa.niffler.page.pages.RegisterPage;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
@@ -11,19 +10,18 @@ import static com.codeborne.selenide.Selenide.open;
 public class RegistrationTest {
 
     private static final Config CFG = Config.getInstance();
-    private static final String existingUsername = "Catty";
+    private static final String existingUsername = "catty";
     private static final String password = "12345";
 
 
     @Test
     void shouldRegisterNewUser() {
 
-        String uniqueUsername = RandomDataUtils.randomUsername();
-        System.out.println("Сгенерированное имя: " + uniqueUsername);
+        String username = RandomDataUtils.randomUsername();
+        System.out.println("Сгенерированное имя: " + username);
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
-                .setUserName(uniqueUsername)
+        open(RegisterPage.URL, RegisterPage.class)
+                .setUserName(username)
                 .setPassword(password)
                 .setPasswordSubmit(password)
                 .submitRegistration()
@@ -33,8 +31,7 @@ public class RegistrationTest {
     @Test
     void shouldNotRegisterUserIfNameExists() {
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(existingUsername)
                 .setPassword(password)
                 .setPasswordSubmit(password)
@@ -45,8 +42,7 @@ public class RegistrationTest {
     @Test
     void shouldNotRegisterUserIfPasswordsAreNotEqual() {
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(existingUsername)
                 .setPassword(password)
                 .setPasswordSubmit("1234")
@@ -57,8 +53,7 @@ public class RegistrationTest {
     @Test
     void shouldShowPasswordInPlainText() {
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(existingUsername)
                 .setPassword(password)
                 .togglePasswordVisibility()
@@ -68,8 +63,7 @@ public class RegistrationTest {
     @Test
     void shouldShowPasswordConfirmationInPlainText() {
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(existingUsername)
                 .setPassword(password)
                 .setPasswordSubmit(password)
@@ -80,8 +74,7 @@ public class RegistrationTest {
     @Test
     void shouldNotRegisterUserIfUsernameTooShort() {
         String shortUserName = "Ca";
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(shortUserName)
                 .setPassword(password)
                 .setPasswordSubmit(password)
@@ -93,8 +86,7 @@ public class RegistrationTest {
     void shouldNotRegisterUserIfUsernameTooLong() throws InterruptedException {
         String longUserName = "m6WLYoyioVWhpwgTK7FytQBNav4Y76jD0dgihDatfpi5QzVVkQP6908p6QuCFDpu";
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(longUserName)
                 .setPassword(password)
                 .setPasswordSubmit(password)
@@ -103,11 +95,10 @@ public class RegistrationTest {
     }
 
     @Test
-    void shouldNotRegisterUserIfPasswordTooShort(){
+    void shouldNotRegisterUserIfPasswordTooShort() {
         String shortPassword = "1";
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(existingUsername)
                 .setPassword(shortPassword)
                 .setPasswordSubmit(shortPassword)
@@ -119,8 +110,7 @@ public class RegistrationTest {
     void shouldNotRegisterUserIfPasswordTooLong() {
         String longPassword = "123456789988575757575757575";
 
-        open(CFG.frontUrl(), LoginPage.class)
-                .clickCreateNewAccountLink()
+        open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(existingUsername)
                 .setPassword(longPassword)
                 .setPasswordSubmit(longPassword)
