@@ -7,10 +7,12 @@ import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient extends RestClient implements SpendClient {
 
     private final SpendApi spendApi;
