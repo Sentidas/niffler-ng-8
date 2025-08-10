@@ -49,7 +49,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                         if (anno.incomeInvitation() > 0) {
                             incomeInvitations = usersClient.createIncomeInvitations(user, anno.incomeInvitation());
                         }
-                        if (anno.incomeInvitation() > 0) {
+                        if (anno.outcomeInvitation() > 0) {
                              outcomeInvitations = usersClient.createOutcomeInvitations(user, anno.outcomeInvitation());
                         }
 

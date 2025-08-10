@@ -22,14 +22,4 @@ public class OAuthTest {
         System.out.println("token -> " + token);
         assertNotNull(token);
     }
-
-
-    @Test
-    @User
-    @ApiLogin()
-    void oauthTest2(@Token String token, UserJson user) {
-        System.out.println(user);
-        System.out.println("token -> " + token);
-        assertNotNull(token);
-    }
 }
