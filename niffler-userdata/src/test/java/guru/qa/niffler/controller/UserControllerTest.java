@@ -26,6 +26,7 @@ class UserControllerTest {
   @Sql(scripts = "/currentUserShouldBeReturned.sql")
   @Test
   void currentUserShouldBeReturned() throws Exception {
+
     mockMvc.perform(get("/internal/users/current")
             .contentType(MediaType.APPLICATION_JSON)
             .param("username", "dima")
