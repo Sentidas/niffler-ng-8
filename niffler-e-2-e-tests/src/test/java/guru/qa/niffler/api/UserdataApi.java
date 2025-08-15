@@ -13,8 +13,8 @@ public interface UserdataApi {
     Call<UserJson> currentUser(@Query("username") String username);
 
     @GET("/internal/users/all")
-    Call<List<UserJson>> allUsers(@Query("username") String username,
-                                  @Query("searchQuery") @Nullable String searchQuery);
+    Call<List<UserJson>> getAllUsers(@Query("username") String username,
+                                     @Query("searchQuery") @Nullable String searchQuery);
 
 
     @POST("/internal/users/update")

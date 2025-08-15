@@ -35,7 +35,7 @@ public class RandomDataUtils {
         do {
             username = faker.animal().name();
         } while (username.length() < 3);
-        return username + new Random().nextInt(100);
+        return username + new Random().nextInt(1000);
     }
 
     public static String randomName() {

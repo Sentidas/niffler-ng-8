@@ -20,6 +20,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static guru.qa.niffler.model.userdata.FriendshipStatus.*;
+
 @ParametersAreNonnullByDefault
 public class UsersApiClient extends BaseApiClient implements UsersClient {
 
@@ -116,13 +118,39 @@ public class UsersApiClient extends BaseApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> friends(String targetUser) {
-        return execute(userdataApi.friends(targetUser, null));
+    public List<UserJson> getFriends(String username) {
+        List<UserJson> friends = execute(userdataApi.friends(username, null));
+        return friends.stream().filter(
+                        user ->
+                                FRIEND.equals(user.friendshipStatus()))
+                .toList();
     }
 
     @Override
-    public List<UserJson> people(String username) {
-        return execute(userdataApi.allUsers(username, null));
+    public List<UserJson> getIncomeInvitation(String username) {
+        List<UserJson> friends = execute(userdataApi.friends(username, null));
+
+        return friends
+                .stream()
+                .filter(
+                        user ->
+                                INVITE_RECEIVED.equals(user.friendshipStatus()))
+                .toList();
+    }
+
+    @Override
+    public List<UserJson> getOutcomeInvitation(String username) {
+        List<UserJson> allUsers = execute(userdataApi.getAllUsers(username, null));
+
+        return allUsers.stream().filter(
+                        user ->
+                                INVITE_SENT.equals(user.friendshipStatus()))
+                .toList();
+    }
+
+    @Override
+    public List<UserJson> getAllUsers(String username) {
+        return execute(userdataApi.getAllUsers(username, null));
     }
 
     @Override

@@ -9,11 +9,12 @@ import java.util.List;
 public enum ThreadSafeCookieStore implements CookieStore {
     INSTANCE;
 
+
     private final ThreadLocal<CookieStore> threadLocalCookieStore = ThreadLocal.withInitial(
             this::inMemoryCookieStore
     );
 
-    private CookieStore inMemoryCookieStore() {
+    public CookieStore inMemoryCookieStore() {
         return new CookieManager().getCookieStore();
     }
 

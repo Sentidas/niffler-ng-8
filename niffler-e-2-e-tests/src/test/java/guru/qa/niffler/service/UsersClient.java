@@ -21,9 +21,13 @@ public interface UsersClient {
 
     List<UserJson> addFriends(UserJson targetUser, int count);
 
-    List<UserJson> friends(String username);
+    List<UserJson> getFriends(String username);
 
-    List<UserJson> people(String username);
+    List<UserJson> getIncomeInvitation(String username);
+
+    List<UserJson> getOutcomeInvitation(String username);
+
+    List<UserJson> getAllUsers(String username);
 
     Optional<UserJson> findUserByUsername(String username);
 

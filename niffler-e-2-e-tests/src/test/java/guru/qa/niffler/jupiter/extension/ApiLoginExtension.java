@@ -68,8 +68,8 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
 
                         List<CategoryJson> categories = spendApiClient.existingCategories(username);
                         List<SpendJson> spends = spendApiClient.existingSpends(username);
-                        List<UserJson> friendsList = usersApiClient.friends(username);
-                        List<UserJson> peopleList = usersApiClient.people(username);
+                        List<UserJson> friendsList = usersApiClient.getFriends(username);
+                        List<UserJson> peopleList = usersApiClient.getAllUsers(username);
 
                         List<UserJson> friends = friendsList.stream()
                                 .filter(userJson -> FriendshipStatus.FRIEND.equals(userJson.friendshipStatus()))
@@ -80,6 +80,8 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
                         List<UserJson> outcomeInvitations = peopleList.stream()
                                 .filter(userJson -> FriendshipStatus.INVITE_SENT. equals(userJson.friendshipStatus()))
                                 .toList();
+
+                        System.out.println("исходящие приглашения в аннотации: " + outcomeInvitations);
 
                         UserJson fakeUser = new UserJson(
                                 username,

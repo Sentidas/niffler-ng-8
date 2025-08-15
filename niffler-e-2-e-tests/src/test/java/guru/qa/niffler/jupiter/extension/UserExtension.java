@@ -53,10 +53,6 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                              outcomeInvitations = usersClient.createOutcomeInvitations(user, anno.outcomeInvitation());
                         }
 
-                      //  List<UserJson> friends = usersClient.addFriends(user, anno.friends());
-                      //  List<UserJson> incomeInvitations = usersClient.createIncomeInvitations(user, anno.incomeInvitation());
-                      //  List<UserJson> outcomeInvitations = usersClient.createOutcomeInvitations(user, anno.outcomeInvitation());
-
                         user = user.withTestData(
                                 new TestData(
                                         defaultPassword,

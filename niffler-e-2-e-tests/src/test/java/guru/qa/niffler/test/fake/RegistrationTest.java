@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.web.fake;
+package guru.qa.niffler.test.fake;
 
 import guru.qa.niffler.service.impl.UsersApiClient;
 import guru.qa.niffler.utils.RandomDataUtils;

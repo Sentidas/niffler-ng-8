@@ -1,4 +1,4 @@
-package guru.qa.niffler.model.friend;
+package guru.qa.niffler.model.userdata;
 
 public record UserJsonError(
         String type,
