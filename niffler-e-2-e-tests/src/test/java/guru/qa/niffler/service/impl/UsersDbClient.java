@@ -79,6 +79,7 @@ public class UsersDbClient implements UsersClient {
         return authUser;
     }
 
+    @Override
     @Step("Delete user '{0}' using SQL")
     public void removeUser(String username) {
         xaTxTemplate.execute(() -> {
@@ -95,6 +96,7 @@ public class UsersDbClient implements UsersClient {
         });
     }
 
+    @Override
     @Step("Update user '{0}' using SQL")
     public UserJson updateUser(String username, UserJson updatedUser) {
         return xaTxTemplate.execute(() -> {
@@ -150,6 +152,7 @@ public class UsersDbClient implements UsersClient {
         });
     }
 
+    @Override
     @Step("Get user using SQL with id:'{0}'")
     public Optional<FullUserJson> findUserByIdWithAuth(UUID userId) {
         return xaTxTemplate.execute(() -> {
@@ -170,6 +173,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Override
     @Step("Get user '{0}' using SQL")
     public Optional<UserJson> findUserByUsername(String username) {
         return xaTxTemplate.execute(() ->
@@ -178,6 +182,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Override
     @Step("Get user '{0}' with authority using SQL")
     public Optional<FullUserJson> findFullUserByUsername(String username) {
         return xaTxTemplate.execute(() -> {
@@ -196,6 +201,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Override
     @Step("Create {1} income invitation using SQL")
     public List<UserJson> createIncomeInvitations(UserJson targetUser, int count) {
         List<UserJson> incomeInvitations = new ArrayList<>();
@@ -223,6 +229,7 @@ public class UsersDbClient implements UsersClient {
         return incomeInvitations;
     }
 
+    @Override
     @Step("Create {1} outcome invitation using SQL")
     public List<UserJson> createOutcomeInvitations(UserJson targetUser, int count) {
         List<UserJson> outcomeInvitations = new ArrayList<>();
@@ -249,6 +256,7 @@ public class UsersDbClient implements UsersClient {
         return outcomeInvitations;
     }
 
+    @Override
     @Step("Add {1} friends using SQL")
     public List<UserJson> addFriends(UserJson targetUser, int count) {
         List<UserJson> friends = new ArrayList<>();
@@ -276,12 +284,22 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> friends(String username) {
+    public List<UserJson> getIncomeInvitation(String username) {
+        throw new UnsupportedOperationException("getIncomeInvitation() method is not implemented yet");
+    }
+
+    @Override
+    public List<UserJson> getOutcomeInvitation(String username) {
+        throw new UnsupportedOperationException("getOutcomeInvitation() method is not implemented yet");
+    }
+
+    @Override
+    public List<UserJson> getFriends(String username) {
         throw new UnsupportedOperationException("friends() method is not implemented yet");
     }
 
     @Override
-    public List<UserJson> people(String username) {
+    public List<UserJson> getAllUsers(String username) {
         throw new UnsupportedOperationException("people() method is not implemented yet");
     }
 }

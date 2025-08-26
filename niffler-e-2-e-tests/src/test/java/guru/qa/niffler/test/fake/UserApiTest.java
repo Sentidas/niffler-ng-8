@@ -1,4 +1,4 @@
-package guru.qa.niffler.test.ServiceTest;
+package guru.qa.niffler.test.fake;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.qa.niffler.model.spend.CurrencyValues;

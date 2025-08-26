@@ -6,17 +6,16 @@ import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.page.pages.FriendsPage;
 import guru.qa.niffler.page.pages.LoginPage;
 import guru.qa.niffler.page.pages.PeoplePage;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 
-@ExtendWith(BrowserExtension.class)
+@WebTest
 public class FriendsTest {
 
     public static Config CFG = Config.getInstance();
@@ -49,11 +48,11 @@ public class FriendsTest {
     @ApiLogin
     @DisplayName("Отклонить приглашение")
     void incomeInvitationsShouldBePresentInFriendsTable3(UserJson user) throws InterruptedException {
-        System.out.println("добавили пользователя:" + user.username());
+        System.out.println("добавили пользователя:" + user);
 
         String friendName = user.testData().incomeInvitations().get(0).username();
 
-        System.out.println("приглашение отправил:" + friendName);
+        System.out.println("приглашение получил:" + friendName);
 
         Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .declineIncomingInvitation(friendName)
@@ -78,7 +77,7 @@ public class FriendsTest {
     @DisplayName("При добавлении друзей новому пользователю они отображаются в списке друзей")
     void friendShouldBePresentInFriendsTable(UserJson user) {
 
-        System.out.println("добавили пользователя:" + user.username());
+        System.out.println("добавили пользователя:" + user);
         System.out.println("Друзья пользователя: " + user.testData().friends());
         FriendsPage friendsPage = new FriendsPage();
 
@@ -90,15 +89,13 @@ public class FriendsTest {
     }
 
 
-
-
     @User(
             incomeInvitation = 4
     )
     @ApiLogin
     @DisplayName("При отправке приглашений новому пользователю они отображаются на странице друзей")
     void incomeInvitationsShouldBePresentInFriendsTable(UserJson user) {
-        System.out.println("добавили пользователя:" + user.username());
+        System.out.println("добавили пользователя:" + user);
 
         FriendsPage friendsPage = Selenide.open(FriendsPage.URL, FriendsPage.class);
 
@@ -114,7 +111,9 @@ public class FriendsTest {
     @ApiLogin
     @DisplayName("При отправке приглашений от нового пользователя они отображаются в списке пользователей")
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
+        System.out.println(user);
         System.out.println("добавили пользователя: " + user.username());
+        System.out.println("отправили приглашение: " + user.testData().outcomeInvitations().get(0).username());
         PeoplePage peoplePage = Selenide.open(PeoplePage.URL, PeoplePage.class);
 
         for (UserJson invitation : user.testData().outcomeInvitations()) {
@@ -123,17 +122,21 @@ public class FriendsTest {
     }
 
     @User(
-            categories = @Category(
-                    archived = false
-            ),
-            spendings = @Spend(
-                    category = "test category",
-                    description = "test description",
-                    amount = 89000.00,
-                    currency = CurrencyValues.RUB
-            ),
-            friends = 4,
-            incomeInvitation = 3,
+            categories = {
+                    @Category(name = "Обучение"),
+                    @Category(name = "Ремонт"),
+                    @Category(name = "Путешествие на Алтай")
+            },
+            spendings = {
+                    @Spend(category = "Обучение", description = "Дизайнер курс", amount = 95000),
+                    @Spend(category = "Ремонт", description = "Потолок", amount = 50700.45),
+                    @Spend(category = "Путешествие на Алтай", description = "Билеты в Барнаул", amount = 108000, currency = CurrencyValues.RUB),
+                    @Spend(category = "Путешествие на Алтай", description = "Бронь гостиницы", amount = 140000, currency = CurrencyValues.RUB),
+                    @Spend(category = "Путешествие на Алтай", description = "Корм для нерп", amount = 5000, currency = CurrencyValues.RUB)
+            },
+
+            friends = 14,
+            incomeInvitation = 4,
             outcomeInvitation = 2
     )
     @ApiLogin

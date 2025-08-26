@@ -1,11 +1,10 @@
-package guru.qa.niffler.service.impl;
+package guru.qa.niffler.service.gateway;
 
-import guru.qa.niffler.api.core.GetawayV2Api;
+import guru.qa.niffler.api.GetawayV2Api;
 import guru.qa.niffler.model.pageable.RestResponsePage;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.RestClient;
 import io.qameta.allure.Step;
-import org.springframework.data.domain.Page;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
@@ -25,7 +24,7 @@ public class GatewayV2ApiClient extends RestClient {
         getawayV2Api = retrofit.create(GetawayV2Api.class);
     }
 
-    @Step("Get all friends and income invitation spend using /api/v2/friends/all endpoint")
+    @Step("Get all friends and income invitation using /api/v2/friends/all")
     @Nonnull
     public RestResponsePage<UserJson> allFriends(String bearerToken,
                                                  int page,

@@ -3,13 +3,10 @@ package guru.qa.niffler.model.userdata;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.model.spend.CurrencyValues;
-import guru.qa.niffler.model.spend.SpendJson;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.UUID;
 
 public record UserJson(
@@ -65,8 +62,8 @@ public record UserJson(
         );
     }
 
-    public UserJson (String username, TestData testData) {
-        this(null, username, null, null, null, null,null,null,null,testData);
+    public UserJson(String username, TestData testData) {
+        this(null, username, null, null, null, null, null, null, null, testData);
     }
 
     public UserJson withPassword(String password) {
