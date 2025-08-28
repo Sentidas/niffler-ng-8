@@ -32,7 +32,7 @@ public class GatewayApiClient extends RestClient {
     public List<UserJson> allUsers(String bearerToken, @Nullable String searchQuery) {
         final Response<List<UserJson>> response;
         try {
-            response = getawayApi.allUsers("Bearer " + bearerToken, searchQuery)
+            response = getawayApi.allUsers(bearerToken, searchQuery)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -47,7 +47,7 @@ public class GatewayApiClient extends RestClient {
     public List<UserJson> allFriends(String bearerToken, @Nullable String searchQuery) {
         final Response<List<UserJson>> response;
         try {
-            response = getawayApi.allFriends("Bearer " + bearerToken, searchQuery)
+            response = getawayApi.allFriends(bearerToken, searchQuery)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -60,7 +60,7 @@ public class GatewayApiClient extends RestClient {
     public void removeFriend(String bearerToken, String username) {
         final Response<Void> response;
         try {
-            response = getawayApi.removeFriend("Bearer " + bearerToken, username).execute();
+            response = getawayApi.removeFriend(bearerToken, username).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -72,7 +72,7 @@ public class GatewayApiClient extends RestClient {
         FriendJson friendJson = new FriendJson(toUsername);
         final Response<UserJson> response;
         try {
-            response = getawayApi.sendInvitation("Bearer " + bearerToken, friendJson).execute();
+            response = getawayApi.sendInvitation(bearerToken, friendJson).execute();
         } catch (IOException e) {
             throw new RuntimeException("Failed to send invitation", e);
         }
@@ -86,7 +86,7 @@ public class GatewayApiClient extends RestClient {
 
         try {
             Response<UserJson> response = getawayApi.sendInvitation(
-                            "Bearer " + bearerToken,
+                            bearerToken,
                             friendJson)
                     .execute();
 
@@ -112,7 +112,7 @@ public class GatewayApiClient extends RestClient {
 
         final Response<UserJson> response;
         try {
-            response = getawayApi.acceptInvitation("Bearer " + bearerToken, friendJson).execute();
+            response = getawayApi.acceptInvitation(bearerToken, friendJson).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -126,7 +126,7 @@ public class GatewayApiClient extends RestClient {
 
         final Response<UserJson> response;
         try {
-            response = getawayApi.declineInvitation("Bearer " + bearerToken, friendJson).execute();
+            response = getawayApi.declineInvitation(bearerToken, friendJson).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

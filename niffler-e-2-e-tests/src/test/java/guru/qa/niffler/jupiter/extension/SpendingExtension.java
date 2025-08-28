@@ -50,7 +50,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                             false,
                                             null
                                     ),
-                                    CurrencyValues.RUB,
+                                    spendAnno.currency(),
                                     spendAnno.amount(),
                                     spendAnno.description(),
                                     username
