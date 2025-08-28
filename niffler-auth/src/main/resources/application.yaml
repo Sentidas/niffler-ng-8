@@ -4,7 +4,6 @@ server:
     whitelabel:
       enabled: false
     path: /error
-
 spring:
   application:
     name: niffler-auth
@@ -146,4 +145,3 @@ niffler-auth:
   base-uri: 'https://auth.niffler-stage.qa.guru'
 oauth2:
   client-id: ${client-id}
----
