@@ -10,6 +10,7 @@ import guru.qa.niffler.data.repository.UserdataUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.UserDataUserRepositoryHibernate;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CurrencyValues;
 import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
@@ -278,6 +279,35 @@ public class UsersDbClient implements UsersClient {
                     return UserJson.fromEntity(user, null);
                 });
                 friends.add(friend);
+            }
+        }
+        return friends;
+    }
+
+    @Override
+    public List<UserJson> addFriendsName(UserJson targetUser, User.Friend[] friendsName) {
+        List<UserJson> friends = new ArrayList<>();
+
+        if (friendsName.length > 0) {
+            UserEntity targetEntity = userdataUserRepository.findByUsername(
+                    targetUser.username()
+            ).orElseThrow();
+
+            for (User.Friend friend : friendsName) {
+                String friendUsername = friend.username();
+
+                UserJson friendJson  = xaTxTemplate.execute(() -> {
+                    UserEntity friendEntity = userdataUserRepository.findByUsername(friendUsername)
+                            .orElseGet(() -> {
+                                AuthUserEntity authUser = authUserEntity(friendUsername, "12345");
+                                authUserRepository.create(authUser);
+                                return userdataUserRepository.create(userEntity(friendUsername));
+                            });
+
+                    userdataUserRepository.addFriend(targetEntity, friendEntity);
+                    return UserJson.fromEntity(friendEntity, null);
+                });
+                friends.add(friendJson);
             }
         }
         return friends;
