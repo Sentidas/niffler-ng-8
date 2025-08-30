@@ -151,7 +151,7 @@ public class SoapUsersTest {
     }
 
     @User
-    void sendInvitation_self_shouldReturnSoapFault(UserJson user) {
+    void sendInvitationToSelfReturnsSoapFault(UserJson user) {
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 userdataSoapClient.sendInvitation(user.username(), user.username())
         );
