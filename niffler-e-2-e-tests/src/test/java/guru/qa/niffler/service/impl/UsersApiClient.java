@@ -5,6 +5,7 @@ import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
 import guru.qa.niffler.service.RestClient;
@@ -114,6 +115,26 @@ public class UsersApiClient extends BaseApiClient implements UsersClient {
         }
         targetUser.testData().friends().addAll(friends);
 
+        return friends;
+    }
+
+    @Override
+    public List<UserJson> addFriendsName(UserJson targetUser, User.Friend[] friendsName) {
+        List<UserJson> friends = new ArrayList<>();
+        UsersDbClient db = new UsersDbClient();
+
+        for (User.Friend friend : friendsName) {
+            String friendUsername = friend.username();
+
+            UserJson addressee = db.findUserByUsername(friendUsername)
+                    .orElseGet(() -> db.createUser(friendUsername, defaultPassword));
+
+            execute(userdataApi.sendInvitation(targetUser.username(), addressee.username()));
+            execute(userdataApi.acceptInvitation(addressee.username(), targetUser.username()));
+            friends.add(addressee);
+            addressee.testData().friends().add(targetUser);
+        }
+        targetUser.testData().friends().addAll(friends);
         return friends;
     }
 

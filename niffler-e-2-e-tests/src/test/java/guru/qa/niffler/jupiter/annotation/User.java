@@ -20,8 +20,17 @@ public @interface User {
 
     int friends() default 0;
 
+    Friend[] usernameFriends() default {};
+
     int incomeInvitation() default 0;
 
     int outcomeInvitation() default 0;
+
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({})
+    public @interface Friend {
+        String username();
+    }
 
 }

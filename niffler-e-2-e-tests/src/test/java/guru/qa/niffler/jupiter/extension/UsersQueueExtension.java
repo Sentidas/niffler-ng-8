@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
-
+@Deprecated
 public class UsersQueueExtension implements
         BeforeTestExecutionCallback,
         AfterTestExecutionCallback,
