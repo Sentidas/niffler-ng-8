@@ -75,7 +75,7 @@ public record UserJsonBulk(
 
         b.setCurrency(currency() != null
                 ? guru.qa.niffler.grpc.CurrencyValues.valueOf(currency().name())
-                : guru.qa.niffler.grpc.CurrencyValues.RUB); // ваш бизнес-дефолт
+                : guru.qa.niffler.grpc.CurrencyValues.UNSPECIFIED);
 
         if (photoSmall() != null) {
             b.setPhotoSmall(photoSmall());
