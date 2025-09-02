@@ -21,7 +21,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
 
     @Test
     void allCurrenciesShouldReturnedWithRates() {
-        final CurrencyResponse response = blockingStub.getAllCurrencies(Empty.getDefaultInstance());
+        final CurrencyResponse response = currencyBlockingStub.getAllCurrencies(Empty.getDefaultInstance());
 
         Map<CurrencyValues, Double> actual = response.getAllCurrenciesList()
                 .stream()
@@ -59,7 +59,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 .setDesiredCurrency(desiredCurrency)
                 .build();
 
-        final CalculateResponse response = blockingStub.calculateRate(request);
+        final CalculateResponse response = currencyBlockingStub.calculateRate(request);
         Assertions.assertEquals(expectedValue, response.getCalculatedAmount(), EPS);
     }
 
@@ -83,7 +83,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 .setDesiredCurrency(desiredCurrency)
                 .build();
 
-        final CalculateResponse response = blockingStub.calculateRate(request);
+        final CalculateResponse response = currencyBlockingStub.calculateRate(request);
         Assertions.assertEquals(expectedValue, response.getCalculatedAmount(), EPS);
     }
 
@@ -107,7 +107,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 .setDesiredCurrency(desiredCurrency)
                 .build();
 
-        final CalculateResponse response = blockingStub.calculateRate(request);
+        final CalculateResponse response = currencyBlockingStub.calculateRate(request);
         Assertions.assertEquals(expectedValue, response.getCalculatedAmount(), EPS);
     }
 
@@ -130,7 +130,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 .setDesiredCurrency(desiredCurrency)
                 .build();
 
-        final CalculateResponse response = blockingStub.calculateRate(request);
+        final CalculateResponse response = currencyBlockingStub.calculateRate(request);
         Assertions.assertEquals(expectedValue, response.getCalculatedAmount(), EPS);
     }
 
@@ -142,7 +142,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 .setDesiredCurrency(CurrencyValues.RUB)
                 .build();
         Assertions.assertThrows(io.grpc.StatusRuntimeException.class,
-                () -> blockingStub.calculateRate(req));
+                () -> currencyBlockingStub.calculateRate(req));
     }
 
     @Test
@@ -153,6 +153,6 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 .setDesiredCurrency(CurrencyValues.UNSPECIFIED)
                 .build();
         Assertions.assertThrows(io.grpc.StatusRuntimeException.class,
-                () -> blockingStub.calculateRate(req));
+                () -> currencyBlockingStub.calculateRate(req));
     }
 }

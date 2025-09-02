@@ -41,6 +41,12 @@ enum LocalConfig implements Config {
     return "127.0.0.1";
   }
 
+  @NotNull
+  @Override
+  public String userdataGrpcAddress() {
+    return "127.0.0.1";
+  }
+
   @Override
   public String currencyJdbcUrl() {
     return "jdbc:postgresql://127.0.0.1:5432/niffler-currency";

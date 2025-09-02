@@ -1,5 +1,6 @@
 package guru.qa.niffler.service;
 
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.FullUserJson;
 import guru.qa.niffler.model.userdata.UserJson;
 
@@ -20,6 +21,8 @@ public interface UsersClient {
     List<UserJson> createOutcomeInvitations(UserJson targetUser, int count);
 
     List<UserJson> addFriends(UserJson targetUser, int count);
+
+    List<UserJson> addFriendsName(UserJson targetUser, User.Friend[] friendsName);
 
     List<UserJson> getFriends(String username);
 
