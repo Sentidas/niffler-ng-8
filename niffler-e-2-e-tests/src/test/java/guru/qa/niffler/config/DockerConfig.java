@@ -1,5 +1,7 @@
 package guru.qa.niffler.config;
 
+import org.jetbrains.annotations.NotNull;
+
 enum DockerConfig implements Config {
   INSTANCE;
 
@@ -30,6 +32,18 @@ enum DockerConfig implements Config {
 
   @Override
   public String userdataJdbcUrl() {
+    return "";
+  }
+
+  @NotNull
+  @Override
+  public String currencyGrpcAddress() {
+    return "";
+  }
+
+  @NotNull
+  @Override
+  public String userdataGrpcAddress() {
     return "";
   }
 

@@ -26,7 +26,6 @@ public @interface User {
 
     int outcomeInvitation() default 0;
 
-
     @Retention(RetentionPolicy.RUNTIME)
     @Target({})
     public @interface Friend {
